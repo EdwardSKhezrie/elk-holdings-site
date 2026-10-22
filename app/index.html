@@ -235,7 +235,11 @@ VIEWS.home=()=>({title:"",html:`
   <div class="group">${CATS.map((c,i)=>`<button class="row" data-go="cat" data-p='${JSON.stringify({id:c.id})}'><span class="ic">${ROMAN[i]}</span><span class="tx"><b>${esc(c.name)}</b><small>${esc(c.sub)}</small></span>${chev}</button>`).join("")}</div>
   <h3 class="sec">How we work</h3>
   <div class="prin">${[["We win when you win","We only make money when our partners make money."],["Always informed","Updates, photos and current numbers, whenever you want them."],["We strike fast","When we're ready, we move, and we don't back out."],["Straight answers","Good news or bad, you hear it from us first."]].map(([a,b],i)=>`<div><i>0${i+1}</i><b>${a}</b><small>${b}</small></div>`).join("")}</div>
-  <button class="btn ghost" data-go="tab" data-tab="firm">Meet the founder</button>
+  <h3 class="sec">Founder</h3>
+  <div class="tcard"><div><span class="kicker">Founder &amp; CEO</span><h4 style="font-size:1.7rem;margin-top:6px">Eddie Khezrie</h4></div>
+    <p>At 22, Eddie is a driven investor who wants to make deals, build real relationships, and outwork everyone in the room. Deal-making is in his blood, and he learned early how deals get made and how partners should be treated.</p>
+    <p>He built his experience across lending, underwriting and management at Safra National Bank, Kushner and 601W Companies, and today oversees real estate investments at Global Group Acquisitions.</p>
+    <p style="color:var(--ink)">His approach is simple: be honest, keep partners updated, create real value, and make sure everyone at the table does well.</p></div>
   <div class="foot"><b>ELK HOLDINGS</b><span class="note">New Jersey · Investing nationwide</span></div>`});
 
 VIEWS.invest=()=>({title:"Investments",html:`

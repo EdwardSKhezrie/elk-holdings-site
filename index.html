@@ -302,6 +302,7 @@ footer.site-foot{border-top:1px solid var(--line);padding-block:64px 32px;color:
 .holdings .nm{display:flex;flex-direction:column;gap:2px}
 .holdings .nm b{font-weight:500;color:var(--ink)}
 .holdings .nm small{color:var(--dim);font-size:.78rem}
+.op-head{margin-top:36px;padding-bottom:4px}
 .detail-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding-top:8px;border-top:1px solid var(--line-2)}
 .detail-head h3{font-size:2rem;margin-top:14px}
 .cmp{display:flex;flex-direction:column;gap:12px}
@@ -1231,13 +1232,12 @@ function openRoom(){
       <div><span>Gain to date</span><b class="${gain>0?"pos":gain<0?"neg":""}">${gain?sign(gain):"$0"}</b><em>${gain?(gain/cost*100).toFixed(2)+"% on total invested":"bought "+fmtDate(PRICES.buyDate)+", no change yet"}</em></div>
       <div><span>Last trading day</span><b class="${dayT>0?"pos":dayT<0?"neg":""}">${dayT?sign(dayT):"$0"}</b><em>${fmtDate(PRICES.asof)} · ${cats.length} categories</em></div>
     </div>${stocksBlock(value)}
-    <div class="stocks-head" style="margin-bottom:18px"><div><p class="eyebrow">Positions</p><h3>Every investment</h3></div></div>
-    <div class="holdings"><table>
-      <thead><tr><th>Investment</th><th>Status</th><th class="r">Invested</th><th class="r">Current value</th><th class="r">Gain / loss</th><th class="r">Projected profit</th></tr></thead>
-      <tbody>${rows}</tbody></table></div>`;
+    <div class="stocks-head op-head"><div><p class="eyebrow">Where your money is held</p><h3>Operating businesses</h3></div><p class="muted" style="max-width:46ch;font-size:.92rem">Businesses and projects we own and run directly, outside the stock market.</p></div>`;
   wireStocks();
-  document.querySelectorAll("#overview tr.h").forEach(tr=>{const f=()=>openItem(tr.dataset.key);tr.addEventListener("click",f);tr.addEventListener("keydown",e=>{if(e.key==="Enter")f()})});
-  openItem(items[0].key);go("room");
+  const op=items.find(x=>x.cat==="Operating Businesses");
+  if(op){openItem(op.key);document.getElementById("detCat").textContent="Operating Businesses · hands-on";}
+  document.querySelector(".detail-head").hidden=!op;document.getElementById("dealView").hidden=!op;document.querySelector(".op-head").hidden=!op;
+  go("room");
 }
 document.addEventListener("click",e=>{const x=e.target.closest("[data-open-deal]");if(!x)return;const id=x.dataset.openDeal;
   document.getElementById("detCat").textContent="Operating Businesses · Real Estate Development";document.getElementById("detName").textContent=DEALS[id].name;showDeal(id);

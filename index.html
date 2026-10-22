@@ -302,8 +302,8 @@ footer.site-foot{border-top:1px solid var(--line);padding-block:64px 32px;color:
 .holdings .nm{display:flex;flex-direction:column;gap:2px}
 .holdings .nm b{font-weight:500;color:var(--ink)}
 .holdings .nm small{color:var(--dim);font-size:.78rem}
-.op-head{margin-top:36px;padding-bottom:4px}
-.detail-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding-top:8px;border-top:1px solid var(--line-2)}
+.op-head{margin-top:36px;padding-bottom:4px;scroll-margin-top:110px}
+.detail-head{scroll-margin-top:110px;margin-top:28px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding-top:8px;border-top:1px solid var(--line-2)}
 .detail-head h3{font-size:2rem;margin-top:14px}
 .cmp{display:flex;flex-direction:column;gap:12px}
 .cmp .bar{height:12px;background:var(--line);position:relative}
@@ -470,6 +470,8 @@ nav a[aria-current="page"]{color:var(--gold-hi)}
 .ctabs{display:flex;gap:0;border:1px solid var(--line);background:var(--surface);overflow-x:auto}
 .ctab{flex:1;min-width:150px;background:none;border:0;border-right:1px solid var(--line);padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;text-align:left;align-items:center}
 .ctab:last-child{border-right:0}
+.ctab-op{background:linear-gradient(135deg,rgba(201,164,92,.10),transparent 60%)}
+.ctab-op em{color:var(--gold)!important}
 .ctab .sw{width:9px;height:9px;border-radius:2px;grid-row:span 3;align-self:start;margin-top:6px}
 .ctab .ct-n{font-size:.86rem;color:var(--ink);white-space:nowrap}
 .ctab b{font-weight:500;font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
@@ -1232,11 +1234,11 @@ function openRoom(){
       <div><span>Gain to date</span><b class="${gain>0?"pos":gain<0?"neg":""}">${gain?sign(gain):"$0"}</b><em>${gain?(gain/cost*100).toFixed(2)+"% on total invested":"bought "+fmtDate(PRICES.buyDate)+", no change yet"}</em></div>
       <div><span>Last trading day</span><b class="${dayT>0?"pos":dayT<0?"neg":""}">${dayT?sign(dayT):"$0"}</b><em>${fmtDate(PRICES.asof)} · ${cats.length} categories</em></div>
     </div>${stocksBlock(value)}
-    <div class="stocks-head op-head"><div><p class="eyebrow">Where your money is held</p><h3>Operating businesses</h3></div><p class="muted" style="max-width:46ch;font-size:.92rem">Businesses and projects we own and run directly, outside the stock market.</p></div>`;
+    `;
   wireStocks();
   const op=items.find(x=>x.cat==="Operating Businesses");
-  if(op){openItem(op.key);document.getElementById("detCat").textContent="Operating Businesses · hands-on";}
-  document.querySelector(".detail-head").hidden=!op;document.getElementById("dealView").hidden=!op;document.querySelector(".op-head").hidden=!op;
+  if(op){openItem(op.key);document.getElementById("detCat").textContent="Where your money is held · Operating businesses";}
+  document.querySelector(".detail-head").hidden=!op;document.getElementById("dealView").hidden=!op;
   go("room");
 }
 document.addEventListener("click",e=>{const x=e.target.closest("[data-open-deal]");if(!x)return;const id=x.dataset.openDeal;
@@ -1300,7 +1302,7 @@ function stocksBlock(total){
     <div class="stocks-head" style="margin-top:18px"><div><p class="eyebrow">Stocks by category</p><h3>Where your money is held</h3></div>
       <div class="stocks-tools"><input id="stockQ" type="search" placeholder="Search all tickers or companies" value="${stockQ}"></div></div>
     <div class="ctabs" role="tablist">${cats.map(c=>{const r=all.filter(x=>x.cat===c),v=r.reduce((a,x)=>a+x.value,0),g=r.reduce((a,x)=>a+x.value-x.cost,0),co=r.reduce((a,x)=>a+x.cost,0);
-      return`<button class="ctab${c===stockCat?" on":""}" role="tab" data-cat="${c}" aria-selected="${c===stockCat}"><span class="sw" style="background:${CAT_COLORS[c]}"></span><span class="ct-n">${c==="Service & Trade Businesses"?"Service &amp; Trade":c}</span><b>${fmt$(v)}</b><em class="${pn(Math.abs(g)<0.5?0:g)}">${co?pctS(Math.abs(g)<0.5?0:g/co):"—"}</em></button>`}).join("")}</div>
+      return`<button class="ctab${c===stockCat?" on":""}" role="tab" data-cat="${c}" aria-selected="${c===stockCat}"><span class="sw" style="background:${CAT_COLORS[c]}"></span><span class="ct-n">${c==="Service & Trade Businesses"?"Service &amp; Trade":c}</span><b>${fmt$(v)}</b><em class="${pn(Math.abs(g)<0.5?0:g)}">${co?pctS(Math.abs(g)<0.5?0:g/co):"—"}</em></button>`}).join("")}${(()=>{const ops=partnerItems().filter(x=>x.cat==="Operating Businesses");if(!ops.length)return"";const v=ops.reduce((t,x)=>t+x.value,0);return`<button class="ctab ctab-op" data-op="1" title="Jump to operating businesses"><span class="sw" style="background:${CAT_COLORS["Operating Businesses"]}"></span><span class="ct-n">Operating Businesses</span><b>${fmt$(v)}</b><em>hands-on · see below ↓</em></button>`})()}</div>
     <div id="catSum"></div>
     <div class="holdings stocks-table"><table><thead><tr>
       <th data-k="t">Ticker</th><th data-k="name">Company</th><th class="r" data-k="shares">Shares</th><th class="r" data-k="buy">Buy</th><th class="r" data-k="last">Last close</th><th class="r" data-k="dayp">Day</th><th class="r" data-k="value">Value</th><th class="r" data-k="gain">Gain</th><th class="r" data-k="ret">Return</th><th class="r" data-k="pct">% of category</th>
@@ -1336,7 +1338,7 @@ function renderStocks(){
 function wireStocks(){
   const s=document.getElementById("stocks");if(!s)return;
   s.addEventListener("click",e=>{
-    const ct=e.target.closest(".ctab");if(ct){stockCat=ct.dataset.cat;stockQ="";document.getElementById("stockQ").value="";s.querySelectorAll(".ctab").forEach(x=>{x.classList.toggle("on",x===ct);x.setAttribute("aria-selected",x===ct)});renderPerf();renderStocks();return}
+    const ct=e.target.closest(".ctab");if(ct&&ct.dataset.op){const h=document.querySelector(".detail-head");if(h)h.scrollIntoView({behavior:"smooth",block:"start"});return}if(ct){stockCat=ct.dataset.cat;stockQ="";document.getElementById("stockQ").value="";s.querySelectorAll(".ctab").forEach(x=>{x.classList.toggle("on",x===ct);x.setAttribute("aria-selected",x===ct)});renderPerf();renderStocks();return}
     const rb=e.target.closest("[data-range]");if(rb){perfRange=rb.dataset.range;renderPerf();return}
     const th=e.target.closest("th[data-k]");if(th){stockSort=stockSort.k===th.dataset.k?{k:th.dataset.k,d:-stockSort.d}:{k:th.dataset.k,d:["t","name"].includes(th.dataset.k)?1:-1};renderStocks();}});
   document.getElementById("stockQ").addEventListener("input",e=>{stockQ=e.target.value;renderStocks()});

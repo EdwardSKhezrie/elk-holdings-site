@@ -9,7 +9,7 @@ S=sys.argv[1]
 REPO=sys.argv[2]
 src=open(S+'/site/index.html').read()
 data=json.load(open(S+'/portal_data.json'))
-codes_path=S+'/build/codes.json'  # partner codes, kept private
+codes_path=S+'/build/codes.json'
 if os.path.exists(codes_path): codes=json.load(open(codes_path))
 else:
   al='abcdefghjkmnpqrstuvwxyz23456789'
@@ -39,8 +39,7 @@ json.dump(data['PRICES'],open(REPO+'/prices.json','w'),indent=0)
 i=src.index('<script>');j=src.index('</script>',i)
 js=src[i+8:j]
 html=src[:i]
-html=html[:html.index('<!-- PAGE: home -->')]+html[html.index('<!-- LOGIN -->'):]
-html=html.replace('src="crest','src="../crest').replace('<div class="view" id="v-login" hidden>','<div class="view" id="v-login">')
+
 def cutblock(s,marker):
   a=s.index(marker);b=s.index('\n};\n',a);return s[:a]+marker+'};\n'+s[b+4:]
 js=js.replace(js[js.index('const IMG='):js.index(';\n',js.index('const IMG='))],'const IMG={}')
@@ -49,8 +48,7 @@ js=cutblock(js,'const INVESTORS={')
 a=js.index('const EXAMPLES=');b=js.index(';\n',a);js=js[:a]+'const EXAMPLES={}'+js[b:]
 a=js.index('/*PRICES_START*/')+16;b=js.index('/*PRICES_END*/');js=js[:a]+'{"asof":"","buyDate":"","t":{}}'+js[b:]
 # router: public pages live on the main site
-js=js.replace('function go(v,to){','function go(v,to){\n  if(v!=="login"&&v!=="room"){location.href="../#"+(to||v);return}',1)
-js=js.replace('(()=>{const h=(location.hash||"").slice(1);go(PAGE_OF[h]||"home",h||undefined)})();','go("login");')
+js=js.replace('(()=>{const h=(location.hash||"").slice(1);go(PAGE_OF[h]||"home",h||undefined)})();','(()=>{const h=(location.hash||"").slice(1);go(h==="login"?"login":(PAGE_OF[h]||"home"),h&&h!=="login"?h:undefined)})();')
 
 # scrub deal-specific text from public JS; it now comes from each partner's encrypted data
 R=[('"Beach 5th & 6th Street · healthcare deal (~$12M) under review":"Healthcare deal (~$12M) under review · nothing invested"',
@@ -74,7 +72,7 @@ const codeEl=document.getElementById("code");
 const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
 async function unlock(name,code){
   const h=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode("elk:"+name)))).map(x=>x.toString(16).padStart(2,"0")).join("");
-  const r=await fetch("vault/"+h+".json",{cache:"no-store"});if(!r.ok)throw new Error("nouser");
+  const r=await fetch("portal/vault/"+h+".json",{cache:"no-store"});if(!r.ok)throw new Error("nouser");
   const v=await r.json();
   const km=await crypto.subtle.importKey("raw",new TextEncoder().encode(code),"PBKDF2",false,["deriveKey"]);
   const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(v.salt),iterations:v.iter,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt"]);
@@ -90,7 +88,7 @@ document.getElementById("loginForm").addEventListener("submit",async e=>{
   try{
     const p=await unlock(em,pin);
     Object.assign(DEALS,p.deals||{});Object.assign(EXAMPLES,p.examples||{});Object.assign(IMG,p.images||{});
-    try{const pr=await (await fetch("../prices.json",{cache:"no-store"})).json();Object.assign(PRICES,pr)}catch(x){}
+    try{const pr=await (await fetch("prices.json",{cache:"no-store"})).json();Object.assign(PRICES,pr)}catch(x){}
     err.textContent="";session=p.investor;openRoom();
   }catch(x){err.textContent="That login and code don't match. Check both and try again.";codeEl.value="";codeEl.focus()}
   finally{btn.disabled=false}
@@ -99,11 +97,11 @@ document.getElementById("logout").addEventListener("click",()=>{location.reload(
 
 '''
 js=js[:a]+login+js[b:]
-doc='<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<meta name="robots" content="noindex">\n<link rel="icon" href="../crest-icon.jpg">\n<link rel="manifest" href="../manifest.webmanifest">\n<meta name="theme-color" content="#000000">\n<link rel="apple-touch-icon" href="../apple-touch-icon.png">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n<meta name="apple-mobile-web-app-title" content="ELK">\n'
+doc='<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<meta name="description" content="ELK Holdings is a family office investing across real estate, fixed income, private equity, venture capital, operating businesses, service and trade businesses and public equities.">\n<link rel="icon" href="crest-icon.jpg">\n<link rel="manifest" href="manifest.webmanifest">\n<meta name="theme-color" content="#000000">\n<link rel="apple-touch-icon" href="apple-touch-icon.png">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n<meta name="apple-mobile-web-app-title" content="ELK">\n'
 k=html.index('\n<header')
-out=doc+html[:k]+'\n</head>\n<body>\n'+html[k:]+'<script>'+js+'</script>\n<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js",{scope:"../"}).catch(()=>{});</script>\n</body></html>\n'
-out=out.replace('<title>ELK Holdings</title>','<title>Partner Portal · ELK Holdings</title>',1)
-open(REPO+'/portal/index.html','w').write(out)
+out=doc+html[:k]+'\n</head>\n<body>\n'+html[k:]+'<script>'+js+'</script>\n<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});</script>\n</body></html>\n'
+open(REPO+'/index.html','w').write(out)
+open(REPO+'/portal/index.html','w').write('<!doctype html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=../#login"><title>ELK Holdings</title></head><body><a href="../#login">Investor login</a></body></html>\n')
 for u,inv in data['INVESTORS'].items():
   deals={k:data['DEALS'][k] for k in inv.get('holdings',{})}
   ex=data['EXAMPLES'] if inv.get('other') else {}

@@ -1036,7 +1036,7 @@ nav a[aria-current="page"]{color:var(--gold-hi)}
 const PAGE_OF={top:"home",firm:"home",approach:"home",process:"home",platform:"investments",realestate:"realestate",fixedincome:"fixedincome",privateequity:"privateequity",venture:"venture",operating:"operating",services:"services",equities:"equities",portfolio:"portfolio",leadership:"leadership",contact:"contact"};
 const FIRST={home:"top",investments:"platform"};
 function go(v,to){
-  if(v==="login"||v==="room"){location.href="/portal/";return}
+  if(v==="login"||v==="room"){location.href="portal/";return}
   document.querySelectorAll(".view").forEach(s=>s.hidden=s.id!=="v-"+v);
   const navPage=["realestate","fixedincome","privateequity","venture","operating","services","equities"].includes(v)?"investments":v;
   document.querySelectorAll("nav a[data-page]").forEach(a=>a.dataset.page===navPage?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));

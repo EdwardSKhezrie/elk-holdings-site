@@ -1,6 +1,13 @@
 <!doctype html>
 <html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="description" content="ELK Holdings is a family office investing across real estate, fixed income, private equity, venture capital, operating businesses, service and trade businesses and public equities.">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#000000">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ELK">
 <link rel="icon" href="crest-icon.jpg">
 <title>ELK Holdings</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1053,4 +1060,5 @@ document.addEventListener("click",e=>{
 (()=>{const h=(location.hash||"").slice(1);go(PAGE_OF[h]||"home",h||undefined)})();
 </script>
 
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});</script>
 </body></html>

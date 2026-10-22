@@ -99,9 +99,9 @@ document.getElementById("logout").addEventListener("click",()=>{location.reload(
 
 '''
 js=js[:a]+login+js[b:]
-doc='<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<meta name="robots" content="noindex">\n<link rel="icon" href="../crest-icon.jpg">\n'
+doc='<!doctype html>\n<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<meta name="robots" content="noindex">\n<link rel="icon" href="../crest-icon.jpg">\n<link rel="manifest" href="../manifest.webmanifest">\n<meta name="theme-color" content="#000000">\n<link rel="apple-touch-icon" href="../apple-touch-icon.png">\n<meta name="apple-mobile-web-app-capable" content="yes">\n<meta name="mobile-web-app-capable" content="yes">\n<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">\n<meta name="apple-mobile-web-app-title" content="ELK">\n'
 k=html.index('\n<header')
-out=doc+html[:k]+'\n</head>\n<body>\n'+html[k:]+'<script>'+js+'</script>\n</body></html>\n'
+out=doc+html[:k]+'\n</head>\n<body>\n'+html[k:]+'<script>'+js+'</script>\n<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js",{scope:"../"}).catch(()=>{});</script>\n</body></html>\n'
 out=out.replace('<title>ELK Holdings</title>','<title>Partner Portal · ELK Holdings</title>',1)
 open(REPO+'/portal/index.html','w').write(out)
 for u,inv in data['INVESTORS'].items():

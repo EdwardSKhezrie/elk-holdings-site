@@ -449,6 +449,43 @@ nav a[aria-current="page"]{color:var(--gold-hi)}
   nav a.hide-sm{display:none}
 }
 @media (max-width:520px){.strategies{grid-template-columns:1fr}.feature .info,.principles article,.loginbox{padding:26px}}
+
+/* Performance + category tabs */
+.perf{border:1px solid var(--line);background:var(--surface);padding:22px 24px 0;display:flex;flex-direction:column;gap:14px}
+.rtabs{display:flex;gap:4px}
+.rtabs button{background:none;border:1px solid transparent;color:var(--muted);font-size:.8rem;font-weight:600;letter-spacing:.06em;padding:7px 14px}
+.rtabs button.on{border-color:var(--gold);color:var(--gold-hi)}
+.pchart{position:relative}
+.pchart svg{width:100%;height:240px;display:block}
+.pc-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.92rem;text-align:center;padding:0 24px}
+.pc-axis{display:flex;justify-content:space-between;font-size:.74rem;color:var(--dim);padding-top:6px}
+.rets{display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--line);margin:0 -24px}
+.ret{background:none;border:0;border-right:1px solid var(--line);padding:16px 20px;display:flex;flex-direction:column;gap:4px;text-align:left;min-width:0}
+.ret:last-child{border-right:0}
+.ret span{font-family:var(--mark);font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+.ret b{font-family:var(--body);font-weight:600;font-size:1.25rem;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ret em{font-style:normal;font-size:.76rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ret.on{background:rgba(201,164,92,.07);box-shadow:inset 0 2px 0 var(--gold)}
+.ctabs{display:flex;gap:0;border:1px solid var(--line);background:var(--surface);overflow-x:auto}
+.ctab{flex:1;min-width:150px;background:none;border:0;border-right:1px solid var(--line);padding:14px 16px;display:grid;grid-template-columns:auto 1fr;gap:2px 10px;text-align:left;align-items:center}
+.ctab:last-child{border-right:0}
+.ctab .sw{width:9px;height:9px;border-radius:2px;grid-row:span 3;align-self:start;margin-top:6px}
+.ctab .ct-n{font-size:.86rem;color:var(--ink);white-space:nowrap}
+.ctab b{font-weight:500;font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ctab em{font-style:normal;font-size:.76rem;font-variant-numeric:tabular-nums;color:var(--dim)}
+.ctab:hover{background:var(--bg-2)}
+.ctab.on{background:var(--bg-2);box-shadow:inset 0 -2px 0 var(--gold)}
+.ctab.on .ct-n{color:var(--gold-hi)}
+.cat-perf{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding:4px 2px}
+.cp-name{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center}
+.cp-name .sw{width:10px;height:10px;border-radius:2px}
+.cp-name b{font-family:var(--display);font-weight:500;font-size:1.6rem}
+.cp-name em{grid-column:2;font-style:normal;font-size:.84rem;color:var(--muted)}
+.cp-rets{display:flex;gap:22px}
+.cp-rets div{display:flex;flex-direction:column;gap:2px;text-align:right}
+.cp-rets span{font-family:var(--mark);font-size:.54rem;letter-spacing:.2em;color:var(--dim)}
+.cp-rets b{font-weight:600;font-size:.98rem;font-variant-numeric:tabular-nums}
+@media (max-width:900px){.rets{grid-template-columns:repeat(3,1fr)}.ret:nth-child(3){border-right:0}.ret:nth-child(n+4){border-top:1px solid var(--line)}.cp-rets{flex-wrap:wrap;gap:14px}}
 </style>
 
 </head>
@@ -1152,6 +1189,7 @@ document.getElementById("loginForm").addEventListener("submit",async e=>{
     const p=await unlock(em,pin);
     Object.assign(DEALS,p.deals||{});Object.assign(EXAMPLES,p.examples||{});Object.assign(IMG,p.images||{});
     try{const pr=await (await fetch("prices.json",{cache:"no-store"})).json();Object.assign(PRICES,pr)}catch(x){}
+    try{HIST=await (await fetch("history.json",{cache:"no-store"})).json()}catch(x){}
     err.textContent="";session=p.investor;openRoom();
   }catch(x){err.textContent="That login and code don't match. Check both and try again.";codeEl.value="";codeEl.focus()}
   finally{btn.disabled=false}
@@ -1192,10 +1230,11 @@ function openRoom(){
       <div><span>Current value</span><b>${fmt$(value)}</b><em>stocks at ${fmtDate(PRICES.asof)} close; deals at cost</em></div>
       <div><span>Gain to date</span><b class="${gain>0?"pos":gain<0?"neg":""}">${gain?sign(gain):"$0"}</b><em>${gain?(gain/cost*100).toFixed(2)+"% on total invested":"bought "+fmtDate(PRICES.buyDate)+", no change yet"}</em></div>
       <div><span>Last trading day</span><b class="${dayT>0?"pos":dayT<0?"neg":""}">${dayT?sign(dayT):"$0"}</b><em>${fmtDate(PRICES.asof)} · ${cats.length} categories</em></div>
-    </div>
+    </div>${stocksBlock(value)}
+    <div class="stocks-head" style="margin-bottom:18px"><div><p class="eyebrow">Positions</p><h3>Every investment</h3></div></div>
     <div class="holdings"><table>
       <thead><tr><th>Investment</th><th>Status</th><th class="r">Invested</th><th class="r">Current value</th><th class="r">Gain / loss</th><th class="r">Projected profit</th></tr></thead>
-      <tbody>${rows}</tbody></table></div>${stocksBlock(value)}`;
+      <tbody>${rows}</tbody></table></div>`;
   wireStocks();
   document.querySelectorAll("#overview tr.h").forEach(tr=>{const f=()=>openItem(tr.dataset.key);tr.addEventListener("click",f);tr.addEventListener("keydown",e=>{if(e.key==="Enter")f()})});
   openItem(items[0].key);go("room");
@@ -1203,53 +1242,105 @@ function openRoom(){
 document.addEventListener("click",e=>{const x=e.target.closest("[data-open-deal]");if(!x)return;const id=x.dataset.openDeal;
   document.getElementById("detCat").textContent="Operating Businesses · Real Estate Development";document.getElementById("detName").textContent=DEALS[id].name;showDeal(id);
   document.querySelector(".detail-head").scrollIntoView();});
-/* ---- All stocks view: every listed holding in one clean table ---- */
-const CAT_COLORS={"Real Estate":"#C9A45C","Fixed Income":"#8FB3C9","Private Equity":"#B98AC9","Venture Capital":"#E39B7B","Service & Trade Businesses":"#7FBF95","Public Equities":"#E8CB8A","Public Markets":"#E8CB8A","Operating Businesses":"#9AA8A1"};
+/* ---- Stocks: whole-portfolio performance (1W to All), then one category at a time ---- */
+const CAT_COLORS={"Operating Businesses":"#F0DCA8","Real Estate":"#E8CB8A","Fixed Income":"#C9A45C","Private Equity":"#A9894E","Venture Capital":"#8C7142","Service & Trade Businesses":"#D8B571","Public Equities":"#6E5935","Public Markets":"#6E5935"};
+const STOCK_ORDER=["Real Estate","Fixed Income","Private Equity","Venture Capital","Service & Trade Businesses","Public Equities","Public Markets"];
+let HIST=null;
 function allStocks(){
   const out=[];
   (session.other||[]).forEach(o=>{if(!o.planned)return;o.alloc.forEach(([n])=>{(EXAMPLES[n]||[]).forEach(([nm,amt])=>{const h=holdingCalc(nm,amt);if(!h.t)return;
-    const pd=PRICES.t[h.t]||{};out.push({t:h.t,name:nm.replace(/\s*\([A-Z.]+\)/,"").replace(/\s·.*$/,""),cat:o.cat,group:n,shares:h.shares,buy:h.buy,last:h.last,cost:amt,value:h.value,day:h.day,date:pd.lastDate})})})});
-  (session.positions||[]).forEach(p=>{const pd=PRICES.t[p.ticker]||{},last=pd.last||MARKET[p.ticker].price;out.push({t:p.ticker,name:p.name,cat:"Public Equities",group:"Individual stock",shares:p.shares,buy:p.cost,last,cost:p.shares*p.cost,value:p.shares*last,day:pd.prev?p.shares*(last-pd.prev):0,date:pd.lastDate})});
+    const pd=PRICES.t[h.t]||{};out.push({t:h.t,name:nm.replace(/\s*\([A-Z.]+\)/,"").replace(/\s·.*$/,""),cat:o.cat,group:n,shares:h.shares,buy:h.buy,last:h.last,prev:pd.prev,cost:amt,value:h.value,day:h.day,date:pd.lastDate,buyDate:pd.buyDate||PRICES.buyDate})})})});
+  (session.positions||[]).forEach(p=>{const pd=PRICES.t[p.ticker]||{},last=pd.last||MARKET[p.ticker].price;out.push({t:p.ticker,name:p.name,cat:"Public Equities",group:"Individual stock",shares:p.shares,buy:p.cost,last,prev:pd.prev,cost:p.shares*p.cost,value:p.shares*last,day:pd.prev?p.shares*(last-pd.prev):0,date:pd.lastDate,buyDate:""})});
   return out;
 }
-let stockSort={k:"value",d:-1},stockCat="All",stockQ="";
+/* Daily closes: history.json on the live site; if it is not available, the buy and latest close from PRICES. */
+function hist(){
+  if(HIST&&HIST.dates&&HIST.dates.length)return HIST;
+  const ds=[...new Set(Object.values(PRICES.t).flatMap(p=>[p.buyDate,p.lastDate]).filter(Boolean))].sort(),t={};
+  for(const k in PRICES.t){const p=PRICES.t[k];t[k]=ds.map(d=>d===p.lastDate?p.last:d===p.buyDate?p.buy:null)}
+  return{dates:ds,t};
+}
+function series(rows,fixed){
+  const H=hist(),out=[];
+  H.dates.forEach((d,i)=>{let v=fixed||0;rows.forEach(s=>{if(s.buyDate&&d<s.buyDate){v+=s.cost;return}const a=H.t[s.t]||[];let px=null;for(let j=i;j>=0;j--){if(a[j]!=null){px=a[j];break}}v+=s.shares*(px==null?s.buy:px)});out.push({d,v})});
+  return out;
+}
+const RANGES=["1W","1M","3M","YTD","5Y","All"];
+function rangeStart(r,last){const d=new Date(last+"T12:00:00");
+  if(r==="1W")d.setDate(d.getDate()-7);else if(r==="1M")d.setMonth(d.getMonth()-1);else if(r==="3M")d.setMonth(d.getMonth()-3);
+  else if(r==="YTD"){d.setMonth(0);d.setDate(1)}else if(r==="5Y")d.setFullYear(d.getFullYear()-5);else return"0000-00-00";
+  return d.toISOString().slice(0,10);}
+function valueAt(all,date){let v=null;for(const p of all){if(p.d<=date)v=p.v;else break}return v}
+function rangeRet(all,r){if(all.length<2)return null;const last=all[all.length-1],start=rangeStart(r,last.d);
+  let base=valueAt(all,start),since=false;if(base==null){base=all[0].v;since=r!=="All"}
+  const ch=Math.abs(last.v-base)<0.5?0:last.v-base;return{ch,p:base?ch/base:0,since}}
+const sgn$=n=>(n>0?"+":n<0?"-":"")+fmt$(Math.abs(n));
+const pctS=p=>(p>0?"+":"")+(p*100).toFixed(2)+"%";
+const pn=n=>n>0?"pos":n<0?"neg":"";
+let perfRange="1M",stockSort={k:"value",d:-1},stockCat=null,stockQ="";
+function perfChart(pts){
+  const W=1000,H=240,p=10;
+  if(pts.length<2)return`<div class="pchart"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><line x1="0" x2="${W}" y1="${H-1}" y2="${H-1}" stroke="var(--line-2)" stroke-dasharray="4 6"/></svg><div class="pc-empty">Tracking started ${fmtDate(PRICES.buyDate)}. This chart adds a point with every day's close.</div></div>`;
+  const vs=pts.map(x=>x.v),mn=Math.min(...vs),mx=Math.max(...vs),rg=(mx-mn)||1,up=vs[vs.length-1]>=vs[0];
+  const X=i=>p+i*(W-2*p)/(pts.length-1),Y=v=>H-p-((v-mn)/rg)*(H-2*p-20);
+  const d=pts.map((q,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(q.v).toFixed(1)).join(" "),c=up?"#7FBF95":"#E39B7B";
+  return`<div class="pchart"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="pcg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".22"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${d} L${X(pts.length-1)} ${H} L${X(0)} ${H} Z" fill="url(#pcg)"/><path d="${d}" fill="none" stroke="${c}" stroke-width="2.2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>
+    <div class="pc-axis"><span>${fmtDate(pts[0].d)}</span><span>${fmtDate(pts[pts.length-1].d)}</span></div></div>`;
+}
+function retStrip(all){const first=all.length?all[0].d:"";
+  return`<div class="rets">${RANGES.map(r=>{const x=rangeRet(all,r);return`<button class="ret${perfRange===r?" on":""}" data-range="${r}"><span>${r==="All"?"All time":r}</span><b class="${x?pn(x.ch):""}">${x?pctS(x.p):"—"}</b><em>${x?sgn$(x.ch):"no data yet"}${x&&x.since?" · since "+fmtDate(first):""}</em></button>`}).join("")}</div>`}
 function stocksBlock(total){
   const all=allStocks();if(!all.length)return "";
-  const sv=all.reduce((a,x)=>a+x.value,0),sc=Math.abs(all.reduce((a,x)=>a+x.value-x.cost,0))<1?sv:all.reduce((a,x)=>a+x.cost,0),sd=all.reduce((a,x)=>a+x.day,0);
-  const byCat={};all.forEach(x=>{byCat[x.cat]=(byCat[x.cat]||0)+x.value});
-  const cats=Object.keys(byCat).sort((a,b)=>byCat[b]-byCat[a]);
-  const bar=cats.map(c=>`<i style="width:${byCat[c]/sv*100}%;background:${CAT_COLORS[c]||"#888"}" title="${c}"></i>`).join("");
-  const legend=cats.map(c=>`<button class="lg${stockCat===c?" on":""}" data-cat="${c}"><span style="background:${CAT_COLORS[c]||"#888"}"></span>${c}<b>${fmt$(byCat[c])}</b><em>${(byCat[c]/sv*100).toFixed(1)}%</em></button>`).join("");
-  return `<section class="stocks" id="stocks">
-    <div class="stocks-head"><div><p class="eyebrow">All stocks</p><h3>Where your money is held</h3></div>
-      <div class="stocks-sum"><div><span>Stocks & funds</span><b>${all.length}</b></div><div><span>Value</span><b>${fmt$(sv)}</b></div><div><span>Gain</span><b class="${sv-sc>0?"pos":sv-sc<0?"neg":""}">${sv-sc>=0?"+":"-"}${fmt$(Math.abs(sv-sc))}</b></div><div><span>Last day</span><b class="${sd>0?"pos":sd<0?"neg":""}">${sd>=0?"+":"-"}${fmt$(Math.abs(sd))}</b></div></div></div>
-    <div class="allocbar">${bar}</div>
-    <div class="legend"><button class="lg${stockCat==="All"?" on":""}" data-cat="All"><span style="background:var(--ink)"></span>All categories<b>${fmt$(sv)}</b><em>100%</em></button>${legend}</div>
-    <div class="stocks-tools"><input id="stockQ" type="search" placeholder="Search ticker or company" value="${stockQ}"><span class="muted" id="stockN"></span></div>
+  const cats=[...new Set(all.map(x=>x.cat))].sort((a,b)=>STOCK_ORDER.indexOf(a)-STOCK_ORDER.indexOf(b));
+  if(!stockCat||!cats.includes(stockCat))stockCat=cats[0];
+  return `<section class="stocks" id="stocks" data-total="${total}">
+    <div class="stocks-head"><div><p class="eyebrow">Performance</p><h3>Whole portfolio</h3></div><div class="stocks-sum" id="perfSum"></div></div>
+    <div class="perf" id="perf"></div>
+    <div class="stocks-head" style="margin-top:18px"><div><p class="eyebrow">Stocks by category</p><h3>Where your money is held</h3></div>
+      <div class="stocks-tools"><input id="stockQ" type="search" placeholder="Search all tickers or companies" value="${stockQ}"></div></div>
+    <div class="ctabs" role="tablist">${cats.map(c=>{const r=all.filter(x=>x.cat===c),v=r.reduce((a,x)=>a+x.value,0),g=r.reduce((a,x)=>a+x.value-x.cost,0),co=r.reduce((a,x)=>a+x.cost,0);
+      return`<button class="ctab${c===stockCat?" on":""}" role="tab" data-cat="${c}" aria-selected="${c===stockCat}"><span class="sw" style="background:${CAT_COLORS[c]}"></span><span class="ct-n">${c==="Service & Trade Businesses"?"Service &amp; Trade":c}</span><b>${fmt$(v)}</b><em class="${pn(Math.abs(g)<0.5?0:g)}">${co?pctS(Math.abs(g)<0.5?0:g/co):"—"}</em></button>`}).join("")}</div>
+    <div id="catSum"></div>
     <div class="holdings stocks-table"><table><thead><tr>
-      <th data-k="t">Ticker</th><th data-k="name">Company</th><th data-k="cat">Category</th><th class="r" data-k="shares">Shares</th><th class="r" data-k="buy">Buy</th><th class="r" data-k="last">Last close</th><th class="r" data-k="value">Value</th><th class="r" data-k="gain">Gain</th><th class="r" data-k="ret">Return</th><th class="r" data-k="pct">% of stocks</th>
+      <th data-k="t">Ticker</th><th data-k="name">Company</th><th class="r" data-k="shares">Shares</th><th class="r" data-k="buy">Buy</th><th class="r" data-k="last">Last close</th><th class="r" data-k="dayp">Day</th><th class="r" data-k="value">Value</th><th class="r" data-k="gain">Gain</th><th class="r" data-k="ret">Return</th><th class="r" data-k="pct">% of category</th>
     </tr></thead><tbody id="stockRows"></tbody></table></div>
-    <p class="muted" style="font-size:.78rem">Closing prices update every morning. Click a column to sort, a category to filter.</p>
+    <p class="muted" style="font-size:.78rem"><span id="stockN"></span> Closing prices update every morning. Returns use each trading day's close; ranges longer than the tracking history show results since tracking began. Click a column to sort.</p>
   </section>`;
+}
+function renderPerf(){
+  const s=document.getElementById("stocks");if(!s)return;
+  const all=allStocks(),sv=all.reduce((a,x)=>a+x.value,0),fixed=(+s.dataset.total||sv)-sv;
+  const ser=series(all,fixed),last=ser.length?ser[ser.length-1]:{d:PRICES.asof,v:+s.dataset.total};
+  const start=rangeStart(perfRange,last.d);let pts=ser.filter(p=>p.d>=start);const bv=valueAt(ser,start);if(bv!=null&&pts.length&&pts[0].d>start)pts=[{d:start,v:bv},...pts];
+  const day=all.reduce((a,x)=>a+x.day,0),x=rangeRet(ser,perfRange);
+  document.getElementById("perfSum").innerHTML=`<div><span>Value</span><b>${fmt$(+s.dataset.total)}</b></div><div><span>Last day</span><b class="${pn(Math.abs(day)<0.5?0:day)}">${sgn$(Math.abs(day)<0.5?0:day)}</b></div><div><span>${perfRange==="All"?"All time":perfRange}</span><b class="${x?pn(x.ch):""}">${x?sgn$(x.ch)+" ("+pctS(x.p)+")":"—"}</b></div>`;
+  document.getElementById("perf").innerHTML=`<div class="rtabs">${RANGES.map(r=>`<button data-range="${r}" class="${perfRange===r?"on":""}">${r}</button>`).join("")}</div>${perfChart(pts)}${retStrip(ser)}`;
+  const rows=all.filter(r=>r.cat===stockCat),cs=series(rows,0),cv=rows.reduce((a,r)=>a+r.value,0),cd=rows.reduce((a,r)=>a+r.day,0);
+  document.getElementById("catSum").innerHTML=`<div class="cat-perf"><div class="cp-name"><span class="sw" style="background:${CAT_COLORS[stockCat]}"></span><b>${stockCat}</b><em>${rows.length} holdings · ${fmt$(cv)} · last day <span class="${pn(Math.abs(cd)<0.5?0:cd)}">${sgn$(Math.abs(cd)<0.5?0:cd)}</span></em></div>
+    <div class="cp-rets">${RANGES.map(r=>{const y=rangeRet(cs,r);return`<div><span>${r==="All"?"All":r}</span><b class="${y?pn(y.ch):""}">${y?pctS(y.p):"—"}</b></div>`}).join("")}</div></div>`;
 }
 function renderStocks(){
   const tb=document.getElementById("stockRows");if(!tb)return;
-  const all=allStocks(),sv=all.reduce((a,x)=>a+x.value,0);
-  const z=n=>Math.abs(n)<0.5?0:n;let rows=all.map(x=>({...x,gain:z(x.value-x.cost),ret:z(x.value-x.cost)/x.cost*100,pct:x.value/sv*100}));
-  if(stockCat!=="All")rows=rows.filter(x=>x.cat===stockCat);
-  const q=stockQ.trim().toLowerCase();if(q)rows=rows.filter(x=>x.t.toLowerCase().includes(q)||x.name.toLowerCase().includes(q));
+  const all=allStocks(),q=stockQ.trim().toLowerCase();
+  const z=n=>Math.abs(n)<0.5?0:n;
+  let rows=q?all.filter(x=>x.t.toLowerCase().includes(q)||x.name.toLowerCase().includes(q)):all.filter(x=>x.cat===stockCat);
+  const base=rows.reduce((a,x)=>a+x.value,0);
+  rows=rows.map(x=>({...x,gain:z(x.value-x.cost),ret:z(x.value-x.cost)/x.cost*100,pct:x.value/base*100,dayp:x.prev?(x.last-x.prev)/x.prev*100:0}));
   const k=stockSort.k,d=stockSort.d;rows.sort((a,b)=>(typeof a[k]==="string"?a[k].localeCompare(b[k]):(a[k]||0)-(b[k]||0))*d);
   const px=n=>n==null?"—":"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
-  tb.innerHTML=rows.map(x=>`<tr><td><span class="tkr">${x.t}</span></td><td><span class="nm"><b>${x.name}</b><small>${x.group}</small></span></td><td><span class="dot" style="background:${CAT_COLORS[x.cat]||"#888"}"></span>${x.cat}</td><td class="r">${x.shares==null?"—":x.shares.toLocaleString("en-US",{maximumFractionDigits:2})}</td><td class="r">${px(x.buy)}</td><td class="r">${px(x.last)}<br><small class="muted">${x.date?fmtDate(x.date):""}</small></td><td class="r">${fmt$(x.value)}</td><td class="r ${x.gain>0?"pos":x.gain<0?"neg":""}">${x.gain>=0?"+":"-"}${fmt$(Math.abs(x.gain))}</td><td class="r ${x.gain>0?"pos":x.gain<0?"neg":""}">${x.ret.toFixed(2)}%</td><td class="r">${x.pct.toFixed(2)}%</td></tr>`).join("");
-  document.getElementById("stockN").textContent=rows.length+" of "+all.length+" shown";
+  tb.innerHTML=rows.map(x=>`<tr><td><span class="tkr">${x.t}</span></td><td><span class="nm"><b>${x.name}</b><small>${q?x.cat+" · ":""}${x.group}</small></span></td><td class="r">${x.shares==null?"—":x.shares.toLocaleString("en-US",{maximumFractionDigits:2})}</td><td class="r">${px(x.buy)}</td><td class="r">${px(x.last)}<br><small class="muted">${x.date?fmtDate(x.date):""}</small></td><td class="r ${pn(x.dayp)}">${x.prev?(x.dayp>0?"+":"")+x.dayp.toFixed(2)+"%":"—"}</td><td class="r">${fmt$(x.value)}</td><td class="r ${pn(x.gain)}">${sgn$(x.gain)}</td><td class="r ${pn(x.gain)}">${(x.ret>0?"+":"")+x.ret.toFixed(2)}%</td><td class="r">${x.pct.toFixed(1)}%</td></tr>`).join("");
+  document.getElementById("stockN").textContent=q?rows.length+(rows.length===1?" match":" matches")+" across all categories.":rows.length+(rows.length===1?" holding":" holdings")+" in "+stockCat+".";
   document.querySelectorAll(".stocks-table th").forEach(th=>{th.classList.toggle("sorted",th.dataset.k===k);th.dataset.dir=th.dataset.k===k?(d>0?"↑":"↓"):""});
 }
 function wireStocks(){
   const s=document.getElementById("stocks");if(!s)return;
-  s.addEventListener("click",e=>{const lg=e.target.closest(".lg");if(lg){stockCat=lg.dataset.cat;s.querySelectorAll(".lg").forEach(x=>x.classList.toggle("on",x===lg));renderStocks();return}
-    const th=e.target.closest("th[data-k]");if(th){stockSort=stockSort.k===th.dataset.k?{k:th.dataset.k,d:-stockSort.d}:{k:th.dataset.k,d:["t","name","cat"].includes(th.dataset.k)?1:-1};renderStocks();}});
+  s.addEventListener("click",e=>{
+    const ct=e.target.closest(".ctab");if(ct){stockCat=ct.dataset.cat;stockQ="";document.getElementById("stockQ").value="";s.querySelectorAll(".ctab").forEach(x=>{x.classList.toggle("on",x===ct);x.setAttribute("aria-selected",x===ct)});renderPerf();renderStocks();return}
+    const rb=e.target.closest("[data-range]");if(rb){perfRange=rb.dataset.range;renderPerf();return}
+    const th=e.target.closest("th[data-k]");if(th){stockSort=stockSort.k===th.dataset.k?{k:th.dataset.k,d:-stockSort.d}:{k:th.dataset.k,d:["t","name"].includes(th.dataset.k)?1:-1};renderStocks();}});
   document.getElementById("stockQ").addEventListener("input",e=>{stockQ=e.target.value;renderStocks()});
-  renderStocks();
+  renderPerf();renderStocks();
 }
 function openItem(key){
   document.querySelectorAll("#overview tr.h").forEach(tr=>tr.setAttribute("aria-selected",tr.dataset.key===key));

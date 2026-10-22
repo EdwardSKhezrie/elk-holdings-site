@@ -14,11 +14,11 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@400;500;600&family=Figtree:wght@400;500;600;700&display=swap">
 <style>
-/* iPhone app: dark, native-feeling. Large titles, grouped lists, bottom tab bar. Gold only for value and selection. */
+/* ELK iPhone app. Black, warm ivory text, gold only as an accent. One serif for titles, one sans for reading. */
 :root{
-  --bg:#000;--card:#121110;--card2:#1A1815;--line:#262320;--line2:#34302A;
-  --ink:#F2ECE0;--muted:#A39A8A;--dim:#6E665A;
-  --gold:#C9A45C;--gold-hi:#E8CB8A;--pos:#5FD08A;--neg:#FF7A6B;
+  --bg:#000;--card:#0D0C0B;--card2:#16140F;--line:rgba(201,164,92,.16);--line2:rgba(201,164,92,.28);--hair:rgba(255,255,255,.07);
+  --ink:#F3EDE1;--muted:#A69E90;--dim:#6F685D;
+  --gold:#C9A45C;--gold-hi:#E8CB8A;--pos:#7CC99A;--neg:#E3826F;
   --mark:"Cinzel",Georgia,serif;--disp:"Cormorant Garamond",Georgia,serif;--body:"Figtree",-apple-system,system-ui,sans-serif;
   --top:env(safe-area-inset-top,0px);--bot:env(safe-area-inset-bottom,0px);
   color-scheme:dark;
@@ -30,112 +30,134 @@ button{font:inherit;color:inherit;background:none;border:0;padding:0;cursor:poin
 .num{font-variant-numeric:tabular-nums}
 .pos{color:var(--pos)}.neg{color:var(--neg)}
 
-/* shell */
 #app{position:fixed;inset:0;display:flex;flex-direction:column}
-.bar{flex:none;padding:calc(var(--top) + 8px) 16px 8px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(0,0,0,.82);backdrop-filter:saturate(1.4) blur(18px);-webkit-backdrop-filter:saturate(1.4) blur(18px);border-bottom:1px solid transparent;z-index:5;min-height:52px}
+.bar{flex:none;padding:calc(var(--top) + 6px) 20px 10px;display:flex;align-items:center;justify-content:space-between;gap:12px;background:rgba(0,0,0,.86);backdrop-filter:saturate(1.3) blur(18px);-webkit-backdrop-filter:saturate(1.3) blur(18px);border-bottom:1px solid transparent;z-index:5;min-height:52px;transition:border-color .2s}
 .bar.scrolled{border-bottom-color:var(--line)}
-.bar .back{display:flex;align-items:center;gap:4px;color:var(--gold-hi);font-size:1rem;min-width:70px}
-.bar .back svg{width:12px;height:20px}
-.bar .ttl{font-weight:600;font-size:1rem;opacity:0;transition:opacity .2s;text-align:center;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.bar .back{display:flex;align-items:center;gap:6px;color:var(--gold-hi);font-size:1rem;min-width:76px}
+.bar .back svg{width:10px;height:18px}
+.bar .ttl{font-family:var(--mark);font-weight:500;font-size:.78rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink);opacity:0;transition:opacity .2s;text-align:center;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .bar.scrolled .ttl{opacity:1}
-.bar .brand{display:flex;align-items:center;gap:8px;min-width:70px}
-.bar .brand img{width:28px;height:28px;object-fit:cover;mix-blend-mode:screen}
-.bar .brand b{font-family:var(--mark);font-weight:600;letter-spacing:.14em;color:var(--gold-hi);font-size:.95rem}
-.bar .act{min-width:70px;text-align:right;color:var(--gold-hi);font-size:.95rem}
-main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 16px calc(96px + var(--bot))}
-.screen{display:flex;flex-direction:column;gap:22px;padding-top:4px;animation:in .22s ease}
-@keyframes in{from{opacity:.4;transform:translateX(10px)}to{opacity:1;transform:none}}
+.bar .brand{display:flex;align-items:baseline;gap:7px;min-width:76px}
+.bar .brand b{font-family:var(--mark);font-weight:600;letter-spacing:.22em;color:var(--gold-hi);font-size:.95rem}
+.bar .brand span{font-family:var(--mark);letter-spacing:.3em;font-size:.55rem;color:var(--muted)}
+.bar .act{min-width:76px;text-align:right;color:var(--gold-hi);font-size:.92rem}
+main{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch;padding:0 20px calc(100px + var(--bot))}
+.screen{display:flex;flex-direction:column;gap:26px;padding-top:6px;animation:in .25s ease}
+@keyframes in{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
 @media (prefers-reduced-motion:reduce){.screen{animation:none}}
-.large{font-family:var(--disp);font-weight:500;font-size:2.35rem;line-height:1.05;margin:6px 0 0;letter-spacing:-.01em}
-.kicker{font-family:var(--mark);font-size:.62rem;letter-spacing:.28em;text-transform:uppercase;color:var(--gold)}
-.lede{color:var(--muted);font-size:.98rem;line-height:1.5;margin:0}
-h3.sec{font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--dim);margin:0 4px -12px}
+.large{font-family:var(--disp);font-weight:500;font-size:2.5rem;line-height:1.02;margin:8px 0 0;letter-spacing:-.005em}
+.kicker{font-family:var(--mark);font-size:.6rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold)}
+.lede{color:var(--muted);font-size:1rem;line-height:1.6;margin:0}
+h3.sec{font-family:var(--mark);font-size:.62rem;font-weight:500;letter-spacing:.3em;text-transform:uppercase;color:var(--gold);margin:6px 2px -14px;display:flex;align-items:center;gap:12px}
+h3.sec::after{content:"";flex:1;height:1px;background:var(--line)}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--line2),transparent);margin:4px 0}
 
-/* tab bar */
-.tabs{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);padding:8px 8px calc(8px + var(--bot));background:rgba(10,9,8,.86);backdrop-filter:saturate(1.4) blur(20px);-webkit-backdrop-filter:saturate(1.4) blur(20px);border-top:1px solid var(--line);z-index:6}
-.tabs button{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:.66rem;font-weight:500;color:var(--dim);padding:4px 0}
-.tabs svg{width:24px;height:24px;stroke:currentColor;fill:none;stroke-width:1.7}
+.tabs{position:fixed;left:0;right:0;bottom:0;display:grid;grid-template-columns:repeat(4,1fr);padding:9px 10px calc(6px + var(--bot));background:rgba(6,6,5,.9);backdrop-filter:saturate(1.3) blur(20px);-webkit-backdrop-filter:saturate(1.3) blur(20px);border-top:1px solid var(--line);z-index:6}
+.tabs button{display:flex;flex-direction:column;align-items:center;gap:4px;font-size:.62rem;font-weight:500;letter-spacing:.04em;color:var(--dim);padding:3px 0}
+.tabs svg{width:23px;height:23px;stroke:currentColor;fill:none;stroke-width:1.5;stroke-linecap:round;stroke-linejoin:round}
 .tabs button[aria-current="page"]{color:var(--gold-hi)}
 
-/* grouped list */
-.group{background:var(--card);border-radius:14px;overflow:hidden}
-.row{display:flex;align-items:center;gap:12px;padding:13px 14px;min-height:56px;width:100%;text-align:left;position:relative}
-.row+.row::before{content:"";position:absolute;top:0;left:14px;right:0;height:1px;background:var(--line)}
-.row .ic{flex:none;width:34px;height:34px;border-radius:9px;display:grid;place-items:center;font-family:var(--mark);font-size:.7rem;color:var(--bg);font-weight:600}
-.row .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}
+.group{background:var(--card);border:1px solid var(--hair);border-radius:16px;overflow:hidden}
+.row{display:flex;align-items:center;gap:14px;padding:15px 16px;min-height:60px;width:100%;text-align:left;position:relative}
+.row+.row::before{content:"";position:absolute;top:0;left:16px;right:0;height:1px;background:var(--hair)}
+.row:active{background:var(--card2)}
+.row .ic{flex:none;width:36px;height:36px;border-radius:50%;display:grid;place-items:center;font-family:var(--mark);font-size:.68rem;letter-spacing:.04em;color:var(--gold-hi);border:1px solid var(--line2);background:transparent}
+.row .sw{flex:none;width:10px;height:10px;border-radius:3px}
+.row .tx{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}
 .row .tx b{font-weight:600;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .row .tx small{color:var(--muted);font-size:.8rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.row .rt{flex:none;text-align:right;display:flex;flex-direction:column;gap:2px;font-variant-numeric:tabular-nums}
+.row .rt{flex:none;text-align:right;display:flex;flex-direction:column;gap:3px;font-variant-numeric:tabular-nums}
 .row .rt b{font-weight:600;font-size:.95rem}
 .row .rt small{font-size:.78rem}
-.row .chev{flex:none;width:8px;height:14px;color:var(--dim)}
-.pill{display:inline-block;font-size:.66rem;font-weight:600;letter-spacing:.06em;text-transform:uppercase;padding:3px 8px;border-radius:999px;background:var(--card2);color:var(--muted)}
-.pill.on{background:rgba(201,164,92,.18);color:var(--gold-hi)}
+.row .chev{flex:none;width:7px;height:12px;color:var(--dim)}
+.pill{display:inline-block;font-size:.62rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;padding:4px 9px;border-radius:999px;border:1px solid var(--hair);color:var(--muted)}
+.pill.on{border-color:var(--line2);color:var(--gold-hi)}
 .tkr{font-weight:700;letter-spacing:.04em}
 
-/* hero cards */
-.hero{position:relative;border-radius:20px;overflow:hidden;background:radial-gradient(90% 80% at 70% 20%,rgba(201,164,92,.22),transparent 60%),var(--card);padding:22px 20px;display:flex;flex-direction:column;gap:14px}
-.hero img.crest{position:absolute;right:-24px;top:-10px;width:170px;opacity:.55;mix-blend-mode:screen;pointer-events:none}
-.hero h1{font-family:var(--disp);font-weight:500;font-size:2.1rem;line-height:1.08;margin:0;max-width:12ch;position:relative}
-.hero h1 em{color:var(--gold-hi)}
-.hero p{position:relative}
-.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:13px;background:var(--gold);color:#000;font-weight:600;font-size:1rem}
-.btn.ghost{background:var(--card2);color:var(--ink)}
+/* home */
+.cover{display:flex;flex-direction:column;align-items:center;text-align:center;gap:14px;padding:10px 0 4px}
+.cover img{width:62%;max-width:250px;aspect-ratio:1;object-fit:cover;mix-blend-mode:screen;-webkit-mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%);mask-image:radial-gradient(ellipse 50% 50% at 50% 50%,#000 62%,transparent 100%)}
+.cover h1{font-family:var(--disp);font-weight:500;font-size:2.55rem;line-height:1.04;margin:0;max-width:11ch}
+.cover h1 em{color:var(--gold-hi);font-style:italic}
+.cover p{max-width:32ch}
+.statement{font-family:var(--disp);font-size:1.55rem;line-height:1.3;margin:0;color:var(--ink)}
+.facts{display:grid;grid-template-columns:1fr 1fr;border:1px solid var(--hair);border-radius:16px;overflow:hidden;background:var(--card)}
+.facts div{padding:16px;display:flex;flex-direction:column;gap:5px}
+.facts div:nth-child(odd){border-right:1px solid var(--hair)}
+.facts div:nth-child(n+3){border-top:1px solid var(--hair)}
+.facts span{font-family:var(--mark);font-size:.55rem;letter-spacing:.26em;text-transform:uppercase;color:var(--dim)}
+.facts b{font-weight:500;font-size:.95rem;line-height:1.35}
+.prin{display:flex;flex-direction:column;gap:0;border:1px solid var(--hair);border-radius:16px;background:var(--card);overflow:hidden}
+.prin div{padding:16px 18px;display:grid;grid-template-columns:34px 1fr;gap:4px 10px}
+.prin div+div{border-top:1px solid var(--hair)}
+.prin i{font-style:normal;font-family:var(--mark);color:var(--gold);font-size:.75rem;grid-row:span 2;padding-top:3px}
+.prin b{font-family:var(--disp);font-weight:600;font-size:1.25rem}
+.prin small{color:var(--muted);font-size:.86rem;line-height:1.45}
+.btn{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;padding:15px;border-radius:14px;background:var(--gold);color:#000;font-weight:600;font-size:1rem;letter-spacing:.01em}
+.btn.ghost{background:transparent;color:var(--gold-hi);border:1px solid var(--line2)}
 .btn:active{opacity:.8}
-.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px}
+.chips{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px}
 .chips::-webkit-scrollbar{display:none}
-.chip{flex:none;padding:8px 14px;border-radius:999px;background:var(--card);color:var(--muted);font-size:.85rem;font-weight:500;white-space:nowrap}
-.chip[aria-pressed="true"]{background:var(--ink);color:#000}
+.chip{flex:none;padding:8px 15px;border-radius:999px;border:1px solid var(--hair);color:var(--muted);font-size:.84rem;font-weight:500;white-space:nowrap}
+.chip[aria-pressed="true"]{border-color:var(--gold);color:var(--gold-hi);background:rgba(201,164,92,.08)}
 
 .cardgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
-.tile{background:var(--card);border-radius:14px;padding:14px;display:flex;flex-direction:column;gap:4px;text-align:left;min-height:96px}
-.tile span{font-size:.72rem;color:var(--dim);font-weight:600;letter-spacing:.06em;text-transform:uppercase}
-.tile b{font-weight:700;font-size:1.3rem;line-height:1.15;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
+.tile{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:15px;display:flex;flex-direction:column;gap:5px;text-align:left;min-height:96px}
+.tile span{font-family:var(--mark);font-size:.55rem;color:var(--dim);letter-spacing:.24em;text-transform:uppercase}
+.tile b{font-weight:600;font-size:1.25rem;line-height:1.15;letter-spacing:-.01em;font-variant-numeric:tabular-nums}
 .tile small{color:var(--muted);font-size:.78rem}
 
 /* portfolio */
-.pv{display:flex;flex-direction:column;gap:2px;padding:4px 2px 0}
-.pv .big{font-family:var(--body);font-weight:700;font-size:2.4rem;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
-.pv .chg{font-weight:600;font-size:.95rem;font-variant-numeric:tabular-nums}
-.chart{position:relative;margin:0 -4px}
-.chart svg{width:100%;height:190px;display:block}
-.chart .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:.85rem;padding:0 30px}
-.ranges{display:flex;justify-content:space-between;gap:4px}
-.ranges button{flex:1;padding:7px 0;border-radius:8px;font-size:.8rem;font-weight:600;color:var(--muted)}
-.ranges button[aria-pressed="true"]{background:var(--card2);color:var(--gold-hi)}
-.alloc{display:flex;height:8px;border-radius:4px;overflow:hidden;gap:2px}
+.pv{display:flex;flex-direction:column;gap:3px;padding:4px 0 0}
+.pv .big{font-family:var(--body);font-weight:600;font-size:2.5rem;letter-spacing:-.025em;font-variant-numeric:tabular-nums;margin:6px 0 2px}
+.pv .chg{font-weight:600;font-size:.92rem;font-variant-numeric:tabular-nums}
+.pv .chg span{color:var(--dim);font-weight:500}
+.chart{position:relative;margin:0 -6px}
+.chart svg{width:100%;height:180px;display:block}
+.chart .empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--muted);font-size:.85rem;line-height:1.5;padding:0 34px}
+.ranges{display:flex;justify-content:space-between;gap:4px;border-bottom:1px solid var(--hair);padding-bottom:12px}
+.ranges button{flex:1;padding:7px 0;border-radius:999px;font-size:.78rem;font-weight:600;color:var(--dim);letter-spacing:.03em}
+.ranges button[aria-pressed="true"]{background:rgba(201,164,92,.14);color:var(--gold-hi)}
+.rets{display:grid;grid-template-columns:repeat(3,1fr);border:1px solid var(--hair);border-radius:16px;overflow:hidden;background:var(--card)}
+.rets div{padding:12px 14px;display:flex;flex-direction:column;gap:3px;font-variant-numeric:tabular-nums}
+.rets div:nth-child(n+4){border-top:1px solid var(--hair)}
+.rets div:not(:nth-child(3n+1)){border-left:1px solid var(--hair)}
+.rets span{font-family:var(--mark);font-size:.55rem;letter-spacing:.22em;color:var(--dim)}
+.rets b{font-weight:600;font-size:.98rem}
+.rets small{font-size:.7rem;color:var(--dim)}
+.alloc{display:flex;height:6px;border-radius:3px;overflow:hidden;gap:2px}
 .alloc i{display:block;height:100%}
-.note{font-size:.78rem;color:var(--dim);line-height:1.45;margin:0 4px}
+.note{font-size:.76rem;color:var(--dim);line-height:1.5;margin:0 2px}
 
-/* type cards */
-.tcard{background:var(--card);border-radius:14px;padding:16px;display:flex;flex-direction:column;gap:10px}
+.tcard{background:var(--card);border:1px solid var(--hair);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:10px}
 .tcard .h{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-.tcard h4{margin:0;font-family:var(--disp);font-weight:600;font-size:1.3rem;line-height:1.15}
-.tcard p{margin:0;color:var(--muted);font-size:.88rem;line-height:1.45}
+.tcard h4{margin:0;font-family:var(--disp);font-weight:600;font-size:1.35rem;line-height:1.15}
+.tcard p{margin:0;color:var(--muted);font-size:.9rem;line-height:1.5}
 .tcard .lk{color:var(--ink)}
-.tcard .tk{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--line);padding-top:10px;font-size:.8rem;color:var(--dim)}
-.tcard .tk b{color:var(--gold-hi);letter-spacing:.05em}
+.tcard .tk{display:flex;justify-content:space-between;align-items:center;gap:10px;border-top:1px solid var(--hair);padding-top:11px;font-size:.78rem;color:var(--dim)}
+.tcard .tk b{color:var(--gold-hi);letter-spacing:.06em;font-weight:600}
 
-/* login */
-.login{display:flex;flex-direction:column;gap:14px;padding-top:24px}
-.login img{width:96px;height:96px;object-fit:cover;mix-blend-mode:screen;align-self:center}
-.field{background:var(--card);border-radius:13px;padding:4px 14px;display:flex;flex-direction:column}
-.field label{font-size:.72rem;color:var(--dim);padding-top:8px;font-weight:600;letter-spacing:.04em}
-.field input{background:none;border:0;color:var(--ink);font:inherit;font-size:1.05rem;padding:6px 0 10px;outline:none;width:100%}
+.login{display:flex;flex-direction:column;gap:14px;padding-top:18px}
+.login img{width:110px;height:110px;object-fit:cover;mix-blend-mode:screen;align-self:center;-webkit-mask-image:radial-gradient(circle,#000 55%,transparent 72%);mask-image:radial-gradient(circle,#000 55%,transparent 72%)}
+.field{background:var(--card);border:1px solid var(--hair);border-radius:14px;padding:4px 16px;display:flex;flex-direction:column}
+.field:focus-within{border-color:var(--line2)}
+.field label{font-family:var(--mark);font-size:.55rem;letter-spacing:.24em;text-transform:uppercase;color:var(--dim);padding-top:10px}
+.field input{background:none;border:0;color:var(--ink);font:inherit;font-size:1.05rem;padding:6px 0 11px;outline:none;width:100%}
 .err{color:var(--neg);font-size:.88rem;min-height:1.2em;text-align:center;margin:0}
 
-/* deal */
-.photos{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -16px;padding:0 16px;scrollbar-width:none}
+.photos{display:flex;gap:10px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -20px;padding:0 20px;scrollbar-width:none}
 .photos::-webkit-scrollbar{display:none}
-.photos figure{flex:none;width:86%;margin:0;scroll-snap-align:center;display:flex;flex-direction:column;gap:6px}
-.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:14px;display:block;background:var(--card)}
-.photos figcaption{font-size:.75rem;color:var(--dim)}
+.photos figure{flex:none;width:86%;margin:0;scroll-snap-align:center;display:flex;flex-direction:column;gap:7px}
+.photos img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:16px;display:block;background:var(--card)}
+.photos figcaption{font-size:.74rem;color:var(--dim)}
 .steps{display:flex;gap:4px}
-.steps i{flex:1;height:4px;border-radius:2px;background:var(--line2)}
+.steps i{flex:1;height:3px;border-radius:2px;background:var(--hair)}
 .steps i.d{background:var(--gold)}.steps i.n{background:var(--gold-hi)}
 .ul{margin:0;padding:0 0 0 18px;color:var(--muted);font-size:.9rem;line-height:1.5;display:flex;flex-direction:column;gap:6px}
-.para{color:var(--muted);font-size:.95rem;line-height:1.55;margin:0}
+.para{color:var(--muted);font-size:.98rem;line-height:1.65;margin:0}
 .para strong{color:var(--ink);font-weight:500}
+.foot{text-align:center;display:flex;flex-direction:column;gap:6px;align-items:center;padding:8px 0 4px}
+.foot b{font-family:var(--mark);letter-spacing:.3em;color:var(--gold);font-weight:500;font-size:.8rem}
 </style></head>
 <body>
 <div id="app">
@@ -144,15 +166,16 @@ h3.sec{font-size:.78rem;font-weight:600;letter-spacing:.08em;text-transform:uppe
   </header>
   <main id="main"></main>
   <nav class="tabs" aria-label="Main">
-    <button data-tab="home"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Home</button>
-    <button data-tab="invest"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>Invest</button>
-    <button data-tab="portfolio"><svg viewBox="0 0 24 24"><path d="M3 17l5-5 4 4 8-8"/><path d="M15 8h5v5"/></svg>Portfolio</button>
-    <button data-tab="firm"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="4"/><path d="M4 21c1.5-4 4.5-6 8-6s6.5 2 8 6"/></svg>Firm</button>
+    <button data-tab="home"><svg viewBox="0 0 24 24"><path d="M4 10.5 12 4l8 6.5V20H4z"/><path d="M10 20v-5h4v5"/></svg>Home</button>
+    <button data-tab="invest"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>Investments</button>
+    <button data-tab="firm"><svg viewBox="0 0 24 24"><path d="M3 9l9-5 9 5"/><path d="M5 9v9M9.5 9v9M14.5 9v9M19 9v9M3 20h18"/></svg>Firm</button>
+    <button data-tab="portfolio"><svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>Partners</button>
   </nav>
 </div>
 <script>
 const CATS=[{"id":"realestate","name":"Real Estate","sub":"Property and development","intro":"We buy, reposition and build across property types, always looking for a price that sits below what the property can become. Below is every type of real estate we invest in and what we look for in each.","groups":[{"g":"","items":[{"n":"Office","what":"Buildings leased to businesses, from single tenants to downtown towers.","look":"Distressed or under-leased buildings in growing markets, bought well below replacement cost, with a clear plan to lease up.","active":false,"tk":"BXP · VNO"},{"n":"Retail","what":"Shopping centers, strip centers, storefronts and single-tenant retail.","look":"Vacant or under-performing centers we can re-tenant with the right mix of stores and services.","active":false,"tk":"SPG · O"},{"n":"Multifamily","what":"Apartment buildings, from small walk-ups to large communities.","look":"Buildings with below-market rents, deferred upkeep or weak management that we can fix.","active":false,"tk":"VMRK · MAA"},{"n":"Residential Development","what":"Building new homes to sell, from single homes to small communities.","look":"Sites where approvals, a fixed-price contractor and presales can take most of the risk out before we build.","active":false,"tk":"DHI · LEN"},{"n":"Land & Entitlements","what":"Raw or underused land bought to rezone, approve and sell or build.","look":"Land with a clear path to a higher use, where approvals add value on their own.","active":false,"tk":"HHH · JOE"},{"n":"Industrial & Flex","what":"Warehouses, distribution and light industrial space.","look":"Older or vacant buildings near population centers where demand is strong.","active":false,"tk":"PLD · REXR"},{"n":"Mixed-Use","what":"Buildings that combine apartments, retail and office.","look":"Neighborhood properties where one part is under-used and can lift the whole.","active":false,"tk":"FRT · HHH"},{"n":"Hospitality","what":"Hotels and short-stay properties.","look":"Properties that need new management, a brand change or a renovation.","active":false,"tk":"HST · PK"}]}]},{"id":"fixedincome","name":"Fixed Income","sub":"Lending and debt","intro":"Fixed income means owning debt: getting paid interest and principal instead of owning the asset outright. It covers loans secured by real estate and other assets, as well as traditional bonds for steady income and liquidity.","groups":[{"g":"","items":[{"n":"Performing Notes","what":"Buying loans that are being paid on time.","look":"Loans at a discount to face value, backed by collateral we understand.","active":false,"tk":"STWD · BXMT"},{"n":"Non-Performing Notes & Loan-to-Own","what":"Buying loans in default directly from banks and lenders.","look":"Notes where, if the borrower cannot pay, we convert the debt into ownership and take control of the asset.","active":false,"tk":"RITM"},{"n":"Bridge Loans","what":"Short-term loans between a purchase and permanent financing.","look":"Low loan-to-value loans on assets we would be happy to own.","active":false,"tk":"ABR · KREF · RC"},{"n":"Mezzanine & Preferred Equity","what":"Capital that sits between senior debt and the owner's equity.","look":"Deals with strong sponsors where our position is protected by real value below it.","active":false,"tk":"LADR"},{"n":"Private Credit","what":"Direct loans to private companies.","look":"Senior, secured loans to established businesses with steady cash flow.","active":false,"tk":"ARCC · MAIN · BIZD"},{"n":"Government Bonds","what":"U.S. Treasury bills, notes and bonds.","look":"Safe, liquid income for capital waiting to be deployed.","active":false,"tk":"SGOV · IEF · TLT"},{"n":"Corporate Bonds","what":"Debt issued by public and private companies.","look":"Investment-grade and select high-yield issuers with strong coverage.","active":false,"tk":"LQD · HYG"},{"n":"Municipal Bonds","what":"Debt issued by cities, states and public agencies.","look":"Tax-efficient income from well-run issuers.","active":false,"tk":"MUB"}]}]},{"id":"privateequity","name":"Private Equity","sub":"Ownership in private companies","intro":"Private equity means owning stakes in companies that are not traded on a stock exchange. We invest directly and alongside experienced sponsors, across company sizes and deal types.","groups":[{"g":"","items":[{"n":"Buyouts","what":"Buying a controlling stake in an established company.","look":"Profitable businesses where new ownership, better systems and capital can grow earnings.","active":false,"tk":"BX · KKR · APO"},{"n":"Growth Equity","what":"Minority investments in fast-growing companies.","look":"Proven products and revenue, with capital needed to scale.","active":false,"tk":"TPG"},{"n":"Minority Stakes","what":"Partnering with founders and family owners without taking control.","look":"Owner-led companies that want a long-term partner, not a quick flip.","active":false,"tk":"OWL"},{"n":"Co-Investments","what":"Investing directly in a deal alongside a private equity sponsor.","look":"Sponsors with strong records, on terms that line up with theirs.","active":false,"tk":"HLNE"},{"n":"Secondaries","what":"Buying existing stakes in private funds or companies from other investors.","look":"Quality assets bought at a discount from sellers who need liquidity.","active":false,"tk":"STEP · HLNE"},{"n":"Fund Investments","what":"Committing capital to private equity funds managed by others.","look":"Managers with a clear edge in their market and their own money in the fund.","active":false,"tk":"PSP"}]}]},{"id":"venture","name":"Venture Capital","sub":"Early-stage companies","intro":"Venture capital means backing young companies with high growth potential. Most of the return in venture comes from a small number of winners, so we size these investments carefully and look for founders we believe in.","groups":[{"g":"","items":[{"n":"Pre-Seed & Seed","what":"The first outside capital a company raises.","look":"Strong founders solving a real problem in a large market.","active":false,"tk":"RVII"},{"n":"Early Stage","what":"Series A and B rounds for companies with early traction.","look":"Growing revenue and customers who keep coming back.","active":false,"tk":"RVII · ARKK"},{"n":"Late Stage & Pre-IPO","what":"Larger rounds for established, scaling companies.","look":"Clear paths to profit or a public listing, at sensible valuations.","active":false,"tk":"RVI · XOVR · DXYZ"},{"n":"Venture Funds","what":"Commitments to funds run by venture investors.","look":"Managers with access to the best deals in their area.","active":false,"tk":"RVI · DXYZ"}]}]},{"id":"operating","name":"Operating Businesses","sub":"Companies we own and run","intro":"Operating businesses are companies we own and run hands-on, in any industry. Anything we actively operate, rather than hold to diversify, lives here, including our own development projects. Investments in service, trade and wholesale companies are covered in their own section. We look for established businesses where hands-on ownership and better systems can grow them.","groups":[{"g":"Development & Construction","items":[{"n":"Real Estate Development","what":"Building and selling new homes, buildings and communities that we manage ourselves.","look":"Sites where we control approvals, cost and sales from start to finish.","active":true,"tk":"DHI · LEN"}]},{"g":"Every Other Industry","items":[{"n":"Healthcare","what":"Home care, clinics, outpatient programs and other providers.","look":"Licensed providers with steady demand and room to expand.","active":false,"tk":"HCA · EHC"},{"n":"Business Services","what":"Companies that serve other businesses, from staffing to cleaning.","look":"Recurring revenue and long customer relationships.","active":false,"tk":"ADP · CTAS"},{"n":"Real Estate Services","what":"Property management, brokerage and leasing companies.","look":"Contracts that renew and fit alongside our own properties.","active":false,"tk":"CBRE · JLL"},{"n":"Manufacturing","what":"Companies that make products, parts and materials.","look":"Essential products, skilled teams and room to modernize.","active":false,"tk":"ITW · PH"},{"n":"Consumer Brands & Retail","what":"Brands and stores that sell to consumers.","look":"Loyal customers and better operations and distribution.","active":false,"tk":"PG · WMT"},{"n":"Restaurants & Hospitality","what":"Restaurants, food concepts, hotels and venues.","look":"Proven concepts with room for new locations.","active":false,"tk":"MCD · MAR"},{"n":"Transportation & Logistics","what":"Trucking, delivery, warehousing and moving people and goods.","look":"Real assets and clear paths to better margins.","active":false,"tk":"UPS · ODFL"},{"n":"Automotive","what":"Dealerships, repair shops, car washes and auto services.","look":"Steady local demand and strong locations.","active":false,"tk":"AN · PAG"},{"n":"Technology & Software","what":"Software and technology-enabled businesses.","look":"Recurring revenue and products customers depend on.","active":false,"tk":"MSFT · CRM"},{"n":"Energy & Utilities Services","what":"Fuel distribution, solar installers and energy services.","look":"Long-term contracts and steady cash flow.","active":false,"tk":"PWR · NEE"},{"n":"Agriculture & Food Production","what":"Farms, food processing and agricultural services.","look":"Land-backed businesses with steady demand.","active":false,"tk":"DE · ADM"},{"n":"Education & Childcare","what":"Schools, tutoring, training and childcare centers.","look":"Strong reputations and waiting lists.","active":false,"tk":"BFAM · LOPE"},{"n":"Financial Services","what":"Insurance agencies, lenders and payment businesses.","look":"Recurring commissions and loyal clients.","active":false,"tk":"BRO · AJG"},{"n":"Media & Marketing","what":"Agencies, publishers and marketing services.","look":"Long-term clients and repeatable services.","active":false,"tk":"OMC"}]}]},{"id":"services","name":"Service & Trade Businesses","sub":"Main Street businesses","intro":"Service and trade businesses are the companies people and buildings depend on every day: landscapers, pool services, plumbers, HVAC, cleaning, wholesale suppliers and more. We invest in established, profitable owner-run businesses in these fields, often with recurring customers and room to grow. Below is every type we look at.","groups":[{"g":"Home Services","items":[{"n":"Landscaping & Lawn Care","what":"Grass cutting, planting, cleanups and seasonal care.","look":"","active":false,"tk":"BV · SMG"},{"n":"Pool Service","what":"Weekly cleaning, chemicals, openings, closings and repairs.","look":"","active":false,"tk":"POOL · LESL"},{"n":"Pest Control","what":"Recurring treatments for homes and businesses.","look":"","active":false,"tk":"ROL · RTO"},{"n":"House Cleaning","what":"Recurring residential cleaning and move-out cleans.","look":"","active":false,"tk":"FTDR"},{"n":"Window & Gutter Cleaning","what":"Exterior cleaning and gutter maintenance.","look":"","active":false,"tk":"ABM"},{"n":"Tree Service","what":"Trimming, removal and stump grinding.","look":"","active":false,"tk":"BV"},{"n":"Snow Removal","what":"Plowing and salting for homes and lots.","look":"","active":false,"tk":"BV"},{"n":"Junk Removal & Hauling","what":"Clean-outs, debris and bulk removal.","look":"","active":false,"tk":"WM · RSG"},{"n":"Moving & Storage","what":"Local moves, packing and storage units.","look":"","active":false,"tk":"UHAL · PSA · EXR"},{"n":"Irrigation & Sprinklers","what":"Install, startup, winterizing and repair.","look":"","active":false,"tk":"TTC · SITE"}]},{"g":"Skilled Trades","items":[{"n":"Plumbing","what":"Repairs, drain cleaning, water heaters and new installs.","look":"","active":false,"tk":"FERG · WTS"},{"n":"HVAC","what":"Heating and air conditioning service, repair and replacement.","look":"","active":false,"tk":"FIX · LII · CARR · WSO"},{"n":"Electrical","what":"Residential and commercial electrical work.","look":"","active":false,"tk":"EME · IESC · PWR"},{"n":"Roofing","what":"Repairs, replacements and inspections.","look":"","active":false,"tk":"QXO · OC · CSL"},{"n":"Painting","what":"Interior and exterior, residential and commercial.","look":"","active":false,"tk":"SHW"},{"n":"Flooring","what":"Tile, wood, carpet install and refinishing.","look":"","active":false,"tk":"MHK · FND"},{"n":"Fencing & Decking","what":"Installation and repair of fences and decks.","look":"","active":false,"tk":"TREX"},{"n":"Paving & Masonry","what":"Driveways, sidewalks, patios and stonework.","look":"","active":false,"tk":"VMC · MLM"},{"n":"Garage Doors","what":"Installation, openers and repair.","look":"","active":false,"tk":"GFF"},{"n":"Handyman & Repairs","what":"Small jobs and general home repair.","look":"","active":false,"tk":"HD · LOW"}]},{"g":"Commercial Services","items":[{"n":"Janitorial","what":"Office and commercial cleaning contracts.","look":"","active":false,"tk":"ABM"},{"n":"Security Services","what":"Guards, patrols and monitoring.","look":"","active":false,"tk":"ADT · BCO"},{"n":"Fire & Life Safety","what":"Sprinkler, alarm and extinguisher inspections.","look":"","active":false,"tk":"APG"},{"n":"Elevator Service","what":"Maintenance and inspection contracts.","look":"","active":false,"tk":"OTIS"},{"n":"Waste & Recycling","what":"Hauling, dumpsters and recycling.","look":"","active":false,"tk":"WM · RSG"},{"n":"Laundry & Linen","what":"Commercial laundry for hotels, gyms and clinics.","look":"","active":false,"tk":"CTAS · UNF"},{"n":"Facility Maintenance","what":"Repairs and upkeep for commercial properties.","look":"","active":false,"tk":"ABM · CTAS"},{"n":"Staffing","what":"Temporary and permanent staffing services.","look":"","active":false,"tk":"RHI · MAN"}]},{"g":"Wholesale & Distribution","items":[{"n":"Food & Beverage Distribution","what":"Supplying restaurants, grocers and stores.","look":"","active":false,"tk":"SYY · USFD · PFGC"},{"n":"Consumer Goods Wholesale","what":"Bulk products sold to retailers and online sellers.","look":"","active":false,"tk":"COST"},{"n":"Apparel & Footwear Wholesale","what":"Clothing, sneakers and accessories to stores.","look":"","active":false,"tk":"GIII"},{"n":"Building Materials & Industrial Supply","what":"Lumber, fixtures, tools and parts.","look":"","active":false,"tk":"GWW · FAST · BLDR"},{"n":"Medical & Healthcare Supply","what":"Products and equipment for providers and pharmacies.","look":"","active":false,"tk":"MCK · COR · HSIC"},{"n":"Auto Parts Distribution","what":"Parts and accessories for shops and dealers.","look":"","active":false,"tk":"GPC · LKQ"},{"n":"Electronics & Technology Distribution","what":"Devices and components to resellers.","look":"","active":false,"tk":"ARW · AVT · SNX"},{"n":"Import & Export","what":"Goods brought into and out of the U.S. for resale.","look":"","active":false,"tk":"EXPD · CHRW"}]},{"g":"Auto & Equipment Services","items":[{"n":"Auto Repair","what":"Maintenance and repair shops.","look":"","active":false,"tk":"MNRO · VVV"},{"n":"Car Wash & Detailing","what":"Express washes and detailing.","look":"","active":false,"tk":"MCW"},{"n":"Towing","what":"Roadside and contract towing.","look":"","active":false,"tk":"MLR · CPRT"},{"n":"Equipment Rental","what":"Tools and machinery rented to contractors.","look":"","active":false,"tk":"URI · HRI"}]}]},{"id":"equities","name":"Public Equities","sub":"Stocks and public markets","intro":"Public equities are shares of companies traded on stock exchanges. They give partners liquidity alongside longer-term private investments. Every holding is shown in the partner's portal with cost, current price and gain or loss.","groups":[{"g":"","items":[{"n":"Large-Cap Stocks","what":"Shares of the largest public companies.","look":"Market leaders with durable advantages and strong balance sheets.","active":false,"tk":"AAPL · MSFT · NVDA"},{"n":"Small & Mid-Cap Stocks","what":"Shares of smaller public companies.","look":"Under-followed companies trading below their value.","active":false,"tk":"IJR · IJH"},{"n":"International Equities","what":"Shares of companies outside the United States.","look":"Strong businesses in growing markets.","active":false,"tk":"VXUS · TSM"},{"n":"Sector & Thematic","what":"Concentrated positions in sectors such as technology, semiconductors and financials.","look":"Long-term trends with real demand behind them.","active":false,"tk":"SMH · XLF"},{"n":"Dividend & Income Stocks","what":"Established companies that pay regular dividends.","look":"Steady income and long records of paying shareholders.","active":false,"tk":"SCHD · JNJ · KO"},{"n":"Index Funds & ETFs","what":"Broad funds that track a market index.","look":"Low-cost, diversified exposure and a home for liquid capital.","active":false,"tk":"VOO · QQQ"},{"n":"REITs","what":"Publicly traded real estate companies.","look":"Real estate exposure at a discount to private market value.","active":false,"tk":"VNQ"}]}]}];
-const COLORS={"Operating Businesses":"#9AA8A1","Real Estate":"#C9A45C","Fixed Income":"#8FB3C9","Private Equity":"#B98AC9","Venture Capital":"#E39B7B","Service & Trade Businesses":"#7FBF95","Public Equities":"#E8CB8A","Public Markets":"#E8CB8A"};
+const COLORS={"Operating Businesses":"#F0DCA8","Real Estate":"#E8CB8A","Fixed Income":"#C9A45C","Private Equity":"#A9894E","Venture Capital":"#8C7142","Service & Trade Businesses":"#D8B571","Public Equities":"#6E5935","Public Markets":"#6E5935"};
+const ROMAN=["I","II","III","IV","V","VI","VII","VIII"];
 const CAT_OF={realestate:"Real Estate",fixedincome:"Fixed Income",privateequity:"Private Equity",venture:"Venture Capital",operating:"Operating Businesses",services:"Service & Trade Businesses",equities:"Public Equities"};
 const $=s=>document.querySelector(s);
 const esc=s=>String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
@@ -177,7 +200,7 @@ document.addEventListener("click",e=>{const a=e.target.closest("[data-go]");if(!
   push(d.go,JSON.parse(d.p||"{}"));});
 
 function bar(title,showBack,right){
-  $("#barL").innerHTML=showBack?'<button class="back" data-go="back"><svg viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" stroke="currentColor" fill="none" stroke-width="2.2"/></svg>Back</button>':'<div class="brand"><img src="../crest-icon.jpg" alt=""><b>ELK</b></div>';
+  $("#barL").innerHTML=showBack?'<button class="back" data-go="back"><svg viewBox="0 0 12 20"><path d="M10 2L2 10l8 8" stroke="currentColor" fill="none" stroke-width="2.2"/></svg>Back</button>':'<div class="brand"><b>ELK</b><span>HOLDINGS</span></div>';
   $("#barT").textContent=title||"";$("#barR").innerHTML=right||"";
 }
 function render(reset){
@@ -191,25 +214,34 @@ function render(reset){
 
 /* ---------- public views ---------- */
 const VIEWS={};
-VIEWS.home=()=>({title:"ELK Holdings",html:`
-  <div class="hero"><img class="crest" src="../crest.jpg" alt="">
+VIEWS.home=()=>({title:"",html:`
+  <section class="cover">
+    <img src="../crest.jpg" alt="ELK Holdings crest">
     <span class="kicker">Family Office</span>
     <h1>Conviction where others <em>hesitate.</em></h1>
-    <p class="lede">A family office investing across real estate, fixed income, private equity, venture capital, operating businesses, service and trade businesses and public equities.</p>
-    <button class="btn" data-go="tab" data-tab="portfolio">Investor login</button>
+    <p class="lede">We invest our own capital alongside our partners, across seven areas, and we look for one thing in each: a price that has fallen behind the value.</p>
+  </section>
+  <div class="rule"></div>
+  <h3 class="sec">About us</h3>
+  <p class="statement">A partnership, not a fund.</p>
+  <p class="para">ELK Holdings is a <strong>family office</strong>. Every category we invest in is a core business, not a side bet. Our partners know the deal, see the progress, and hear from us regularly. We put our own money in next to theirs, and we only make money when they do.</p>
+  <div class="facts">
+    <div><span>Type</span><b>Family office</b></div>
+    <div><span>Capital</span><b>Our own, beside partners</b></div>
+    <div><span>Markets</span><b>United States</b></div>
+    <div><span>Areas</span><b>Seven, all core</b></div>
   </div>
-  <h3 class="sec">What we invest in</h3>
-  <div class="group">${CATS.map(c=>`<button class="row" data-go="cat" data-p='${JSON.stringify({id:c.id})}'><span class="ic" style="background:${COLORS[CAT_OF[c.id]]}">${c.name.split(" ").map(w=>w[0]).join("").slice(0,2)}</span><span class="tx"><b>${esc(c.name)}</b><small>${esc(c.sub)}</small></span><span class="rt"><small class="num" style="color:var(--dim)">${c.groups.reduce((a,g)=>a+g.items.length,0)}</small></span>${chev}</button>`).join("")}</div>
-  <h3 class="sec">How we work with partners</h3>
-  <div class="group">
-    ${[["We win when you win","We only make money when our partners make money."],["Always informed","Updates, photos and current numbers in your portal."],["We strike fast","When we're ready, we move, and we don't back out."],["Straight answers","Good news or bad, you hear it from us first."]].map(([a,b])=>`<div class="row"><span class="tx"><b>${a}</b><small style="white-space:normal">${b}</small></span></div>`).join("")}
-  </div>
-  <button class="btn ghost" data-go="tab" data-tab="firm">About the firm</button>`});
+  <h3 class="sec">What we do</h3>
+  <div class="group">${CATS.map((c,i)=>`<button class="row" data-go="cat" data-p='${JSON.stringify({id:c.id})}'><span class="ic">${ROMAN[i]}</span><span class="tx"><b>${esc(c.name)}</b><small>${esc(c.sub)}</small></span>${chev}</button>`).join("")}</div>
+  <h3 class="sec">How we work</h3>
+  <div class="prin">${[["We win when you win","We only make money when our partners make money."],["Always informed","Updates, photos and current numbers, whenever you want them."],["We strike fast","When we're ready, we move, and we don't back out."],["Straight answers","Good news or bad, you hear it from us first."]].map(([a,b],i)=>`<div><i>0${i+1}</i><b>${a}</b><small>${b}</small></div>`).join("")}</div>
+  <button class="btn ghost" data-go="tab" data-tab="firm">Meet the founder</button>
+  <div class="foot"><b>ELK HOLDINGS</b><span class="note">New Jersey · Investing nationwide</span></div>`});
 
 VIEWS.invest=()=>({title:"Investments",html:`
   <div><span class="kicker">What we invest in</span><h2 class="large">Investments</h2></div>
-  <p class="lede">Seven areas, no single one first. Tap a category to see every type of investment it covers.</p>
-  <div class="group">${CATS.map(c=>`<button class="row" data-go="cat" data-p='${JSON.stringify({id:c.id})}'><span class="ic" style="background:${COLORS[CAT_OF[c.id]]}">${c.name.split(" ").map(w=>w[0]).join("").slice(0,2)}</span><span class="tx"><b>${esc(c.name)}</b><small>${c.groups.reduce((a,g)=>a+g.items.length,0)} types · ${esc(c.sub)}</small></span>${chev}</button>`).join("")}</div>
+  <p class="lede">Seven areas, no single one first. Tap any of them to see every type of investment it covers and what we look for.</p>
+  <div class="group">${CATS.map((c,i)=>`<button class="row" data-go="cat" data-p='${JSON.stringify({id:c.id})}'><span class="ic">${ROMAN[i]}</span><span class="tx"><b>${esc(c.name)}</b><small>${c.groups.reduce((a,g)=>a+g.items.length,0)} types · ${esc(c.sub)}</small></span>${chev}</button>`).join("")}</div>
   <p class="note">Tickers are examples of public companies in each area that can be bought on Robinhood. They are not recommendations or ELK holdings.</p>`});
 
 VIEWS.cat=p=>{const c=CATS.find(x=>x.id===p.id);if(!c)return VIEWS.invest();
@@ -219,18 +251,15 @@ VIEWS.cat=p=>{const c=CATS.find(x=>x.id===p.id);if(!c)return VIEWS.invest();
   ${c.groups.map(g=>`${g.g?`<h3 class="sec">${esc(g.g)}</h3>`:""}${g.items.map(t=>`<div class="tcard"><div class="h"><h4>${esc(t.n)}</h4>${t.active?'<span class="pill on">Active</span>':""}</div><p>${esc(t.what)}</p>${t.look?`<p><span class="lk">What we look for:</span> ${esc(t.look)}</p>`:""}${t.tk?`<div class="tk"><span>On Robinhood</span><b>${esc(t.tk)}</b></div>`:""}</div>`).join("")}`).join("")}`};};
 
 VIEWS.firm=()=>({title:"The Firm",html:`
-  <div><span class="kicker">About</span><h2 class="large">The Firm</h2></div>
-  <p class="para">ELK Holdings is a <strong>family office</strong>. We invest across real estate, fixed income, private equity, venture capital, operating businesses, service and trade businesses and public equities, and treat every category as a core business. In each one we look for the same thing: situations where the price has fallen behind the value.</p>
-  <p class="para">We are a partnership, not a fund. Our partners know the deal, see the progress, and hear from us regularly. We put our own capital in alongside theirs, and we only make money when they make money.</p>
-  <h3 class="sec">Founder &amp; CEO</h3>
-  <div class="tcard"><div class="h"><h4>Eddie Khezrie</h4><span class="pill">Founder &amp; CEO</span></div>
+  <div><span class="kicker">Leadership</span><h2 class="large">The Firm</h2></div>
+  <div class="tcard"><div class="h"><div><span class="kicker">Founder &amp; CEO</span><h4 style="font-size:1.7rem;margin-top:6px">Eddie Khezrie</h4></div></div>
     <p>At 22, Eddie is a driven investor who wants to make deals, build real relationships, and outwork everyone in the room. Deal-making is in his blood, and he learned early how deals get made and how partners should be treated.</p>
     <p>He sharpened that instinct across lending, underwriting and management at Safra National Bank, Kushner and 601W Companies, and today oversees real estate investments at Global Group Acquisitions.</p>
     <p>His approach is simple: be honest, keep partners updated, create real value, and make sure everyone at the table does well.</p></div>
   <h3 class="sec">Our process</h3>
-  <div class="group">${[["Source","Brokers, bankers, lenders and owners nationwide"],["Underwrite","Tested against the downside before any offer"],["Acquire","We strike fast and don't back out"],["Execute","A written plan, managed hands-on"],["Realize","Sale, refinance or hold, timed for partners"]].map(([a,b],i)=>`<div class="row"><span class="ic" style="background:var(--card2);color:var(--gold-hi)">${["I","II","III","IV","V"][i]}</span><span class="tx"><b>${a}</b><small style="white-space:normal">${b}</small></span></div>`).join("")}</div>
+  <div class="prin">${[["Source","Brokers, bankers, lenders and owners nationwide."],["Underwrite","Tested against the downside before any offer."],["Acquire","We strike fast and don't back out."],["Execute","A written plan, managed hands-on."],["Realize","Sale, refinance or hold, timed for partners."]].map(([a,b],i)=>`<div><i>${ROMAN[i]}</i><b>${a}</b><small>${b}</small></div>`).join("")}</div>
   <h3 class="sec">Contact</h3>
-  <div class="group"><div class="row"><span class="tx"><b>Eddie Khezrie</b><small>Founder &amp; CEO</small></span><span class="rt"><b style="user-select:all">718-668-4514</b></span></div><div class="row"><span class="tx"><b>Based in New Jersey</b><small>Investing nationwide</small></span></div></div>
+  <div class="group"><a class="row" href="tel:7186684514" style="color:inherit;text-decoration:none"><span class="tx"><b>Eddie Khezrie</b><small>Founder &amp; CEO</small></span><span class="rt"><b style="color:var(--gold-hi)">718-668-4514</b></span></a><div class="row"><span class="tx"><b>Based in New Jersey</b><small>Investing nationwide</small></span></div></div>
   <p class="note">© 2026 ELK Holdings. Projections are estimates, not a promise of returns. Nothing here is an offer to sell securities.</p>`});
 
 /* ---------- portfolio data ---------- */
@@ -289,27 +318,34 @@ function chartHTML(pts,id){
   const x=i=>pad+i*(W-2*pad)/(pts.length-1),y=v=>Hh-pad-((v-mn)/rg)*(Hh-2*pad-16);
   const up=vs[vs.length-1]>=vs[0],col=up?"var(--pos)":"var(--neg)";
   const d=pts.map((p,i)=>(i?"L":"M")+x(i).toFixed(1)+" "+y(p.v).toFixed(1)).join(" ");
-  return`<div class="chart"><svg viewBox="0 0 ${W} ${Hh}" id="${id}"><defs><linearGradient id="g${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${up?"#5FD08A":"#FF7A6B"}" stop-opacity=".28"/><stop offset="1" stop-color="${up?"#5FD08A":"#FF7A6B"}" stop-opacity="0"/></linearGradient></defs>
+  return`<div class="chart"><svg viewBox="0 0 ${W} ${Hh}" id="${id}"><defs><linearGradient id="g${id}" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${up?"#7CC99A":"#E3826F"}" stop-opacity=".28"/><stop offset="1" stop-color="${up?"#7CC99A":"#E3826F"}" stop-opacity="0"/></linearGradient></defs>
     <path d="${d} L${x(pts.length-1)} ${Hh} L${x(0)} ${Hh} Z" fill="url(#g${id})"/><path d="${d}" fill="none" stroke="${col}" stroke-width="2.2" stroke-linejoin="round"/>
     <circle cx="${x(pts.length-1)}" cy="${y(vs[vs.length-1])}" r="4" fill="${col}"/></svg></div>`;
 }
+function valueAt(all,date){let v=null;for(const p of all){if(p.d<=date)v=p.v;else break}return v}
+function rangeRet(all,r){if(all.length<1)return null;const last=all[all.length-1],start=rangeStart(r,last.d);
+  let base=valueAt(all,start),since=false;if(base==null){base=all[0].v;since=true}
+  return{ch:last.v-base,p:base?(last.v-base)/base:0,since}}
+function retsGrid(all){const first=all.length?all[0].d:"";
+  return`<div class="rets">${["1W","1M","3M","YTD","5Y","All"].map(r=>{const x=rangeRet(all,r);return`<div><span>${r==="All"?"ALL TIME":r}</span><b class="${x?cls(x.ch):""}">${x&&all.length>1?pct(x.p):"—"}</b><small>${x&&all.length>1?sgn(x.ch):"no data yet"}${x&&x.since&&r!=="All"&&all.length>1?" · since "+fdate(first).replace(/, \d{4}/,""):""}</small></div>`}).join("")}</div>`}
 function perfBlock(B,filter,id){
   const all=series(B,filter);const last=all.length?all[all.length-1].d:S.prices.asof;
   const start=rangeStart(S.range,last);let pts=all.filter(p=>p.d>=start);
-  const base=pts.length?pts[0].v:0,now=pts.length?pts[pts.length-1].v:0,ch=now-base;
+  const bv=valueAt(all,start);if(bv!=null&&pts.length&&pts[0].d>start)pts=[{d:start,v:bv},...pts];
   const firstDate=all.length?all[0].d:"";
   return`${chartHTML(pts,id)}
   <div class="ranges">${["1W","1M","3M","YTD","5Y","All"].map(r=>`<button data-range="${r}" aria-pressed="${S.range===r}">${r}</button>`).join("")}</div>
-  <p class="note">${pts.length>1?`${S.range==="All"?"Since "+fdate(firstDate):S.range}: <span class="${cls(ch)}">${sgn(ch)} (${pct(base?ch/base:0)})</span>.`:""} Ranges that start before ${fdate(firstDate||S.prices.buyDate)} show results since tracking began.</p>`;
+  ${retsGrid(all)}
+  <p class="note">Returns use each trading day's close. Tracking began ${fdate(firstDate||S.prices.buyDate)}, so longer ranges show results since then until there is enough history.</p>`;
 }
 function wireRanges(){document.querySelectorAll("[data-range]").forEach(b=>b.addEventListener("click",()=>{S.range=b.dataset.range;render(false)}))}
 
 /* ---------- portfolio views ---------- */
 VIEWS.portfolio=()=>{
-  if(!S.user)return{title:"Investor Login",html:`
+  if(!S.user)return{title:"Partners",html:`
     <form class="login" id="lf" autocomplete="on">
       <img src="../crest-icon.jpg" alt="">
-      <div style="text-align:center"><span class="kicker">Investor Portal</span><h2 class="large" style="margin-top:8px">Partner sign in</h2></div>
+      <div style="text-align:center"><span class="kicker">Partners</span><h2 class="large" style="margin-top:8px">Sign in</h2></div>
       <div class="field"><label for="lu">Login</label><input id="lu" autocomplete="username" autocapitalize="off" autocorrect="off" spellcheck="false" placeholder="Your login name"></div>
       <div class="field"><label for="lc">Code</label><input id="lc" type="password" autocomplete="current-password" placeholder="Your code"></div>
       <p class="err" id="le"></p>
@@ -330,7 +366,7 @@ VIEWS.portfolio=()=>{
     </div>
     <h3 class="sec">Allocation</h3>
     <div class="alloc">${B.catList.filter(c=>c.value>0).map(c=>`<i style="flex:${c.value};background:${COLORS[c.cat]}"></i>`).join("")}</div>
-    <div class="group">${B.catList.map(c=>`<button class="row" data-go="pcat" data-p='${JSON.stringify({cat:c.cat})}'><span class="ic" style="background:${COLORS[c.cat]}"></span><span class="tx"><b>${esc(c.cat)}</b><small>${c.n?c.n+" holding"+(c.n>1?"s":""):"Under review"}${T.value&&c.value?" · "+(c.value/T.value*100).toFixed(1)+"%":""}</small></span><span class="rt"><b>${money(c.value)}</b><small class="${cls(c.value-c.cost)}">${c.cost?pct((c.value-c.cost)/c.cost):"—"}</small></span>${chev}</button>`).join("")}</div>
+    <div class="group">${B.catList.map(c=>`<button class="row" data-go="pcat" data-p='${JSON.stringify({cat:c.cat})}'><span class="sw" style="background:${COLORS[c.cat]}"></span><span class="tx"><b>${esc(c.cat)}</b><small>${c.n?c.n+" holding"+(c.n>1?"s":""):"Under review"}${T.value&&c.value?" · "+(c.value/T.value*100).toFixed(1)+"%":""}</small></span><span class="rt"><b>${money(c.value)}</b><small class="${cls(c.value-c.cost)}">${c.cost?pct((c.value-c.cost)/c.cost):"—"}</small></span>${chev}</button>`).join("")}</div>
     ${B.stocks.length?`<h3 class="sec">${B.stocks.some(s=>Math.abs(s.day)>0.5)?"Biggest movers":"Largest holdings"}</h3>
     <div class="group">${B.stocks.slice().sort((a,b)=>Math.abs(b.day)-Math.abs(a.day)||b.value-a.value).slice(0,5).map(s=>stockRow(s)).join("")}</div>
     <button class="btn ghost" data-go="stocks">All ${B.stocks.length} stocks &amp; funds</button>`:""}
@@ -400,7 +436,7 @@ VIEWS.deal=p=>{const B=buildBook(),x=B.deals.find(z=>z.id===p.id);if(!x)return V
       <p style="font-size:.78rem;color:var(--dim)">${d.stages.join(" → ")}</p></div>
     <div class="tcard"><div class="h"><h4>${esc(u.head)}</h4><span class="pill">${esc(u.m)}</span></div><ul class="ul">${u.pts.map(t=>`<li>${esc(t)}</li>`).join("")}</ul></div>
     <h3 class="sec">Milestones</h3>
-    <div class="group">${d.done.map(t=>`<div class="row"><span class="ic" style="background:rgba(95,208,138,.16);color:var(--pos);width:24px;height:24px;border-radius:12px">✓</span><span class="tx"><small style="white-space:normal;color:var(--ink);font-size:.88rem">${esc(t)}</small></span></div>`).join("")}${d.next.map(t=>`<div class="row"><span class="ic" style="background:rgba(201,164,92,.16);color:var(--gold-hi);width:24px;height:24px;border-radius:12px">→</span><span class="tx"><small style="white-space:normal;color:var(--muted);font-size:.88rem">Next: ${esc(t)}</small></span></div>`).join("")}</div>
+    <div class="group">${d.done.map(t=>`<div class="row"><span class="ic" style="width:24px;height:24px;font-size:.7rem">✓</span><span class="tx"><small style="white-space:normal;color:var(--ink);font-size:.88rem">${esc(t)}</small></span></div>`).join("")}${d.next.map(t=>`<div class="row"><span class="ic" style="width:24px;height:24px;font-size:.7rem;color:var(--dim);border-color:var(--hair)">→</span><span class="tx"><small style="white-space:normal;color:var(--muted);font-size:.88rem">Next: ${esc(t)}</small></span></div>`).join("")}</div>
     <h3 class="sec">Updates</h3>
     <div class="group">${d.updates.map(z=>`<div class="row"><span class="tx"><b style="white-space:normal">${esc(z.head)}</b><small>${esc(z.m)}</small></span></div>`).join("")}</div>`};};
 

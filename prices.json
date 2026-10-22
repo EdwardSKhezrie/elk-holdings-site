@@ -1,0 +1,510 @@
+{
+"asof": "2026-10-21",
+"buyDate": "2026-10-21",
+"t": {
+"URI": {
+"buy": 1068.98,
+"buyDate": "2026-10-21",
+"last": 1068.98,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"AVGO": {
+"buy": 337.8,
+"buyDate": "2026-10-21",
+"last": 337.8,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"MU": {
+"buy": 913.67,
+"buyDate": "2026-10-21",
+"last": 913.67,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"VOO": {
+"buy": 710.72,
+"buyDate": "2026-10-21",
+"last": 710.72,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"QQQ": {
+"buy": 725.2,
+"buyDate": "2026-10-21",
+"last": 725.2,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"SCHD": {
+"buy": 34.65,
+"buyDate": "2026-10-21",
+"last": 34.65,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"JNJ": {
+"buy": 257.78,
+"buyDate": "2026-10-21",
+"last": 257.78,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"VXUS": {
+"buy": 84,
+"buyDate": "2026-10-21",
+"last": 84,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"TSM": {
+"buy": 431.89,
+"buyDate": "2026-10-21",
+"last": 431.89,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"ASML": {
+"buy": 1676.69,
+"buyDate": "2026-10-21",
+"last": 1676.69,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"GWW": {
+"buy": 1351.87,
+"buyDate": "2026-10-21",
+"last": 1351.87,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"FAST": {
+"buy": 52.49,
+"buyDate": "2026-10-21",
+"last": 52.49,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"GPC": {
+"buy": 124.78,
+"buyDate": "2026-10-21",
+"last": 124.78,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"RVII": {
+"buy": 21.93,
+"buyDate": "2026-10-21",
+"last": 21.93,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"ROL": {
+"buy": 33.45,
+"buyDate": "2026-10-21",
+"last": 33.45,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"POOL": {
+"buy": 168.07,
+"buyDate": "2026-10-21",
+"last": 168.07,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"FIX": {
+"buy": 1401.27,
+"buyDate": "2026-10-21",
+"last": 1401.27,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"EME": {
+"buy": 716.79,
+"buyDate": "2026-10-21",
+"last": 716.79,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"WM": {
+"buy": 229.58,
+"buyDate": "2026-10-21",
+"last": 229.58,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"SYY": {
+"buy": 82.06,
+"buyDate": "2026-10-21",
+"last": 82.06,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"HTGC": {
+"buy": 16.27,
+"buyDate": "2026-10-21",
+"last": 16.27,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"TRIN": {
+"buy": 16.18,
+"buyDate": "2026-10-21",
+"last": 16.18,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"ARKK": {
+"buy": 85.42,
+"buyDate": "2026-10-21",
+"last": 85.42,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"DHI": {
+"buy": 138.98,
+"buyDate": "2026-10-21",
+"last": 138.98,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"LEN": {
+"buy": 77.7,
+"buyDate": "2026-10-21",
+"last": 77.7,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"SGOV": {
+"buy": 100.62,
+"buyDate": "2026-10-21",
+"last": 100.62,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"MAA": {
+"buy": 117.68,
+"buyDate": "2026-10-21",
+"last": 117.68,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"REXR": {
+"buy": 36.8,
+"buyDate": "2026-10-21",
+"last": 36.8,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"AAPL": {
+"buy": 343.99,
+"buyDate": "2026-10-21",
+"last": 343.99,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"MSFT": {
+"buy": 532.95,
+"buyDate": "2026-10-21",
+"last": 532.95,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"NVDA": {
+"buy": 221.97,
+"buyDate": "2026-10-21",
+"last": 221.97,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"JPM": {
+"buy": 335.19,
+"buyDate": "2026-10-21",
+"last": 335.19,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"KO": {
+"buy": 92.68,
+"buyDate": "2026-10-21",
+"last": 92.68,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"STEP": {
+"buy": 42.42,
+"buyDate": "2026-10-21",
+"last": 42.42,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"PSP": {
+"buy": 56.25,
+"buyDate": "2026-10-21",
+"last": 56.25,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"RVI": {
+"buy": 24.765,
+"buyDate": "2026-10-21",
+"last": 24.765,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"XOVR": {
+"buy": 21.56,
+"buyDate": "2026-10-21",
+"last": 21.56,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"DXYZ": {
+"buy": 29,
+"buyDate": "2026-10-21",
+"last": 29,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"BV": {
+"buy": 10.43,
+"buyDate": "2026-10-21",
+"last": 10.43,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"FTDR": {
+"buy": 80.85,
+"buyDate": "2026-10-21",
+"last": 80.85,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"FERG": {
+"buy": 227.96,
+"buyDate": "2026-10-21",
+"last": 227.96,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"WSO": {
+"buy": 305.03,
+"buyDate": "2026-10-21",
+"last": 305.03,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"CTAS": {
+"buy": 220.15,
+"buyDate": "2026-10-21",
+"last": 220.15,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"APG": {
+"buy": 40.21,
+"buyDate": "2026-10-21",
+"last": 40.21,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"ABM": {
+"buy": 51.56,
+"buyDate": "2026-10-20",
+"last": 51.56,
+"lastDate": "2026-10-20",
+"prev": null
+},
+"MCK": {
+"buy": 1015.5,
+"buyDate": "2026-10-21",
+"last": 1015.5,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"VMRK": {
+"buy": 61.99,
+"buyDate": "2026-10-21",
+"last": 61.99,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"PLD": {
+"buy": 127.6,
+"buyDate": "2026-10-21",
+"last": 127.6,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"SPG": {
+"buy": 205.55,
+"buyDate": "2026-10-21",
+"last": 205.55,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"O": {
+"buy": 55.35,
+"buyDate": "2026-10-21",
+"last": 55.35,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"BXP": {
+"buy": 58.64,
+"buyDate": "2026-10-21",
+"last": 58.64,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"VNO": {
+"buy": 32.89,
+"buyDate": "2026-10-21",
+"last": 32.89,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"HST": {
+"buy": 25.09,
+"buyDate": "2026-10-21",
+"last": 25.09,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"VNQ": {
+"buy": 91.49,
+"buyDate": "2026-10-21",
+"last": 91.49,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"IEF": {
+"buy": 90.23,
+"buyDate": "2026-10-21",
+"last": 90.23,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"LQD": {
+"buy": 103.21,
+"buyDate": "2026-10-21",
+"last": 103.21,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"HYG": {
+"buy": 76.98,
+"buyDate": "2026-10-21",
+"last": 76.98,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"MUB": {
+"buy": 102.45,
+"buyDate": "2026-10-21",
+"last": 102.45,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"STWD": {
+"buy": 12.13,
+"buyDate": "2026-10-21",
+"last": 12.13,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"BXMT": {
+"buy": 10.2,
+"buyDate": "2026-10-21",
+"last": 10.2,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"REM": {
+"buy": 17.22,
+"buyDate": "2026-10-20",
+"last": 17.22,
+"lastDate": "2026-10-20",
+"prev": null
+},
+"ARCC": {
+"buy": 18.4,
+"buyDate": "2026-10-21",
+"last": 18.4,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"MAIN": {
+"buy": 53.3,
+"buyDate": "2026-10-21",
+"last": 53.3,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"BIZD": {
+"buy": 11.82,
+"buyDate": "2026-10-20",
+"last": 11.82,
+"lastDate": "2026-10-20",
+"prev": null
+},
+"BX": {
+"buy": 109.57,
+"buyDate": "2026-10-21",
+"last": 109.57,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"KKR": {
+"buy": 89.87,
+"buyDate": "2026-10-21",
+"last": 89.87,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"APO": {
+"buy": 111.69,
+"buyDate": "2026-10-21",
+"last": 111.69,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"CG": {
+"buy": 37.27,
+"buyDate": "2026-10-21",
+"last": 37.27,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"ARES": {
+"buy": 117.01,
+"buyDate": "2026-10-21",
+"last": 117.01,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"BN": {
+"buy": 37.51,
+"buyDate": "2026-10-21",
+"last": 37.51,
+"lastDate": "2026-10-21",
+"prev": null
+},
+"HLNE": {
+"buy": 83.7,
+"buyDate": "2026-10-20",
+"last": 83.7,
+"lastDate": "2026-10-20",
+"prev": null
+},
+"SNDK": {
+"buy": 1378.22,
+"buyDate": "2026-10-21",
+"last": 1378.22,
+"lastDate": "2026-10-21",
+"prev": null
+}
+}
+}

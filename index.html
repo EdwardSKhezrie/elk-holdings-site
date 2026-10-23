@@ -302,6 +302,7 @@ footer.site-foot{border-top:1px solid var(--line);padding-block:64px 32px;color:
 .holdings .nm{display:flex;flex-direction:column;gap:2px}
 .holdings .nm b{font-weight:500;color:var(--ink)}
 .holdings .nm small{color:var(--dim);font-size:.78rem}
+.kpis.k6{grid-template-columns:repeat(3,1fr)}
 .op-head{margin-top:36px;padding-bottom:4px;scroll-margin-top:110px}
 .detail-head{scroll-margin-top:110px;margin-top:28px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding-top:8px;border-top:1px solid var(--line-2)}
 .detail-head h3{font-size:2rem;margin-top:14px}
@@ -1261,6 +1262,40 @@ function openRoom(){
 document.addEventListener("click",e=>{const x=e.target.closest("[data-open-deal]");if(!x)return;const id=x.dataset.openDeal;
   document.getElementById("detCat").textContent="Operating Businesses · Real Estate Development";document.getElementById("detName").textContent=DEALS[id].name;showDeal(id);
   document.querySelector(".detail-head").scrollIntoView();});
+
+/* Options detail */
+function optVal(x){const q=(PRICES.opt||{})[x.contract];return q&&q.last!=null?x.contracts*100*q.last:null}
+function showOption(i,k){
+  const o=eff(session.other[i],i),x=o.options[k],u=PRICES.t[x.ticker]||{},q=(PRICES.opt||{})[x.contract]||{};
+  const S=u.last,K=x.strike,be=K+x.premium,sh=x.contracts*100,today=new Date((u.lastDate||PRICES.asof)+"T12:00:00"),exp=new Date(x.expiry+"T12:00:00");
+  const days=Math.max(0,Math.round((exp-today)/864e5)),intr=S!=null?Math.max(0,S-K):null,val=optVal(x),g=val!=null?val-x.cost:null;
+  const pnl=p=>Math.max(0,p-K)*sh-x.cost;
+  const pts=[5,K,be,13,15,18,20,25,30].filter((v,i2,a)=>a.indexOf(v)===i2).sort((a,b)=>a-b);
+  document.getElementById("detCat").textContent="Where your money is held · Operating businesses · Options";
+  document.getElementById("detName").textContent=`${x.ticker} $${K} ${x.type}s · ${fmtDate(x.expiry)}`;
+  document.getElementById("dealView").innerHTML=`
+   <div class="kpis k6">
+    <div><span>Cost</span><b>${fmt$(x.cost)}</b><em>${x.contracts.toLocaleString("en-US")} contracts × $${x.premium.toFixed(2)} × 100</em></div>
+    <div><span>Current value</span><b>${val!=null?fmt$(val):"At cost"}</b><em>${val!=null?"option last $"+q.last.toFixed(2)+" · "+fmtDate(q.date):"live option price not entered yet"}</em></div>
+    <div><span>Gain / loss</span><b class="${g>0?"pos":g<0?"neg":""}">${g!=null?(g>=0?"+":"-")+fmt$(Math.abs(g)):"—"}</b><em>${g!=null?(g/x.cost*100).toFixed(1)+"% on cost":"shown once a price is entered"}</em></div>
+    <div><span>${x.ticker} price</span><b>${S!=null?"$"+S.toFixed(2):"—"}</b><em>${u.lastDate?"close "+fmtDate(u.lastDate):""}${S!=null?(S>=K?" · in the money":" · $"+(K-S).toFixed(2)+" below strike"):""}</em></div>
+    <div><span>Breakeven at expiry</span><b>$${be.toFixed(2)}</b><em>${S!=null?(S>=be?"above breakeven":"needs +"+((be/S-1)*100).toFixed(0)+"% from here"):""}</em></div>
+    <div><span>Time left</span><b>${days} days</b><em>expires ${fmtDate(x.expiry)}</em></div>
+   </div>
+   <div class="two">
+    <div class="panel"><p class="eyebrow">The position</p>
+      ${[["Underlying",x.under+" ("+x.ticker+")"],["Type",x.side+" "+x.type.toLowerCase()+"s"],["Strike","$"+K.toFixed(2)],["Expiration",fmtDate(x.expiry)],["Contracts",x.contracts.toLocaleString("en-US")+" ("+sh.toLocaleString("en-US")+" shares controlled)"],["Price paid","$"+x.premium.toFixed(2)+" per share · $"+(x.premium*100).toFixed(0)+" per contract"],["Opened",fmtDate(x.opened)],["Value if it expired today",intr!=null?fmt$(intr*sh)+" (intrinsic)":"—"],["Most you can lose",fmt$(x.cost)+" (the premium paid)"],["Contract",x.contract]].map(([a,b])=>`<div class="valrow"><span>${a}</span><b>${b}</b></div>`).join("")}
+      <p class="muted" style="font-size:.8rem">SNXX is a 2x daily leveraged ETF on Sandisk (SNDK). It resets every day, so over weeks it can drift away from 2x Sandisk's move, especially when prices swing.</p></div>
+    <div class="panel"><p class="eyebrow">What it's worth at expiration</p>
+      <div class="valrow"><span><b>${x.ticker} on ${fmtDate(x.expiry)}</b></span><b>Profit / loss</b></div>
+      ${pts.map(p=>{const v=pnl(p);return `<div class="valrow${p===be?" total":""}"><span>$${p.toFixed(2)}${p===K?" (strike)":p===be?" (breakeven)":""}</span><b class="${v>0?"pos":v<0?"neg":""}">${v>=0?"+":"-"}${fmt$(Math.abs(v))}</b></div>`}).join("")}
+      <p class="muted" style="font-size:.8rem">Every $1 SNXX finishes above $${K} is worth ${fmt$(sh)}. Below $${K} the calls expire worthless. Before expiration the calls also carry time value, so they usually trade above these numbers.</p></div>
+   </div>
+   <button class="btn ghost" data-back-op="${i}" style="align-self:flex-start">← Back to operating businesses</button>`;
+  document.querySelector(".detail-head").scrollIntoView({behavior:"smooth",block:"start"});
+}
+document.addEventListener("click",e=>{const r=e.target.closest("[data-open-opt]");if(r){const i=session.other.findIndex(o=>o.options&&o.options.length);showOption(i,+r.dataset.openOpt);return}
+  const b=e.target.closest("[data-back-op]");if(b){showOther(+b.dataset.backOp);document.getElementById("detCat").textContent="Where your money is held · Operating businesses";}});
 /* ---- Stocks: whole-portfolio performance (1W to All), then one category at a time ---- */
 const CAT_COLORS={"Operating Businesses":"#F0DCA8","Real Estate":"#E8CB8A","Fixed Income":"#C9A45C","Private Equity":"#A9894E","Venture Capital":"#8C7142","Service & Trade Businesses":"#D8B571","Public Equities":"#6E5935","Public Markets":"#6E5935"};
 const STOCK_ORDER=["Real Estate","Fixed Income","Private Equity","Venture Capital","Service & Trade Businesses","Public Equities","Public Markets"];
@@ -1393,7 +1428,7 @@ function showOther(i){
     document.getElementById("detName").textContent="Operating businesses";
     const rows=(o.merged||[]).map(id=>{const d=DEALS[id],h=session.holdings[id],c=h.land+(d.soft+d.carry)*h.share;
       return `<tr><td><span class="nm"><b>${d.name}</b><small>Real estate development · ${d.city} · hands-on</small></span></td><td>${d.status}</td><td class="r">${fmt$(c)}</td><td class="r">${fmt$(model(d,d.price,d.build).net*h.share)}</td></tr>`}).join("")+
-      `<tr><td><span class="nm"><b>${o.pipelineName||"Deal under review"}</b><small>${o.pipelineDetail||""}</small></span></td><td>Under review</td><td class="r">$0</td><td class="r">—</td></tr>`+(o.options||[]).map(x=>{const u=PRICES.t[x.ticker]||{};return `<tr><td><span class="nm"><b>Options · ${x.ticker} $${x.strike} ${x.type}s</b><small>${x.side} ${x.contracts.toLocaleString("en-US")} contracts at $${x.premium.toFixed(2)} ($${(x.premium*100).toFixed(0)} each) · ${x.under}${x.expiry?" · expires "+fmtDate(x.expiry):""} · opened ${fmtDate(x.opened)}${u.last?" · "+x.ticker+" last close $"+u.last.toFixed(2)+" ("+fmtDate(u.lastDate)+")":""}</small></span></td><td>Open</td><td class="r">${fmt$(x.cost)}</td><td class="r">—</td></tr>`}).join("");
+      `<tr><td><span class="nm"><b>${o.pipelineName||"Deal under review"}</b><small>${o.pipelineDetail||""}</small></span></td><td>Under review</td><td class="r">$0</td><td class="r">—</td></tr>`+(o.options||[]).map((x,k)=>{const u=PRICES.t[x.ticker]||{};return `<tr class="h" data-open-opt="${k}" tabindex="0" style="cursor:pointer"><td><span class="nm"><b>Options · ${x.ticker} $${x.strike} ${x.type}s →</b><small>${x.side} ${x.contracts.toLocaleString("en-US")} contracts at $${x.premium.toFixed(2)} ($${(x.premium*100).toFixed(0)} each) · ${x.under}${x.expiry?" · expires "+fmtDate(x.expiry):""} · opened ${fmtDate(x.opened)}${u.last?" · "+x.ticker+" last close $"+u.last.toFixed(2)+" ("+fmtDate(u.lastDate)+")":""}</small></span></td><td>Open</td><td class="r">${fmt$(x.cost)}</td><td class="r">${optVal(x)==null?"<small class=muted>open for details</small>":fmt$(optVal(x))+" now"}</td></tr>`}).join("");
     document.getElementById("dealView").innerHTML=`
       <div class="kpis">
         <div><span>Invested</span><b>${fmt$(o.cost)}</b><em>${o.merged&&o.merged.length?o.merged.map(id=>DEALS[id].name).join(", ")+", at cost":"no capital committed yet"}${o.options&&o.options.length?" + options at cost":""}</em></div>

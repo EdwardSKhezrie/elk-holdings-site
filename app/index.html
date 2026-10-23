@@ -400,7 +400,7 @@ VIEWS.pcat=p=>{const B=buildBook(),c=B.catList.find(x=>x.cat===p.cat)||{cat:p.ca
       ${st.length?`<span class="chg ${cls(c.day)}">${sgn(c.day)} <span style="color:var(--dim);font-weight:500">last trading day</span></span>`:""}</div>
     ${st.length?perfBlock(B,s=>s.cat===p.cat,"cc"):""}
     ${dl.length?`<h3 class="sec">Hands-on investments</h3><div class="group">${dl.map(x=>`<button class="row" data-go="deal" data-p='${JSON.stringify({id:x.id})}'><span class="tx"><b>${esc(x.d.name)}</b><small>${esc(x.d.status)} · ${esc(x.d.city.split(",")[0])}</small></span><span class="rt"><b>${money(x.cost)}</b><small class="pos">+${money(x.proj)} proj.</small></span>${chev}</button>`).join("")}</div>`:""}
-    ${op.length?`<h3 class="sec">Options trading</h3><div class="group">${op.map(x=>{const u=(S.prices.t||{})[x.ticker]||{};return`<div class="row"><span class="tx"><b>${esc(x.ticker)} $${x.strike} ${esc(x.type)}s</b><small style="white-space:normal">${esc(x.side)} ${x.contracts.toLocaleString("en-US")} contracts at $${x.premium.toFixed(2)}${x.expiry?" · exp. "+fdate(x.expiry):""}${u.last?" · "+esc(x.ticker)+" $"+u.last.toFixed(2):""}</small></span><span class="rt"><b>${money(x.cost)}</b><small style="color:var(--dim)">at cost</small></span></div>`}).join("")}</div>`:""}
+    ${op.length?`<h3 class="sec">Options trading</h3><div class="group">${op.map(x=>{const u=(S.prices.t||{})[x.ticker]||{};return`<button class="row" data-go="opt" data-p='${JSON.stringify({k:B.opts.indexOf(x)})}'><span class="tx"><b>${esc(x.ticker)} $${x.strike} ${esc(x.type)}s</b><small style="white-space:normal">${esc(x.side)} ${x.contracts.toLocaleString("en-US")} contracts at $${x.premium.toFixed(2)}${x.expiry?" · exp. "+fdate(x.expiry):""}${u.last?" · "+esc(x.ticker)+" $"+u.last.toFixed(2):""}</small></span><span class="rt"><b>${money(optValue(x)??x.cost)}</b><small style="color:var(--dim)">${optValue(x)==null?"at cost":"now"}</small></span>${chev}</button>`}).join("")}</div>`:""}
     ${pl.length?`<h3 class="sec">Under review</h3><div class="group">${pl.map(x=>`<div class="row"><span class="tx"><b>${esc(x.name)}</b><small style="white-space:normal">${esc(x.detail)}</small></span><span class="rt"><b>$0</b><small>invested</small></span></div>`).join("")}</div>`:""}
     ${Object.keys(groups).map(gn=>{const gs=groups[gn],gv=gs.reduce((a,s)=>a+s.value,0),gc=gs.reduce((a,s)=>a+s.cost,0);return`<h3 class="sec">${esc(gn)} · ${money(gv)} <span class="${cls(gv-gc)}" style="text-transform:none">${pct(gc?(gv-gc)/gc:0)}</span></h3><div class="group">${gs.map(stockRow).join("")}</div>`}).join("")}
     `,after:wireRanges};};
@@ -447,6 +447,29 @@ VIEWS.deal=p=>{const B=buildBook(),x=B.deals.find(z=>z.id===p.id);if(!x)return V
     <h3 class="sec">Updates</h3>
     <div class="group">${d.updates.map(z=>`<div class="row"><span class="tx"><b style="white-space:normal">${esc(z.head)}</b><small>${esc(z.m)}</small></span></div>`).join("")}</div>`};};
 
+
+function optValue(x){const q=((S.prices||{}).opt||{})[x.contract];return q&&q.last!=null?x.contracts*100*q.last:null}
+VIEWS.opt=p=>{const B=buildBook(),x=B.opts[p.k];if(!x)return VIEWS.portfolio();
+  const u=(S.prices.t||{})[x.ticker]||{},q=((S.prices||{}).opt||{})[x.contract]||{},Sx=u.last,K=x.strike,be=K+x.premium,sh=x.contracts*100;
+  const days=Math.max(0,Math.round((new Date(x.expiry+"T12:00:00")-new Date((u.lastDate||S.prices.asof)+"T12:00:00"))/864e5));
+  const val=optValue(x),g=val!=null?val-x.cost:null,pnl=v=>Math.max(0,v-K)*sh-x.cost;
+  const pts=[5,K,be,13,15,18,20,25,30].filter((v,i,a)=>a.indexOf(v)===i).sort((a,b)=>a-b);
+  return{title:x.ticker+" options",html:`
+   <div class="pv"><span class="kicker">Operating Businesses · Options</span><span class="large" style="font-family:var(--body);font-weight:700;font-size:1.9rem">${esc(x.ticker)} $${K} ${esc(x.type)}s</span>
+    <span class="chg" style="color:var(--muted)">Expires ${fdate(x.expiry)} · ${days} days left</span>
+    <span class="big" style="font-size:2.2rem">${val!=null?money(val):money(x.cost)}</span>
+    <span class="chg ${g!=null?cls(g):""}">${g!=null?sgn(g)+" ("+pct(g/x.cost)+")":"Shown at cost · live option price not entered yet"}</span></div>
+   <div class="cardgrid">
+    <div class="tile"><span>Cost</span><b class="num">${money(x.cost)}</b><small>${x.contracts.toLocaleString("en-US")} contracts × $${x.premium.toFixed(2)}</small></div>
+    <div class="tile"><span>${esc(x.ticker)} price</span><b class="num">${Sx!=null?"$"+Sx.toFixed(2):"—"}</b><small>${Sx!=null?(Sx>=K?"in the money":"$"+(K-Sx).toFixed(2)+" below strike"):""}</small></div>
+    <div class="tile"><span>Breakeven</span><b class="num">$${be.toFixed(2)}</b><small>${Sx!=null&&Sx<be?"needs +"+((be/Sx-1)*100).toFixed(0)+"% by expiry":"at expiration"}</small></div>
+    <div class="tile"><span>Max loss</span><b class="num">${money(x.cost)}</b><small>the premium paid</small></div>
+   </div>
+   <h3 class="sec">The position</h3>
+   <div class="group">${[["Underlying",x.under],["Type",x.side+" "+x.type.toLowerCase()+"s"],["Strike","$"+K.toFixed(2)],["Expiration",fdate(x.expiry)],["Shares controlled",sh.toLocaleString("en-US")],["Price paid","$"+x.premium.toFixed(2)+" · $"+(x.premium*100).toFixed(0)+"/contract"],["Opened",fdate(x.opened)],["Contract",x.contract]].map(([a,b])=>`<div class="row"><span class="tx"><small>${a}</small></span><span class="rt"><b style="font-size:.88rem">${esc(b)}</b></span></div>`).join("")}</div>
+   <h3 class="sec">Worth at expiration</h3>
+   <div class="group">${pts.map(v=>{const r=pnl(v);return`<div class="row"><span class="tx"><b>${esc(x.ticker)} at $${v.toFixed(2)}</b><small>${v===K?"strike":v===be?"breakeven":""}</small></span><span class="rt"><b class="${cls(r)}">${sgn(r)}</b></span></div>`}).join("")}</div>
+   <p class="note">Every $1 ${esc(x.ticker)} finishes above $${K} is worth ${money(sh)}. Below $${K} the calls expire worthless. Before expiration they also carry time value. SNXX is a 2x daily leveraged Sandisk ETF and can drift from 2x Sandisk over time.</p>`};};
 /* go */
 (function(){const h=(location.hash||"").slice(1);if(["home","invest","portfolio","firm"].includes(h))S.tab=h;render(true)})();
 if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js",{scope:"../"}).catch(()=>{});

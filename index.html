@@ -325,6 +325,8 @@ footer.site-foot{border-top:1px solid var(--line);padding-block:64px 32px;color:
 .cat-head{display:grid;grid-template-columns:1fr 1.4fr;gap:48px;align-items:end;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--line-2)}
 .cat-head h2{font-size:clamp(2.4rem,5vw,3.8rem);margin-top:14px}
 .cat-head p{color:var(--muted);font-size:1.05rem;max-width:62ch}
+.types3{grid-template-columns:repeat(3,1fr)!important}
+@media (max-width:900px){.types3{grid-template-columns:1fr!important}}
 .types{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
 .type{background:var(--bg);padding:28px;display:flex;flex-direction:column;gap:16px;min-width:0}
 .type.is-on{background:linear-gradient(135deg,rgba(201,164,92,.10),transparent 55%),var(--surface)}
@@ -598,9 +600,9 @@ nav a[aria-current="page"]{color:var(--gold-hi)}
       <a class="area" href="#fixedincome"><span class="n">II</span><h3>Fixed Income</h3><p>Lending, debt and currencies</p><span class="cnt">9 investment types →</span></a>
       <a class="area" href="#privateequity"><span class="n">III</span><h3>Private Equity</h3><p>Ownership in private companies</p><span class="cnt">6 investment types →</span></a>
       <a class="area" href="#venture"><span class="n">IV</span><h3>Venture Capital</h3><p>Early-stage companies</p><span class="cnt">4 investment types →</span></a>
-      <a class="area" href="#operating"><span class="n">V</span><h3>Operating Businesses</h3><p>Companies we own and run, any industry</p><span class="cnt">15 business types →</span></a>
+      <a class="area" href="#operating"><span class="n">V</span><h3>Operating Businesses</h3><p>Run hands-on by Eddie</p><span class="cnt">3 investment types →</span></a>
       <a class="area" href="#services"><span class="n">VI</span><h3>Service &amp; Trade Businesses</h3><p>Trades, home services and wholesale</p><span class="cnt">40 business types →</span></a>
-      <a class="area" href="#equities"><span class="n">VII</span><h3>Public Equities</h3><p>Stocks and public markets</p><span class="cnt">7 investment types →</span></a>
+      <a class="area" href="#equities"><span class="n">VII</span><h3>Public Equities</h3><p>Stocks and public markets, every industry</p><span class="cnt">21 investment types →</span></a>
       <a class="area area-cta" href="#portfolio"><span class="n">Partners</span><h3>Our Portfolio</h3><p>See the investments you hold in the partner portal</p><span class="cnt">Partner access →</span></a>
     </div>
   </div>
@@ -803,88 +805,21 @@ nav a[aria-current="page"]{color:var(--gold-hi)}
 <section class="sec cat-sec" id="operating">
   <div class="wrap">
     <div class="cat-head">
-      <div><span class="eyebrow">V · Companies we own and run</span><h2>Operating Businesses</h2></div>
-      <p>Operating businesses are companies we own and run hands-on, in any industry. Anything we actively operate, rather than hold to diversify, lives here, including our own development projects. Investments in service, trade and wholesale companies are covered in their own section. We look for established businesses where hands-on ownership and better systems can grow them.</p>
+      <div><span class="eyebrow">V · Run hands-on by Eddie</span><h2>Operating Businesses</h2></div>
+      <p>Operating businesses are the investments Eddie runs hands-on: development projects, companies we buy and run, and options trading. Investments in other industries through public companies are covered under Public Equities, and service, trade and wholesale companies under Service &amp; Trade Businesses.</p>
     </div>
-    <div class="grp-head"><h3>Development &amp; Construction</h3><span>1 type</span></div>
-    <div class="types">
+    <div class="types types3">
       <article class="type is-on">
         <div class="type-top"><h3>Real Estate Development</h3><span class="pill on">Active investment</span></div>
-        <dl><div><dt>What it is</dt><dd>Building and selling new homes, buildings and communities that we manage ourselves.</dd></div><div><dt>What we look for</dt><dd>Sites where we control approvals, cost and sales from start to finish.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>DHI · LEN</b></div>
-      </article>
-    </div>
-    <div class="grp-head"><h3>Every Other Industry</h3><span>14 types</span></div>
-    <div class="types">
-      <article class="type">
-        <div class="type-top"><h3>Healthcare</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Home care, clinics, outpatient programs and other providers.</dd></div><div><dt>What we look for</dt><dd>Licensed providers with steady demand and room to expand.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>HCA · EHC</b></div>
+        <dl><div><dt>What it is</dt><dd>Building and selling new homes, buildings and communities that we run ourselves, from the site to the sale.</dd></div><div><dt>What we look for</dt><dd>Sites where we control approvals, cost and sales from start to finish.</dd></div></dl>
       </article>
       <article class="type">
-        <div class="type-top"><h3>Business Services</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Companies that serve other businesses, from staffing to cleaning.</dd></div><div><dt>What we look for</dt><dd>Recurring revenue and long customer relationships.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>ADP · CTAS</b></div>
+        <div class="type-top"><h3>Business Acquisitions</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Buying established private companies outright and running them hands-on, in industries like healthcare, services and manufacturing.</dd></div><div><dt>What we look for</dt><dd>Steady cash flow, a clear way to grow, and owners ready to hand over a business that works.</dd></div></dl>
       </article>
       <article class="type">
-        <div class="type-top"><h3>Real Estate Services</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Property management, brokerage and leasing companies.</dd></div><div><dt>What we look for</dt><dd>Contracts that renew and fit alongside our own properties.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>CBRE · JLL</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Manufacturing</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Companies that make products, parts and materials.</dd></div><div><dt>What we look for</dt><dd>Essential products, skilled teams and room to modernize.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>ITW · PH</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Consumer Brands &amp; Retail</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Brands and stores that sell to consumers.</dd></div><div><dt>What we look for</dt><dd>Loyal customers and better operations and distribution.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>PG · WMT</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Restaurants &amp; Hospitality</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Restaurants, food concepts, hotels and venues.</dd></div><div><dt>What we look for</dt><dd>Proven concepts with room for new locations.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>MCD · MAR</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Transportation &amp; Logistics</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Trucking, delivery, warehousing and moving people and goods.</dd></div><div><dt>What we look for</dt><dd>Real assets and clear paths to better margins.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>UPS · ODFL</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Automotive</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Dealerships, repair shops, car washes and auto services.</dd></div><div><dt>What we look for</dt><dd>Steady local demand and strong locations.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>AN · PAG</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Technology &amp; Software</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Software and technology-enabled businesses.</dd></div><div><dt>What we look for</dt><dd>Recurring revenue and products customers depend on.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>MSFT · CRM</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Energy &amp; Utilities Services</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Fuel distribution, solar installers and energy services.</dd></div><div><dt>What we look for</dt><dd>Long-term contracts and steady cash flow.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>PWR · NEE</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Agriculture &amp; Food Production</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Farms, food processing and agricultural services.</dd></div><div><dt>What we look for</dt><dd>Land-backed businesses with steady demand.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>DE · ADM</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Education &amp; Childcare</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Schools, tutoring, training and childcare centers.</dd></div><div><dt>What we look for</dt><dd>Strong reputations and waiting lists.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>BFAM · LOPE</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Financial Services</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Insurance agencies, lenders and payment businesses.</dd></div><div><dt>What we look for</dt><dd>Recurring commissions and loyal clients.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>BRO · AJG</b></div>
-      </article>
-      <article class="type">
-        <div class="type-top"><h3>Media &amp; Marketing</h3><span class="pill">Open to opportunities</span></div>
-        <dl><div><dt>What it is</dt><dd>Agencies, publishers and marketing services.</dd></div><div><dt>What we look for</dt><dd>Long-term clients and repeatable services.</dd></div></dl>
-        <div class="tk"><span>On Robinhood</span><b>OMC</b></div>
+        <div class="type-top"><h3>Options Trading</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Trading listed options, managed directly by Eddie, to act on a specific view with a set amount at risk.</dd></div><div><dt>What we look for</dt><dd>A clear catalyst and a payoff that is large compared with what can be lost.</dd></div></dl>
       </article>
     </div>
   </div>
@@ -976,6 +911,7 @@ nav a[aria-current="page"]{color:var(--gold-hi)}
       <div><span class="eyebrow">VII · Stocks and public markets</span><h2>Public Equities</h2></div>
       <p>Public equities are shares of companies traded on stock exchanges. They give partners liquidity alongside longer-term private investments. Every holding is shown in the partner's portal with cost, current price and gain or loss.</p>
     </div>
+    <div class="grp-head"><h3>Ways to invest</h3><span>7 types</span></div>
     <div class="types">
       <article class="type">
         <div class="type-top"><h3>Large-Cap Stocks</h3><span class="pill">Open to opportunities</span></div>
@@ -1011,6 +947,79 @@ nav a[aria-current="page"]{color:var(--gold-hi)}
         <div class="type-top"><h3>REITs</h3><span class="pill">Open to opportunities</span></div>
         <dl><div><dt>What it is</dt><dd>Publicly traded real estate companies.</dd></div><div><dt>What we look for</dt><dd>Real estate exposure at a discount to private market value.</dd></div></dl>
         <div class="tk"><span>On Robinhood</span><b>VNQ</b></div>
+      </article>
+    </div>
+    <div class="grp-head"><h3>Industries</h3><span>14 types</span></div>
+    <div class="types">
+      <article class="type">
+        <div class="type-top"><h3>Healthcare</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Home care, clinics, outpatient programs and other providers.</dd></div><div><dt>What we look for</dt><dd>Licensed providers with steady demand and room to expand.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>HCA · EHC</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Business Services</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Companies that serve other businesses, from staffing to cleaning.</dd></div><div><dt>What we look for</dt><dd>Recurring revenue and long customer relationships.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>ADP · CTAS</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Real Estate Services</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Property management, brokerage and leasing companies.</dd></div><div><dt>What we look for</dt><dd>Contracts that renew and fit alongside our own properties.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>CBRE · JLL</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Manufacturing</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Companies that make products, parts and materials.</dd></div><div><dt>What we look for</dt><dd>Essential products, skilled teams and room to modernize.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>ITW · PH</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Consumer Brands &amp; Retail</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Brands and stores that sell to consumers.</dd></div><div><dt>What we look for</dt><dd>Loyal customers and better operations and distribution.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>PG · WMT</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Restaurants &amp; Hospitality</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Restaurants, food concepts, hotels and venues.</dd></div><div><dt>What we look for</dt><dd>Proven concepts with room for new locations.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>MCD · MAR</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Transportation &amp; Logistics</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Trucking, delivery, warehousing and moving people and goods.</dd></div><div><dt>What we look for</dt><dd>Real assets and clear paths to better margins.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>UPS · ODFL</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Automotive</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Dealerships, repair shops, car washes and auto services.</dd></div><div><dt>What we look for</dt><dd>Steady local demand and strong locations.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>AN · PAG</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Technology &amp; Software</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Software and technology-enabled businesses.</dd></div><div><dt>What we look for</dt><dd>Recurring revenue and products customers depend on.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>MSFT · CRM</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Energy &amp; Utilities Services</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Fuel distribution, solar installers and energy services.</dd></div><div><dt>What we look for</dt><dd>Long-term contracts and steady cash flow.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>PWR · NEE</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Agriculture &amp; Food Production</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Farms, food processing and agricultural services.</dd></div><div><dt>What we look for</dt><dd>Land-backed businesses with steady demand.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>DE · ADM</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Education &amp; Childcare</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Schools, tutoring, training and childcare centers.</dd></div><div><dt>What we look for</dt><dd>Strong reputations and waiting lists.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>BFAM · LOPE</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Financial Services</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Insurance agencies, lenders and payment businesses.</dd></div><div><dt>What we look for</dt><dd>Recurring commissions and loyal clients.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>BRO · AJG</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Media &amp; Marketing</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Agencies, publishers and marketing services.</dd></div><div><dt>What we look for</dt><dd>Long-term clients and repeatable services.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>OMC</b></div>
       </article>
     </div>
   </div>

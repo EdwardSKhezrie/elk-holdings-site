@@ -472,6 +472,6 @@ VIEWS.opt=p=>{const B=buildBook(),x=B.opts[p.k];if(!x)return VIEWS.portfolio();
    <p class="note">Every $1 ${esc(x.ticker)} finishes above $${K} is worth ${money(sh)}. Below $${K} the calls expire worthless. Before expiration they also carry time value. SNXX is a 2x daily leveraged Sandisk ETF and can drift from 2x Sandisk over time.</p>`};};
 /* go */
 (function(){const h=(location.hash||"").slice(1);if(["home","invest","portfolio","firm"].includes(h))S.tab=h;render(true)})();
-if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js",{scope:"../"}).catch(()=>{});
+if("serviceWorker" in navigator){let r0=!!navigator.serviceWorker.controller;navigator.serviceWorker.addEventListener("controllerchange",()=>{if(r0){r0=false;location.reload()}});navigator.serviceWorker.register("../sw.js",{scope:"../",updateViaCache:"none"}).then(r=>r.update()).catch(()=>{});}
 </script>
 </body></html>

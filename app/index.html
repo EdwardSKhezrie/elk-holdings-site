@@ -283,11 +283,12 @@ function dealIrr(land,soft,back,T){const cf=new Array(T+1).fill(0);cf[0]-=land;c
 /* Build one clean model of everything the signed-in partner holds */
 function buildBook(){
   const P=S.P,inv=P.investor,PR=S.prices.t||{};
-  const stocks=[],deals=[],pipeline=[];
+  const stocks=[],deals=[],pipeline=[],opts=[];
   const stock=(t,name,group,cat,shares,buy,costAmt)=>{const p=PR[t]||{},last=p.last||buy,prev=p.prev||last;
     stocks.push({t,name,group,cat,shares,buy,last,prev,cost:costAmt,value:shares*last,day:shares*(last-prev),date:p.lastDate||"",buyDate:p.buyDate||""})};
   (inv.other||[]).forEach(o=>{
     if(o.planned){o.alloc.forEach(([g])=>{(P.examples[g]||[]).forEach(([nm,amt])=>{const t=tkOf(nm),p=PR[t];if(!t)return;const buy=p&&p.buy?p.buy:null;if(!buy)return;stock(t,clean(nm),g,o.cat,amt/buy,buy,amt)})})}
+    (o.options||[]).forEach(x=>opts.push({...x,cat:o.cat,value:x.cost}));
     if(o.pipeline)pipeline.push({cat:o.cat,name:o.pipelineName||"Deal under review",detail:o.pipelineDetail||"",size:o.pipelineSize||""});
   });
   (inv.positions||[]).forEach(p=>stock(p.ticker,p.name,"Individual stock","Public Equities",p.shares,p.cost,p.shares*p.cost));
@@ -297,11 +298,12 @@ function buildBook(){
   const cats={};const add=(c,k,v)=>{cats[c]=cats[c]||{cat:c,cost:0,value:0,day:0,n:0};cats[c][k]+=v};
   stocks.forEach(s=>{add(s.cat,"cost",s.cost);add(s.cat,"value",s.value);add(s.cat,"day",s.day);add(s.cat,"n",1)});
   deals.forEach(x=>{add(x.cat,"cost",x.cost);add(x.cat,"value",x.value);add(x.cat,"n",1)});
+  opts.forEach(x=>{add(x.cat,"cost",x.cost);add(x.cat,"value",x.value);add(x.cat,"n",1)});
   pipeline.forEach(x=>{cats[x.cat]=cats[x.cat]||{cat:x.cat,cost:0,value:0,day:0,n:0}});
   const ORDER=["Operating Businesses","Real Estate","Fixed Income","Private Equity","Venture Capital","Service & Trade Businesses","Public Equities"];
   const catList=Object.values(cats).sort((a,b)=>ORDER.indexOf(a.cat)-ORDER.indexOf(b.cat));
   const T=catList.reduce((a,c)=>({cost:a.cost+c.cost,value:a.value+c.value,day:a.day+c.day}),{cost:0,value:0,day:0});
-  return{stocks,deals,pipeline,catList,T};
+  return{stocks,deals,pipeline,opts,catList,T};
 }
 /* Portfolio value over time from daily closes (history.json). Deals count at cost. */
 function series(B,filter){
@@ -365,7 +367,7 @@ VIEWS.portfolio=()=>{
       <span class="chg ${cls(g)}">${sgn(g)} (${pct(T.cost?g/T.cost:0)}) <span style="color:var(--dim);font-weight:500">all time</span></span></div>
     ${perfBlock(B,null,"pc")}
     <div class="cardgrid">
-      <div class="tile"><span>Invested</span><b class="num">${money(T.cost)}</b><small>${B.stocks.length+B.deals.length} holdings</small></div>
+      <div class="tile"><span>Invested</span><b class="num">${money(T.cost)}</b><small>${B.stocks.length+B.deals.length+B.opts.length} holdings</small></div>
       <div class="tile"><span>Prices as of</span><b>${fdate(S.prices.asof).replace(/, \d{4}/,"")}</b><small>updated every morning</small></div>
     </div>
     <h3 class="sec">Allocation</h3>
@@ -389,7 +391,7 @@ async function login(e){e.preventDefault();const u=$("#lu").value.trim().toLower
   catch(x){er.style.color="";er.textContent="That login and code don't match.";$("#lc").value="";$("#lb").disabled=false}}
 
 VIEWS.pcat=p=>{const B=buildBook(),c=B.catList.find(x=>x.cat===p.cat)||{cat:p.cat,cost:0,value:0,day:0};
-  const st=B.stocks.filter(s=>s.cat===p.cat),dl=B.deals.filter(x=>x.cat===p.cat),pl=B.pipeline.filter(x=>x.cat===p.cat);
+  const st=B.stocks.filter(s=>s.cat===p.cat),dl=B.deals.filter(x=>x.cat===p.cat),pl=B.pipeline.filter(x=>x.cat===p.cat),op=B.opts.filter(x=>x.cat===p.cat);
   const groups={};st.forEach(s=>{(groups[s.group]=groups[s.group]||[]).push(s)});
   const g=c.value-c.cost;
   return{title:p.cat,html:`
@@ -398,6 +400,7 @@ VIEWS.pcat=p=>{const B=buildBook(),c=B.catList.find(x=>x.cat===p.cat)||{cat:p.ca
       ${st.length?`<span class="chg ${cls(c.day)}">${sgn(c.day)} <span style="color:var(--dim);font-weight:500">last trading day</span></span>`:""}</div>
     ${st.length?perfBlock(B,s=>s.cat===p.cat,"cc"):""}
     ${dl.length?`<h3 class="sec">Hands-on investments</h3><div class="group">${dl.map(x=>`<button class="row" data-go="deal" data-p='${JSON.stringify({id:x.id})}'><span class="tx"><b>${esc(x.d.name)}</b><small>${esc(x.d.status)} · ${esc(x.d.city.split(",")[0])}</small></span><span class="rt"><b>${money(x.cost)}</b><small class="pos">+${money(x.proj)} proj.</small></span>${chev}</button>`).join("")}</div>`:""}
+    ${op.length?`<h3 class="sec">Options trading</h3><div class="group">${op.map(x=>{const u=(S.prices.t||{})[x.ticker]||{};return`<div class="row"><span class="tx"><b>${esc(x.ticker)} $${x.strike} ${esc(x.type)}s</b><small style="white-space:normal">${esc(x.side)} ${x.contracts.toLocaleString("en-US")} contracts at $${x.premium.toFixed(2)}${x.expiry?" · exp. "+fdate(x.expiry):""}${u.last?" · "+esc(x.ticker)+" $"+u.last.toFixed(2):""}</small></span><span class="rt"><b>${money(x.cost)}</b><small style="color:var(--dim)">at cost</small></span></div>`}).join("")}</div>`:""}
     ${pl.length?`<h3 class="sec">Under review</h3><div class="group">${pl.map(x=>`<div class="row"><span class="tx"><b>${esc(x.name)}</b><small style="white-space:normal">${esc(x.detail)}</small></span><span class="rt"><b>$0</b><small>invested</small></span></div>`).join("")}</div>`:""}
     ${Object.keys(groups).map(gn=>{const gs=groups[gn],gv=gs.reduce((a,s)=>a+s.value,0),gc=gs.reduce((a,s)=>a+s.cost,0);return`<h3 class="sec">${esc(gn)} · ${money(gv)} <span class="${cls(gv-gc)}" style="text-transform:none">${pct(gc?(gv-gc)/gc:0)}</span></h3><div class="group">${gs.map(stockRow).join("")}</div>`}).join("")}
     `,after:wireRanges};};

@@ -1364,7 +1364,8 @@ function openItem(key){
   else showPosition(+id);
 }
 /* Folds a partner's named deal into one of their positions */
-function eff(o,i){
+function eff(o,i){const r0=eff0(o,i);if(!o.options||!o.options.length)return r0;const r={...r0};const oc=o.options.reduce((t,x)=>t+x.cost,0);r.cost+=oc;r.value+=oc;return r}
+function eff0(o,i){
   if(!session.merge)return o;
   const ids=Object.keys(session.merge).filter(id=>session.merge[id]===i);
   if(!ids.length)return o;
@@ -1383,14 +1384,14 @@ function showOther(i){
     document.getElementById("detName").textContent="Operating businesses";
     const rows=(o.merged||[]).map(id=>{const d=DEALS[id],h=session.holdings[id],c=h.land+(d.soft+d.carry)*h.share;
       return `<tr><td><span class="nm"><b>${d.name}</b><small>Real estate development · ${d.city} · hands-on</small></span></td><td>${d.status}</td><td class="r">${fmt$(c)}</td><td class="r">${fmt$(model(d,d.price,d.build).net*h.share)}</td></tr>`}).join("")+
-      `<tr><td><span class="nm"><b>${o.pipelineName||"Deal under review"}</b><small>${o.pipelineDetail||""}</small></span></td><td>Under review</td><td class="r">$0</td><td class="r">—</td></tr>`;
+      `<tr><td><span class="nm"><b>${o.pipelineName||"Deal under review"}</b><small>${o.pipelineDetail||""}</small></span></td><td>Under review</td><td class="r">$0</td><td class="r">—</td></tr>`+(o.options||[]).map(x=>{const u=PRICES.t[x.ticker]||{};return `<tr><td><span class="nm"><b>Options · ${x.ticker} $${x.strike} ${x.type}s</b><small>${x.side} ${x.contracts.toLocaleString("en-US")} contracts at $${x.premium.toFixed(2)} ($${(x.premium*100).toFixed(0)} each) · ${x.under}${x.expiry?" · expires "+fmtDate(x.expiry):""} · opened ${fmtDate(x.opened)}${u.last?" · "+x.ticker+" last close $"+u.last.toFixed(2)+" ("+fmtDate(u.lastDate)+")":""}</small></span></td><td>Open</td><td class="r">${fmt$(x.cost)}</td><td class="r">—</td></tr>`}).join("");
     document.getElementById("dealView").innerHTML=`
       <div class="kpis">
-        <div><span>Invested</span><b>${fmt$(o.cost)}</b><em>${o.merged&&o.merged.length?o.merged.map(id=>DEALS[id].name).join(", ")+", at cost":"no capital committed yet"}</em></div>
-        <div><span>Active businesses</span><b>${(o.merged||[]).length}</b><em>run hands-on by ELK</em></div>
+        <div><span>Invested</span><b>${fmt$(o.cost)}</b><em>${o.merged&&o.merged.length?o.merged.map(id=>DEALS[id].name).join(", ")+", at cost":"no capital committed yet"}${o.options&&o.options.length?" + options at cost":""}</em></div>
+        <div><span>Active businesses</span><b>${(o.merged||[]).length+(o.options&&o.options.length?1:0)}</b><em>run hands-on by Eddie${o.options&&o.options.length?" · incl. options trading":""}</em></div>
         <div><span>Under review</span><b>${o.pipelineSize||"—"}</b><em>${(o.pipelineName||"").toLowerCase()}</em></div>
       </div>
-      <div class="panel"><p class="eyebrow">About this category</p><p class="muted">Operating businesses are the companies and projects Eddie runs hands-on, in any industry, rather than holds to diversify. They are owned directly, not through Robinhood.</p></div>
+      <div class="panel"><p class="eyebrow">About this category</p><p class="muted">Operating businesses are the companies, projects and trading Eddie runs hands-on, in any industry, rather than holds to diversify. Options are shown at cost until they are closed or repriced.</p></div>
       <div class="holdings" style="margin-bottom:0"><table>
         <thead><tr><th>Business</th><th>Status</th><th class="r">Invested</th><th class="r">Projected profit</th></tr></thead>
         <tbody>${rows}</tbody></table></div>

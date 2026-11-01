@@ -288,7 +288,7 @@ function buildBook(){
     stocks.push({t,name,group,cat,shares,buy,last,prev,cost:costAmt,value:shares*last,day:shares*(last-prev),date:p.lastDate||"",buyDate:p.buyDate||""})};
   (inv.other||[]).forEach(o=>{
     if(o.planned){o.alloc.forEach(([g])=>{(P.examples[g]||[]).forEach(([nm,amt])=>{const t=tkOf(nm),p=PR[t];if(!t)return;const buy=p&&p.buy?p.buy:null;if(!buy)return;stock(t,clean(nm),g,o.cat,amt/buy,buy,amt)})})}
-    (o.options||[]).forEach(x=>opts.push({...x,cat:o.cat,value:x.cost}));
+    (o.options||[]).forEach(x=>{const v=optValue(x);opts.push({...x,cat:o.cat,value:v==null?x.cost:v})});
     if(o.pipeline)pipeline.push({cat:o.cat,name:o.pipelineName||"Deal under review",detail:o.pipelineDetail||"",size:o.pipelineSize||""});
   });
   (inv.positions||[]).forEach(p=>stock(p.ticker,p.name,"Individual stock","Public Equities",p.shares,p.cost,p.shares*p.cost));
@@ -361,7 +361,7 @@ VIEWS.portfolio=()=>{
   const B=buildBook(),T=B.T,g=T.value-T.cost;
   const stockV=B.stocks.reduce((a,s)=>a+s.value,0);
   return{title:"Portfolio",right:'<button data-act="out" id="out">Sign out</button>',html:`
-    <div class="pv"><span class="kicker">${esc(S.P.investor.name)}</span>
+    ${promoteHTML(B)}<div class="pv"><span class="kicker">${esc(S.P.investor.name)}</span>
       <span class="big">${money(T.value)}</span>
       <span class="chg ${cls(T.day)}">${sgn(T.day)} (${pct(stockV?T.day/(stockV-T.day):0)}) <span style="color:var(--dim);font-weight:500">last trading day</span></span>
       <span class="chg ${cls(g)}">${sgn(g)} (${pct(T.cost?g/T.cost:0)}) <span style="color:var(--dim);font-weight:500">all time</span></span></div>
@@ -433,8 +433,8 @@ VIEWS.deal=p=>{const B=buildBook(),x=B.deals.find(z=>z.id===p.id);if(!x)return V
     <div><span class="kicker">${esc(x.cat)} · ${esc(d.status)}</span><h2 class="large">${esc(d.name)}</h2><p class="lede" style="margin-top:6px">${esc(d.city)} · ${esc(d.type)}</p></div>
     <div class="photos">${d.photos.map(([k,cap])=>S.P.images[k]?`<figure><img src="${S.P.images[k]}" alt=""><figcaption>${esc(cap)}</figcaption></figure>`:"").join("")}</div>
     <div class="cardgrid">
-      <div class="tile"><span>Your capital</span><b class="num">${money(x.cost)}</b><small>${(x.h.share*100).toFixed(0)}% ownership</small></div>
-      <div class="tile"><span>Projected profit</span><b class="num pos">${money(x.proj)}</b><small>your share</small></div>
+      <div class="tile"><span>${S.P.investor.promote?"Capital":"Your capital"}</span><b class="num">${money(x.cost)}</b><small>${S.P.investor.promote?esc(S.P.investor.promote.split):(x.h.share*100).toFixed(0)+"% ownership"}</small></div>
+      <div class="tile"><span>Projected profit</span><b class="num pos">${money(x.proj)}</b><small>${S.P.investor.promote?esc(S.P.investor.promote.ownerShare):"your share"}</small></div>
       <div class="tile"><span>Multiple</span><b class="num">${x.mult.toFixed(2)}x</b><small>projected</small></div>
       <div class="tile"><span>IRR</span><b class="num">${x.irr==null?"—":(x.irr*100).toFixed(1)+"%"}</b><small>~2.5-year plan</small></div>
     </div>
@@ -448,6 +448,19 @@ VIEWS.deal=p=>{const B=buildBook(),x=B.deals.find(z=>z.id===p.id);if(!x)return V
     <div class="group">${d.updates.map(z=>`<div class="row"><span class="tx"><b style="white-space:normal">${esc(z.head)}</b><small>${esc(z.m)}</small></span></div>`).join("")}</div>`};};
 
 
+
+/* A partner's percentage of net profit, by sector, from the owner's book */
+function promoteHTML(B){const pr=S.P.investor.promote;if(!pr)return"";const p=pr.pct,P=Math.round(p*100);
+  const rows=B.catList.map(c=>({name:c.cat,cost:c.cost,value:c.value,profit:Math.abs(c.value-c.cost)<0.5?0:c.value-c.cost,
+    proj:B.deals.filter(x=>x.cat===c.cat).reduce((a,x)=>a+model(x.d,x.d.price,x.d.build).net,0)}));
+  const mine=r=>p*Math.max(0,r.profit),tot=rows.reduce((a,r)=>a+mine(r),0),proj=rows.reduce((a,r)=>a+p*r.proj,0),net=rows.reduce((a,r)=>a+r.profit,0);
+  return`<div class="hero" style="padding:20px 18px;gap:10px"><span class="kicker">Your ${P}% of ELK's net profit</span>
+    <span class="big" style="font-family:var(--body);font-weight:700;font-size:2.3rem;color:var(--gold-hi)">${money(tot)}</span>
+    <small style="color:var(--muted);font-size:.84rem;line-height:1.45">${esc(pr.owner)} owns 100% of the book (${esc(pr.note)}). You earn ${P}% of net profit in every sector.${proj?` Plus <b style="color:var(--ink)">${money(proj)}</b> projected from development deals at completion.`:""}</small></div>
+  <h3 class="sec">Your ${P}% by sector</h3>
+  <div class="group">${rows.map(r=>`<div class="row"><span class="sw" style="background:${COLORS[r.name]}"></span><span class="tx"><b>${esc(r.name)}</b><small>Net profit <span class="${cls(r.profit)}">${sgn(r.profit)}</span>${r.proj?" · "+money(p*r.proj)+" projected":""}</small></span><span class="rt"><b style="color:var(--gold-hi)">${money(mine(r))}</b><small style="color:var(--dim)">${r.profit<0?"sector at a loss":"your "+P+"%"}</small></span></div>`).join("")}</div>
+  <p class="note">Figured sector by sector on profits only; a sector at a loss pays $0. Netted across all sectors it would be ${money(p*Math.max(0,net))}. Values as of the ${fdate(S.prices.asof)} close.</p>
+  <h3 class="sec">ELK book · ${esc(pr.owner)} 100%</h3>`}
 function optValue(x){const q=((S.prices||{}).opt||{})[x.contract];return q&&q.last!=null?x.contracts*100*q.last:null}
 VIEWS.opt=p=>{const B=buildBook(),x=B.opts[p.k];if(!x)return VIEWS.portfolio();
   const u=(S.prices.t||{})[x.ticker]||{},q=((S.prices||{}).opt||{})[x.contract]||{},Sx=u.last,K=x.strike,be=K+x.premium,sh=x.contracts*100;

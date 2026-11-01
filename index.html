@@ -283,7 +283,7 @@ footer.site-foot{border-top:1px solid var(--line);padding-block:64px 32px;color:
 @media (max-width:900px){.pf-head{display:none}.pf-row{grid-template-columns:1fr;gap:16px}.pf-lab{display:block}}
 
 /* Portfolio overview (portal) */
-.ov-tiles{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:24px}
+.ov-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:24px}
 .ov-tiles div{background:var(--surface);padding:22px;display:flex;flex-direction:column;gap:6px;min-width:0}
 .ov-tiles span{font-family:var(--mark);font-size:.58rem;letter-spacing:.22em;color:var(--dim);text-transform:uppercase}
 .ov-tiles b{font-family:var(--display);font-weight:500;font-size:1.9rem;line-height:1.1;font-variant-numeric:tabular-nums}
@@ -1254,7 +1254,7 @@ function openRoom(){
       rows+=`<tr class="h" data-key="${x.key}" tabindex="0"><td><span class="nm"><b>${x.name}</b><small>${x.sub}</small></span></td><td>${x.status}</td><td class="r">${fmt$(x.cost)}</td><td class="r">${fmt$(x.value)}${x.status!=="Planned"&&x.cost>0&&x.value===x.cost?'<br><small class="muted">at cost</small>':""}</td><td class="r ${g>0?"pos":g<0?"neg":""}">${g?sign(g):"—"}${g?'<br><small>'+(g/x.cost*100).toFixed(1)+'%</small>':""}</td><td class="r">${x.proj!==undefined?fmt$(x.proj):"—"}</td></tr>`;});});
   document.getElementById("overview").innerHTML=`
     <div class="ov-tiles">
-      <div><span>Total invested</span><b>${fmt$(cost)}</b><em>across ${items.filter(x=>x.cost>0).length} position${items.filter(x=>x.cost>0).length===1?"":"s"}</em></div>
+      ${session.promote?(()=>{const r=promoteRows(),p=session.promote.pct,m=r.reduce((t,x)=>t+p*Math.max(0,x.profit),0),pj=r.reduce((t,x)=>t+(x.proj?p*x.proj:0),0);return `<div style="background:linear-gradient(135deg,rgba(201,164,92,.16),transparent 70%),var(--surface)"><span>Your ${Math.round(p*100)}% of net profit</span><b style="color:var(--gold-hi)">${fmt$(m)}</b><em>today${pj?" · + "+fmt$(pj)+" projected":""}</em></div>`})():""}      <div><span>${session.promote?"ELK invested":"Total invested"}</span><b>${fmt$(cost)}</b><em>across ${items.filter(x=>x.cost>0).length} position${items.filter(x=>x.cost>0).length===1?"":"s"}</em></div>
       <div><span>Current value</span><b>${fmt$(value)}</b><em>stocks at ${fmtDate(PRICES.asof)} close; deals at cost</em></div>
       <div><span>Gain to date</span><b class="${gain>0?"pos":gain<0?"neg":""}">${gain?sign(gain):"$0"}</b><em>${gain?(gain/cost*100).toFixed(2)+"% on total invested":"bought "+fmtDate(PRICES.buyDate)+", no change yet"}</em></div>
       <div><span>Last trading day</span><b class="${dayT>0?"pos":dayT<0?"neg":""}">${dayT?sign(dayT):"$0"}</b><em>${fmtDate(PRICES.asof)} · ${cats.length} categories</em></div>

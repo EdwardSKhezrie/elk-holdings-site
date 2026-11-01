@@ -454,7 +454,7 @@ function promoteHTML(B){const pr=S.P.investor.promote;if(!pr)return"";const p=pr
   const rows=B.catList.map(c=>({name:c.cat,cost:c.cost,value:c.value,profit:Math.abs(c.value-c.cost)<0.5?0:c.value-c.cost,
     proj:B.deals.filter(x=>x.cat===c.cat).reduce((a,x)=>a+model(x.d,x.d.price,x.d.build).net,0)}));
   const mine=r=>p*Math.max(0,r.profit),tot=rows.reduce((a,r)=>a+mine(r),0),proj=rows.reduce((a,r)=>a+p*r.proj,0),net=rows.reduce((a,r)=>a+r.profit,0);
-  return`<div class="hero" style="padding:20px 18px;gap:10px"><span class="kicker">Your ${P}% of ELK's net profit</span>
+  return`<div style="display:flex;flex-direction:column;gap:8px;padding:20px 18px;border-radius:16px;border:1px solid var(--line2);background:linear-gradient(135deg,rgba(201,164,92,.12),transparent 60%),var(--card)"><span class="kicker">Your ${P}% of ELK's net profit</span>
     <span class="big" style="font-family:var(--body);font-weight:700;font-size:2.3rem;color:var(--gold-hi)">${money(tot)}</span>
     <small style="color:var(--muted);font-size:.84rem;line-height:1.45">${esc(pr.owner)} owns 100% of the book (${esc(pr.note)}). You earn ${P}% of net profit in every sector.${proj?` Plus <b style="color:var(--ink)">${money(proj)}</b> projected from development deals at completion.`:""}</small></div>
   <h3 class="sec">Your ${P}% by sector</h3>

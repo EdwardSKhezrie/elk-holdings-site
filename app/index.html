@@ -361,7 +361,7 @@ VIEWS.portfolio=()=>{
   const B=buildBook(),T=B.T,g=T.value-T.cost;
   const stockV=B.stocks.reduce((a,s)=>a+s.value,0);
   return{title:"Portfolio",right:'<button data-act="out" id="out">Sign out</button>',html:`
-    ${promoteHTML(B)}<div class="pv"><span class="kicker">${esc(S.P.investor.name)}</span>
+    ${promoteHTML(B)}${payoutHTML(B)}<div class="pv"><span class="kicker">${esc(S.P.investor.name)}</span>
       <span class="big">${money(T.value)}</span>
       <span class="chg ${cls(T.day)}">${sgn(T.day)} (${pct(stockV?T.day/(stockV-T.day):0)}) <span style="color:var(--dim);font-weight:500">last trading day</span></span>
       <span class="chg ${cls(g)}">${sgn(g)} (${pct(T.cost?g/T.cost:0)}) <span style="color:var(--dim);font-weight:500">all time</span></span></div>
@@ -463,6 +463,22 @@ function promoteHTML(B){const pr=S.P.investor.promote;if(!pr)return"";const p=pr
   <div class="group">${rows.map(r=>`<div class="row"><span class="sw" style="background:${COLORS[r.name]}"></span><span class="tx"><b>${esc(r.name)}</b><small>Net profit <span class="${cls(r.profit)}">${sgn(r.profit)}</span>${r.proj?" · "+money(p*r.proj)+" projected":""}</small></span><span class="rt"><b style="color:var(--gold-hi)">${money(mine(r))}</b><small style="color:var(--dim)">${r.profit<0?"sector at a loss":"your "+P+"%"}</small></span></div>`).join("")}</div>
   <p class="note">Figured sector by sector on profits only; a sector at a loss pays $0. Netted across all sectors it would be ${money(p*Math.max(0,net))}. Values as of the ${fdate(S.prices.asof)} close.</p>
   <h3 class="sec">ELK book · ${esc(pr.owner)} 100%</h3>`}
+
+function payoutHTML(B){const po=S.P.investor.payout;if(!po)return"";const p=po.pct,P=Math.round(p*100),first=po.to.split(" ")[0];
+  const elk=B.stocks.filter(x=>x.group!=="Individual stock"),own=B.stocks.filter(x=>x.group==="Individual stock");
+  const cats=[...new Set(elk.map(x=>x.cat).concat(B.deals.map(x=>x.cat),B.opts.map(x=>x.cat)))];
+  const rows=cats.map(c=>{const st=elk.filter(x=>x.cat===c),dl=B.deals.filter(x=>x.cat===c),op=B.opts.filter(x=>x.cat===c);
+    const cost=st.reduce((a,x)=>a+x.cost,0)+dl.reduce((a,x)=>a+x.cost,0)+op.reduce((a,x)=>a+x.cost,0),value=st.reduce((a,x)=>a+x.value,0)+dl.reduce((a,x)=>a+x.cost,0)+op.reduce((a,x)=>a+x.value,0);
+    return{name:c,profit:Math.abs(value-cost)<0.5?0:value-cost,proj:dl.reduce((a,x)=>a+x.proj,0)}});
+  own.forEach(x=>rows.push({name:x.name+" ("+x.t+")",profit:x.value-x.cost,own:true,proj:0}));
+  const fee=r=>r.own?0:p*Math.max(0,r.profit),keep=r=>r.profit-fee(r),T=k=>rows.reduce((a,r)=>a+k(r),0),tk=T(keep),pj=T(r=>r.proj*(1-p));
+  return`<div style="display:flex;flex-direction:column;gap:8px;padding:20px 18px;border-radius:16px;border:1px solid var(--line2);background:linear-gradient(135deg,rgba(201,164,92,.12),transparent 60%),var(--card)"><span class="kicker">Your profit after ${esc(first)}'s ${P}%</span>
+    <span class="big ${cls(tk)}" style="font-family:var(--body);font-weight:700;font-size:2.3rem">${sgn(tk)}</span>
+    <small style="color:var(--muted);font-size:.84rem;line-height:1.45">${esc(po.to)} earns ${P}% of ELK's net profit in each sector; you keep the rest. ${esc(first)}'s share today: ${money(T(fee))}.${pj?` Plus <b style="color:var(--ink)">${money(pj)}</b> you keep from development deals at completion.`:""}</small></div>
+  <h3 class="sec">What you keep, by sector</h3>
+  <div class="group">${rows.map(r=>`<div class="row"><span class="tx"><b>${esc(r.name)}</b><small>Profit <span class="${cls(r.profit)}">${sgn(r.profit)}</span> · ${r.own?"yours, not shared":esc(first)+" "+money(fee(r))}${r.proj?" · "+money(r.proj*(1-p))+" projected":""}</small></span><span class="rt"><b class="${cls(keep(r))}">${sgn(keep(r))}</b><small style="color:var(--dim)">you keep</small></span></div>`).join("")}</div>
+  <p class="note">Values as of the ${fdate(S.prices.asof)} close. The ${P}% applies to profits only, sector by sector.</p>
+  <h3 class="sec">Your full book</h3>`}
 function optValue(x){const q=((S.prices||{}).opt||{})[x.contract];return q&&q.last!=null?x.contracts*100*q.last:null}
 VIEWS.opt=p=>{const B=buildBook(),x=B.opts[p.k];if(!x)return VIEWS.portfolio();
   const u=(S.prices.t||{})[x.ticker]||{},q=((S.prices||{}).opt||{})[x.contract]||{},Sx=u.last,K=x.strike,be=K+x.premium,sh=x.contracts*100;

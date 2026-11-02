@@ -1261,7 +1261,7 @@ function openRoom(){
       <div><span>Current value</span><b>${fmt$(value)}</b><em>stocks at ${fmtDate(PRICES.asof)} close; deals at cost</em></div>
       <div><span>Gain to date</span><b class="${gain>0?"pos":gain<0?"neg":""}">${gain?sign(gain):"$0"}</b><em>${gain?(gain/cost*100).toFixed(2)+"% on total invested":"bought "+fmtDate(PRICES.buyDate)+", no change yet"}</em></div>
       <div><span>Last trading day</span><b class="${dayT>0?"pos":dayT<0?"neg":""}">${dayT?sign(dayT):"$0"}</b><em>${fmtDate(PRICES.asof)} · ${cats.length} categories</em></div>
-    </div>${promoteBlock()}${stocksBlock(value)}
+    </div>${promoteBlock()}${payoutBlock()}${stocksBlock(value)}
     `;
   wireStocks();
   const op=items.find(x=>x.cat==="Operating Businesses");
@@ -1301,6 +1301,38 @@ function promoteBlock(){
     <tr class="tot"><td>Total</td><td class="r">${fmt$(tot.cost)}</td><td class="r">${fmt$(tot.value)}</td><td class="r ${cl(tot.profit)}">${s$(tot.profit)}</td><td class="r you">${fmt$(tot.mine)}</td><td class="r">${tot.proj?fmt$(tot.proj):"—"}</td></tr>
     </tbody></table>
     <p class="muted" style="font-size:.8rem">Your ${P}% is figured sector by sector on profits only: a sector at a loss pays $0 and is not netted against the others. If all sectors were netted together, your ${P}% would be ${fmt$(p*Math.max(0,tot.profit))} today. Stocks use the latest daily closes; development deals are at cost until sold, so their share shows as projected.</p>
+  </section>`;
+}
+
+/* Owner view: profit kept after the partner's percentage of net profit */
+function payoutRows(){
+  const P=session.payout;if(!P)return null;const rows=[];
+  (session.other||[]).forEach((o0,i)=>{const o=eff(o0,i);
+    if(o.planned){const v=posCalc(o).value;rows.push({name:o.cat,sub:o.type,cost:o.cost,value:v,profit:Math.abs(v-o.cost)<0.5?0:v-o.cost});}
+    else if(o.pipeline){
+      (o.merged||[]).forEach(id=>{const d=DEALS[id],h=session.holdings[id],c=h.land+(d.soft+d.carry)*h.share,pj=model(d,d.price,d.build).net*h.share;
+        rows.push({name:"Operating · "+d.name,sub:"your "+Math.round(h.share*100)+"% · at cost until sold",cost:c,value:c,profit:0,proj:pj});});
+      (o.options||[]).forEach(x=>{const v=optVal(x);rows.push({name:"Operating · "+x.ticker+" $"+x.strike+" "+x.type.toLowerCase()+"s",sub:v==null?"at cost until a price is entered":"option last price",cost:x.cost,value:v==null?x.cost:v,profit:v==null?0:v-x.cost});});
+    }});
+  (session.positions||[]).forEach(p=>{const pd=PRICES.t[p.ticker]||{},last=pd.last||p.cost,c=p.shares*p.cost,v=p.shares*last;
+    rows.push({name:p.name+" ("+p.ticker+")",sub:"your own position · not part of ELK",cost:c,value:v,profit:v-c,own:true});});
+  return rows;
+}
+function payoutBlock(){
+  const rows=payoutRows();if(!rows)return "";const p=session.payout.pct,P=Math.round(p*100),who=session.payout.to;
+  const fee=r=>r.own?0:p*Math.max(0,r.profit),keep=r=>r.profit-fee(r);
+  const T=k=>rows.reduce((a,r)=>a+k(r),0);
+  const tot={cost:T(r=>r.cost),profit:T(r=>r.profit),fee:T(fee),keep:T(keep),pj:T(r=>r.proj||0),pjFee:T(r=>r.proj?p*r.proj:0)};
+  const s$=n=>(n>0?"+":n<0?"-":"")+fmt$(Math.abs(n)),cl=n=>n>0?"pos":n<0?"neg":"";
+  return `<section class="promo">
+    <div class="promo-top"><div><p class="eyebrow">Your profit after ${who}'s ${P}%</p><h3>What you keep today</h3>
+      <p class="muted" style="max-width:62ch;font-size:.92rem;margin-top:8px">You own 100% of ELK's investments. ${who} earns ${P}% of the net profit in each sector; you keep the rest. Values as of the ${fmtDate(PRICES.asof)} close.</p></div>
+      <div class="promo-big"><b class="${cl(tot.keep)}">${s$(tot.keep)}</b><span>your profit after ${P}% today</span>${tot.pj?`<br><span>+ ${fmt$(tot.pj-tot.pjFee)} projected from development deals at completion</span>`:""}</div></div>
+    <table><thead><tr><th>Sector</th><th class="r">Invested</th><th class="r">Net profit</th><th class="r">${who.split(" ")[0]}'s ${P}%</th><th class="r">You keep today</th><th class="r">You keep, projected</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr><td><b>${r.name}</b><small>${r.sub||""}</small></td><td class="r">${fmt$(r.cost)}</td><td class="r ${cl(r.profit)}">${s$(r.profit)}</td><td class="r">${r.own?"—":fmt$(fee(r))}${!r.own&&r.profit<0?"<small>no fee on a loss</small>":""}</td><td class="r you ${cl(keep(r))}">${s$(keep(r))}</td><td class="r">${r.proj?fmt$(r.proj*(1-p))+`<small>of ${fmt$(r.proj)} projected · ${fmt$(r.proj*p)} to ${who.split(" ")[0]}</small>`:"—"}</td></tr>`).join("")}
+    <tr class="tot"><td>Total</td><td class="r">${fmt$(tot.cost)}</td><td class="r ${cl(tot.profit)}">${s$(tot.profit)}</td><td class="r">${fmt$(tot.fee)}</td><td class="r you ${cl(tot.keep)}">${s$(tot.keep)}</td><td class="r">${tot.pj?fmt$(tot.pj-tot.pjFee):"—"}</td></tr>
+    </tbody></table>
+    <p class="muted" style="font-size:.8rem">The ${P}% is figured sector by sector on profits only, so a sector at a loss pays nothing and you carry the full loss. Your own positions outside ELK are not shared. Development deals are at cost until sold, so their split shows as projected.</p>
   </section>`;
 }
 /* Options detail */

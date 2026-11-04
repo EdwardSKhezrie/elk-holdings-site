@@ -14,29 +14,76 @@ START = "2026-10-21"          # first date of history.json
 UA = "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36"
 
 
-def fetch(sym):
+SRC = Counter()
+FAILS = Counter()
+
+
+def _get(url, timeout=12):
+    req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json,text/csv,*/*"})
+    with urllib.request.urlopen(req, timeout=timeout) as r:
+        return r.read().decode("utf-8", "replace")
+
+
+def _yahoo(sym):
     q = urllib.parse.quote(sym)
     for host in ("query1", "query2"):
-        url = f"https://{host}.finance.yahoo.com/v8/finance/chart/{q}?range=3mo&interval=1d&includePrePost=false"
-        for attempt in range(3):
-            try:
-                req = urllib.request.Request(url, headers={"User-Agent": UA, "Accept": "application/json"})
-                with urllib.request.urlopen(req, timeout=20) as r:
-                    res = json.load(r)["chart"]["result"][0]
-                off = res["meta"].get("gmtoffset", -18000)
-                ts = res.get("timestamp") or []
-                cl = res["indicators"]["quote"][0].get("close") or []
-                out = {}
-                for t, c in zip(ts, cl):
-                    if c is None:
-                        continue
-                    d = datetime.fromtimestamp(t + off, timezone.utc).strftime("%Y-%m-%d")
-                    out[d] = round(c, 2) if c >= 1 else round(c, 4)
+        try:
+            res = json.loads(_get(f"https://{host}.finance.yahoo.com/v8/finance/chart/{q}?range=3mo&interval=1d"))["chart"]["result"][0]
+            off = res["meta"].get("gmtoffset", -18000)
+            out = {}
+            for t, c in zip(res.get("timestamp") or [], res["indicators"]["quote"][0].get("close") or []):
+                if c is not None:
+                    out[datetime.fromtimestamp(t + off, timezone.utc).strftime("%Y-%m-%d")] = c
+            if out:
                 return out
-            except Exception as e:
-                err = e
-                time.sleep(2 + attempt * 3)
-    print(f"  ! {sym}: {err}", file=sys.stderr)
+        except Exception:
+            time.sleep(1)
+    return None
+
+
+def _nasdaq(sym):
+    frm = (datetime.now(timezone.utc) - timedelta(days=90)).strftime("%Y-%m-%d")
+    for ac in ("stocks", "etf"):
+        try:
+            d = json.loads(_get(f"https://api.nasdaq.com/api/quote/{sym}/historical?assetclass={ac}&fromdate={frm}&limit=90"))
+            rows = (((d or {}).get("data") or {}).get("tradesTable") or {}).get("rows") or []
+            out = {}
+            for r in rows:
+                m, dd, y = r["date"].split("/")
+                out[f"{y}-{m}-{dd}"] = float(r["close"].replace("$", "").replace(",", ""))
+            if out:
+                return out
+        except Exception:
+            pass
+    return None
+
+
+def _stooq(sym):
+    try:
+        txt = _get(f"https://stooq.com/q/d/l/?s={sym.lower()}.us&i=d")
+        out = {}
+        for line in txt.strip().splitlines()[1:]:
+            p = line.split(",")
+            if len(p) >= 5 and p[0] >= START:
+                out[p[0]] = float(p[4])
+        return out or None
+    except Exception:
+        return None
+
+
+def fetch(sym, option=False):
+    srcs = [("yahoo", _yahoo)] if option else [("yahoo", _yahoo), ("nasdaq", _nasdaq), ("stooq", _stooq)]
+    for name, fn in srcs:
+        if FAILS[name] >= 6 and not SRC[name]:      # source looks blocked today: stop wasting time on it
+            continue
+        out = fn(sym)
+        if not out:
+            FAILS[name] += 1
+            continue
+        if out:
+            SRC[name] += 1
+            return {d: (round(c, 2) if c >= 1 else round(c, 4)) for d, c in out.items()}
+    print(f"  ! {sym}: no source returned data", file=sys.stderr)
     return None
 
 
@@ -54,7 +101,7 @@ def main():
     series, missing, odd = {}, [], []
     for tk in sorted(P["t"]):
         s = fetch(tk)
-        time.sleep(0.4)
+        time.sleep(0.2)
         if not s:
             missing.append(tk)
             continue
@@ -81,7 +128,7 @@ def main():
 
     # Option contracts (e.g. SNXX270115C00009000): last traded price per share
     for sym, q in (P.get("opt") or {}).items():
-        s = fetch(sym)
+        s = fetch(sym, option=True)
         if s:
             if not closed:
                 s.pop(today, None)
@@ -114,6 +161,10 @@ def main():
     with open(hp, "w") as f:
         json.dump(H, f, separators=(",", ":"))
 
+    summary = (f"Run {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC: updated {updated} of {len(P['t'])} tickers to {P['asof']}; "
+               f"sources {dict(SRC)}; no data: {', '.join(missing) or 'none'}; skipped: {', '.join(odd) or 'none'}")
+    with open(os.path.join(ROOT, "tools", "last_price_run.txt"), "w") as f:
+        f.write(summary + "\n")
     print(f"Updated {updated} tickers; prices as of {P['asof']}; history has {len(H['dates'])} days "
           f"({H['dates'][0]} to {H['dates'][-1]}).")
     if missing:

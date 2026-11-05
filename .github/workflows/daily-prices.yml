@@ -2,7 +2,7 @@ name: Daily prices
 
 on:
   schedule:
-    - cron: "25 22 * * 1-5"   # weekdays ~5:25 PM ET (winter) / 6:25 PM ET (summer), after the close
+    - cron: "15 1 * * 2-6"    # Mon-Fri evenings ~8:15 PM ET, once the day's official closes are posted
     - cron: "40 11 * * 2-6"   # next-morning retry, in case the evening run was skipped or delayed
   workflow_dispatch: {}
   push:

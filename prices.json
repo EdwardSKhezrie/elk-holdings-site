@@ -1,559 +1,559 @@
 {
-"asof": "2026-11-12",
+"asof": "2026-11-13",
 "buyDate": "2026-10-21",
 "t": {
 "URI": {
 "buy": 1068.98,
 "buyDate": "2026-10-21",
-"last": 1139.14,
-"lastDate": "2026-11-12",
-"prev": 1150.8
+"last": 1124.56,
+"lastDate": "2026-11-13",
+"prev": 1139.14
 },
 "AVGO": {
 "buy": 337.8,
 "buyDate": "2026-10-21",
-"last": 364.36,
-"lastDate": "2026-11-12",
-"prev": 345.22
+"last": 347.01,
+"lastDate": "2026-11-13",
+"prev": 364.36
 },
 "MU": {
 "buy": 913.67,
 "buyDate": "2026-10-21",
-"last": 798.44,
-"lastDate": "2026-11-12",
-"prev": 811.3
+"last": 778.31,
+"lastDate": "2026-11-13",
+"prev": 798.44
 },
 "VOO": {
 "buy": 710.72,
 "buyDate": "2026-10-21",
-"last": 696.0,
-"lastDate": "2026-11-12",
-"prev": 698.35
+"last": 693.38,
+"lastDate": "2026-11-13",
+"prev": 696.0
 },
 "QQQ": {
 "buy": 725.2,
 "buyDate": "2026-10-21",
-"last": 688.17,
-"lastDate": "2026-11-12",
-"prev": 690.38
+"last": 679.89,
+"lastDate": "2026-11-13",
+"prev": 688.17
 },
 "SCHD": {
 "buy": 34.65,
 "buyDate": "2026-10-21",
-"last": 35.93,
-"lastDate": "2026-11-12",
-"prev": 36.02
+"last": 36.12,
+"lastDate": "2026-11-13",
+"prev": 35.93
 },
 "JNJ": {
 "buy": 257.78,
 "buyDate": "2026-10-21",
-"last": 283.52,
-"lastDate": "2026-11-12",
-"prev": 280.41
+"last": 285.75,
+"lastDate": "2026-11-13",
+"prev": 283.52
 },
 "VXUS": {
 "buy": 84.0,
 "buyDate": "2026-10-21",
-"last": 82.66,
-"lastDate": "2026-11-12",
-"prev": 83.44
+"last": 82.64,
+"lastDate": "2026-11-13",
+"prev": 82.66
 },
 "TSM": {
 "buy": 431.89,
 "buyDate": "2026-10-21",
-"last": 405.49,
-"lastDate": "2026-11-12",
-"prev": 413.35
+"last": 398.73,
+"lastDate": "2026-11-13",
+"prev": 405.49
 },
 "ASML": {
 "buy": 1676.69,
 "buyDate": "2026-10-21",
-"last": 1497.12,
-"lastDate": "2026-11-12",
-"prev": 1534.42
+"last": 1495.16,
+"lastDate": "2026-11-13",
+"prev": 1497.12
 },
 "GWW": {
 "buy": 1351.87,
 "buyDate": "2026-10-21",
-"last": 1502.61,
-"lastDate": "2026-11-12",
-"prev": 1486.53
+"last": 1489.3,
+"lastDate": "2026-11-13",
+"prev": 1502.61
 },
 "FAST": {
 "buy": 52.49,
 "buyDate": "2026-10-21",
-"last": 55.55,
-"lastDate": "2026-11-12",
-"prev": 55.49
+"last": 55.19,
+"lastDate": "2026-11-13",
+"prev": 55.55
 },
 "GPC": {
 "buy": 124.78,
 "buyDate": "2026-10-21",
-"last": 122.84,
-"lastDate": "2026-11-12",
-"prev": 123.75
+"last": 123.34,
+"lastDate": "2026-11-13",
+"prev": 122.84
 },
 "RVII": {
 "buy": 18.68,
 "buyDate": "2026-10-21",
-"last": 14.69,
-"lastDate": "2026-11-12",
-"prev": 15.02
+"last": 14.92,
+"lastDate": "2026-11-13",
+"prev": 14.69
 },
 "ROL": {
 "buy": 33.45,
 "buyDate": "2026-10-21",
-"last": 37.91,
-"lastDate": "2026-11-12",
-"prev": 38.47
+"last": 38.88,
+"lastDate": "2026-11-13",
+"prev": 37.91
 },
 "POOL": {
 "buy": 172.44,
 "buyDate": "2026-10-21",
-"last": 214.24,
-"lastDate": "2026-11-12",
-"prev": 215.78
+"last": 216.2,
+"lastDate": "2026-11-13",
+"prev": 214.24
 },
 "FIX": {
 "buy": 1401.27,
 "buyDate": "2026-10-21",
-"last": 1128.09,
-"lastDate": "2026-11-12",
-"prev": 1161.63
+"last": 1112.5,
+"lastDate": "2026-11-13",
+"prev": 1128.09
 },
 "EME": {
 "buy": 716.79,
 "buyDate": "2026-10-21",
-"last": 662.77,
-"lastDate": "2026-11-12",
-"prev": 666.74
+"last": 659.36,
+"lastDate": "2026-11-13",
+"prev": 662.77
 },
 "WM": {
 "buy": 229.58,
 "buyDate": "2026-10-21",
-"last": 244.11,
-"lastDate": "2026-11-12",
-"prev": 240.29
+"last": 243.83,
+"lastDate": "2026-11-13",
+"prev": 244.11
 },
 "SYY": {
 "buy": 82.06,
 "buyDate": "2026-10-21",
-"last": 76.24,
-"lastDate": "2026-11-12",
-"prev": 76.94
+"last": 77.1,
+"lastDate": "2026-11-13",
+"prev": 76.24
 },
 "HTGC": {
 "buy": 16.27,
 "buyDate": "2026-10-21",
-"last": 15.85,
-"lastDate": "2026-11-12",
-"prev": 16.05
+"last": 15.87,
+"lastDate": "2026-11-13",
+"prev": 15.85
 },
 "TRIN": {
 "buy": 16.18,
 "buyDate": "2026-10-21",
-"last": 17.87,
-"lastDate": "2026-11-12",
-"prev": 18.03
+"last": 17.7,
+"lastDate": "2026-11-13",
+"prev": 17.87
 },
 "ARKK": {
 "buy": 85.42,
 "buyDate": "2026-10-21",
-"last": 76.5,
-"lastDate": "2026-11-12",
-"prev": 78.47
+"last": 74.99,
+"lastDate": "2026-11-13",
+"prev": 76.5
 },
 "DHI": {
 "buy": 138.98,
 "buyDate": "2026-10-21",
-"last": 144.45,
-"lastDate": "2026-11-12",
-"prev": 147.48
+"last": 145.55,
+"lastDate": "2026-11-13",
+"prev": 144.45
 },
 "LEN": {
 "buy": 77.7,
 "buyDate": "2026-10-21",
-"last": 83.58,
-"lastDate": "2026-11-12",
-"prev": 86.33
+"last": 83.61,
+"lastDate": "2026-11-13",
+"prev": 83.58
 },
 "SGOV": {
 "buy": 100.62,
 "buyDate": "2026-10-21",
-"last": 100.53,
-"lastDate": "2026-11-12",
-"prev": 100.52
+"last": 100.56,
+"lastDate": "2026-11-13",
+"prev": 100.53
 },
 "MAA": {
 "buy": 117.68,
 "buyDate": "2026-10-21",
-"last": 116.55,
-"lastDate": "2026-11-12",
-"prev": 118.19
+"last": 117.89,
+"lastDate": "2026-11-13",
+"prev": 116.55
 },
 "REXR": {
 "buy": 36.8,
 "buyDate": "2026-10-21",
-"last": 37.64,
-"lastDate": "2026-11-12",
-"prev": 37.83
+"last": 37.55,
+"lastDate": "2026-11-13",
+"prev": 37.64
 },
 "AAPL": {
 "buy": 343.99,
 "buyDate": "2026-10-21",
-"last": 354.88,
-"lastDate": "2026-11-12",
-"prev": 355.63
+"last": 356.27,
+"lastDate": "2026-11-13",
+"prev": 354.88
 },
 "MSFT": {
 "buy": 532.95,
 "buyDate": "2026-10-21",
-"last": 523.0,
-"lastDate": "2026-11-12",
-"prev": 521.12
+"last": 523.88,
+"lastDate": "2026-11-13",
+"prev": 523.0
 },
 "NVDA": {
 "buy": 221.97,
 "buyDate": "2026-10-21",
-"last": 166.19,
-"lastDate": "2026-11-12",
-"prev": 173.73
+"last": 162.85,
+"lastDate": "2026-11-13",
+"prev": 166.19
 },
 "JPM": {
 "buy": 335.19,
 "buyDate": "2026-10-21",
-"last": 342.82,
-"lastDate": "2026-11-12",
-"prev": 343.39
+"last": 346.19,
+"lastDate": "2026-11-13",
+"prev": 342.82
 },
 "KO": {
 "buy": 92.68,
 "buyDate": "2026-10-21",
-"last": 97.44,
-"lastDate": "2026-11-12",
-"prev": 97.57
+"last": 99.25,
+"lastDate": "2026-11-13",
+"prev": 97.44
 },
 "STEP": {
 "buy": 42.42,
 "buyDate": "2026-10-21",
-"last": 47.48,
-"lastDate": "2026-11-12",
-"prev": 48.46
+"last": 47.91,
+"lastDate": "2026-11-13",
+"prev": 47.48
 },
 "PSP": {
 "buy": 56.25,
 "buyDate": "2026-10-21",
-"last": 59.53,
-"lastDate": "2026-11-12",
-"prev": 60.52
+"last": 59.66,
+"lastDate": "2026-11-13",
+"prev": 59.53
 },
 "RVI": {
 "buy": 24.765,
 "buyDate": "2026-10-21",
-"last": 21.05,
-"lastDate": "2026-11-12",
-"prev": 21.23
+"last": 20.96,
+"lastDate": "2026-11-13",
+"prev": 21.05
 },
 "XOVR": {
 "buy": 21.56,
 "buyDate": "2026-10-21",
-"last": 20.06,
-"lastDate": "2026-11-12",
-"prev": 20.27
+"last": 20.14,
+"lastDate": "2026-11-13",
+"prev": 20.06
 },
 "DXYZ": {
 "buy": 29.0,
 "buyDate": "2026-10-21",
-"last": 25.3,
-"lastDate": "2026-11-12",
-"prev": 25.97
+"last": 26.47,
+"lastDate": "2026-11-13",
+"prev": 25.3
 },
 "BV": {
 "buy": 10.43,
 "buyDate": "2026-10-21",
-"last": 10.25,
-"lastDate": "2026-11-12",
-"prev": 9.87
+"last": 9.85,
+"lastDate": "2026-11-13",
+"prev": 10.25
 },
 "FTDR": {
 "buy": 80.85,
 "buyDate": "2026-10-21",
-"last": 95.42,
-"lastDate": "2026-11-12",
-"prev": 97.86
+"last": 96.64,
+"lastDate": "2026-11-13",
+"prev": 95.42
 },
 "FERG": {
 "buy": 227.96,
 "buyDate": "2026-10-21",
-"last": 254.89,
-"lastDate": "2026-11-12",
-"prev": 264.5
+"last": 256.47,
+"lastDate": "2026-11-13",
+"prev": 254.89
 },
 "WSO": {
 "buy": 305.03,
 "buyDate": "2026-10-21",
-"last": 308.24,
-"lastDate": "2026-11-12",
-"prev": 313.15
+"last": 308.46,
+"lastDate": "2026-11-13",
+"prev": 308.24
 },
 "CTAS": {
 "buy": 220.15,
 "buyDate": "2026-10-21",
-"last": 227.52,
-"lastDate": "2026-11-12",
-"prev": 227.26
+"last": 226.24,
+"lastDate": "2026-11-13",
+"prev": 227.52
 },
 "APG": {
 "buy": 40.21,
 "buyDate": "2026-10-21",
-"last": 43.48,
-"lastDate": "2026-11-12",
-"prev": 44.04
+"last": 43.47,
+"lastDate": "2026-11-13",
+"prev": 43.48
 },
 "ABM": {
 "buy": 51.56,
 "buyDate": "2026-10-20",
-"last": 54.77,
-"lastDate": "2026-11-12",
-"prev": 54.28
+"last": 54.64,
+"lastDate": "2026-11-13",
+"prev": 54.77
 },
 "MCK": {
 "buy": 1015.5,
 "buyDate": "2026-10-21",
-"last": 1077.05,
-"lastDate": "2026-11-12",
-"prev": 1079.79
+"last": 1102.81,
+"lastDate": "2026-11-13",
+"prev": 1077.05
 },
 "VMRK": {
 "buy": 61.99,
 "buyDate": "2026-10-21",
-"last": 63.93,
-"lastDate": "2026-11-12",
-"prev": 64.63
+"last": 64.22,
+"lastDate": "2026-11-13",
+"prev": 63.93
 },
 "PLD": {
 "buy": 127.6,
 "buyDate": "2026-10-21",
-"last": 128.55,
-"lastDate": "2026-11-12",
-"prev": 130.03
+"last": 128.67,
+"lastDate": "2026-11-13",
+"prev": 128.55
 },
 "SPG": {
 "buy": 205.55,
 "buyDate": "2026-10-21",
-"last": 233.61,
-"lastDate": "2026-11-12",
-"prev": 234.75
+"last": 232.97,
+"lastDate": "2026-11-13",
+"prev": 233.61
 },
 "O": {
 "buy": 55.35,
 "buyDate": "2026-10-21",
-"last": 59.26,
-"lastDate": "2026-11-12",
-"prev": 59.57
+"last": 58.82,
+"lastDate": "2026-11-13",
+"prev": 59.26
 },
 "BXP": {
 "buy": 58.64,
 "buyDate": "2026-10-21",
-"last": 62.89,
-"lastDate": "2026-11-12",
-"prev": 63.44
+"last": 63.78,
+"lastDate": "2026-11-13",
+"prev": 62.89
 },
 "VNO": {
 "buy": 32.89,
 "buyDate": "2026-10-21",
 "last": 34.71,
-"lastDate": "2026-11-12",
-"prev": 35.2
+"lastDate": "2026-11-13",
+"prev": 34.71
 },
 "HST": {
 "buy": 25.09,
 "buyDate": "2026-10-21",
-"last": 25.52,
-"lastDate": "2026-11-12",
-"prev": 25.78
+"last": 25.5,
+"lastDate": "2026-11-13",
+"prev": 25.52
 },
 "VNQ": {
 "buy": 91.49,
 "buyDate": "2026-10-21",
-"last": 96.44,
-"lastDate": "2026-11-12",
-"prev": 97.02
+"last": 96.47,
+"lastDate": "2026-11-13",
+"prev": 96.44
 },
 "IEF": {
 "buy": 90.23,
 "buyDate": "2026-10-21",
-"last": 90.21,
-"lastDate": "2026-11-12",
-"prev": 90.94
+"last": 90.04,
+"lastDate": "2026-11-13",
+"prev": 90.21
 },
 "LQD": {
 "buy": 103.21,
 "buyDate": "2026-10-21",
-"last": 103.05,
-"lastDate": "2026-11-12",
-"prev": 103.96
+"last": 102.81,
+"lastDate": "2026-11-13",
+"prev": 103.05
 },
 "HYG": {
 "buy": 76.98,
 "buyDate": "2026-10-21",
-"last": 76.98,
-"lastDate": "2026-11-12",
-"prev": 77.35
+"last": 76.94,
+"lastDate": "2026-11-13",
+"prev": 76.98
 },
 "MUB": {
 "buy": 102.45,
 "buyDate": "2026-10-21",
-"last": 103.95,
-"lastDate": "2026-11-12",
-"prev": 104.82
+"last": 103.58,
+"lastDate": "2026-11-13",
+"prev": 103.95
 },
 "STWD": {
 "buy": 12.13,
 "buyDate": "2026-10-21",
-"last": 11.44,
-"lastDate": "2026-11-12",
-"prev": 11.79
+"last": 11.34,
+"lastDate": "2026-11-13",
+"prev": 11.44
 },
 "BXMT": {
 "buy": 10.2,
 "buyDate": "2026-10-21",
-"last": 10.82,
-"lastDate": "2026-11-12",
-"prev": 11.01
+"last": 10.69,
+"lastDate": "2026-11-13",
+"prev": 10.82
 },
 "REM": {
 "buy": 17.22,
 "buyDate": "2026-10-20",
-"last": 16.2,
-"lastDate": "2026-11-12",
-"prev": 16.71
+"last": 16.25,
+"lastDate": "2026-11-13",
+"prev": 16.2
 },
 "ARCC": {
 "buy": 18.4,
 "buyDate": "2026-10-21",
-"last": 19.11,
-"lastDate": "2026-11-12",
-"prev": 19.46
+"last": 19.17,
+"lastDate": "2026-11-13",
+"prev": 19.11
 },
 "MAIN": {
 "buy": 53.3,
 "buyDate": "2026-10-21",
-"last": 56.23,
-"lastDate": "2026-11-12",
-"prev": 56.67
+"last": 56.4,
+"lastDate": "2026-11-13",
+"prev": 56.23
 },
 "BIZD": {
 "buy": 11.82,
 "buyDate": "2026-10-20",
-"last": 12.44,
-"lastDate": "2026-11-12",
-"prev": 12.66
+"last": 12.5,
+"lastDate": "2026-11-13",
+"prev": 12.44
 },
 "BX": {
 "buy": 109.57,
 "buyDate": "2026-10-21",
-"last": 118.54,
-"lastDate": "2026-11-12",
-"prev": 122.01
+"last": 120.19,
+"lastDate": "2026-11-13",
+"prev": 118.54
 },
 "KKR": {
 "buy": 89.87,
 "buyDate": "2026-10-21",
-"last": 97.2,
-"lastDate": "2026-11-12",
-"prev": 100.05
+"last": 98.05,
+"lastDate": "2026-11-13",
+"prev": 97.2
 },
 "APO": {
 "buy": 111.69,
 "buyDate": "2026-10-21",
-"last": 121.35,
-"lastDate": "2026-11-12",
-"prev": 122.95
+"last": 123.47,
+"lastDate": "2026-11-13",
+"prev": 121.35
 },
 "CG": {
 "buy": 37.27,
 "buyDate": "2026-10-21",
-"last": 39.36,
-"lastDate": "2026-11-12",
-"prev": 41.12
+"last": 39.77,
+"lastDate": "2026-11-13",
+"prev": 39.36
 },
 "ARES": {
 "buy": 117.01,
 "buyDate": "2026-10-21",
-"last": 133.29,
-"lastDate": "2026-11-12",
-"prev": 137.89
+"last": 134.61,
+"lastDate": "2026-11-13",
+"prev": 133.29
 },
 "BN": {
 "buy": 37.51,
 "buyDate": "2026-10-21",
-"last": 41.64,
-"lastDate": "2026-11-12",
-"prev": 42.06
+"last": 40.97,
+"lastDate": "2026-11-13",
+"prev": 41.64
 },
 "HLNE": {
 "buy": 83.7,
 "buyDate": "2026-10-20",
-"last": 93.88,
-"lastDate": "2026-11-12",
-"prev": 96.78
+"last": 93.73,
+"lastDate": "2026-11-13",
+"prev": 93.88
 },
 "SNDK": {
 "buy": 1378.22,
 "buyDate": "2026-10-21",
-"last": 937.46,
-"lastDate": "2026-11-12",
-"prev": 977.69
+"last": 885.01,
+"lastDate": "2026-11-13",
+"prev": 937.46
 },
 "FXE": {
 "buy": 103.71,
 "buyDate": "2026-10-21",
-"last": 102.04,
-"lastDate": "2026-11-12",
-"prev": 102.31
+"last": 101.71,
+"lastDate": "2026-11-13",
+"prev": 102.04
 },
 "FXF": {
 "buy": 106.77,
 "buyDate": "2026-10-21",
-"last": 105.35,
-"lastDate": "2026-11-12",
-"prev": 105.61
+"last": 104.82,
+"lastDate": "2026-11-13",
+"prev": 105.35
 },
 "FXY": {
 "buy": 57.9,
 "buyDate": "2026-10-21",
-"last": 57.26,
-"lastDate": "2026-11-12",
-"prev": 57.29
+"last": 57.38,
+"lastDate": "2026-11-13",
+"prev": 57.26
 },
 "GLD": {
 "buy": 378.95,
 "buyDate": "2026-10-21",
-"last": 354.89,
-"lastDate": "2026-11-12",
-"prev": 365.17
+"last": 355.45,
+"lastDate": "2026-11-13",
+"prev": 354.89
 },
 "CEW": {
 "buy": 19.73,
 "buyDate": "2026-10-21",
-"last": 19.44,
-"lastDate": "2026-11-12",
-"prev": 19.55
+"last": 19.43,
+"lastDate": "2026-11-13",
+"prev": 19.44
 },
 "SNXX": {
 "buy": 8.44,
 "buyDate": "2026-10-22",
-"last": 4.05,
-"lastDate": "2026-11-12",
-"prev": 4.38
+"last": 3.58,
+"lastDate": "2026-11-13",
+"prev": 4.05
 },
 "HOOD": {
 "buy": 83.32,
 "buyDate": "2026-11-09",
-"last": 81.35,
-"lastDate": "2026-11-12",
-"prev": 84.58
+"last": 77.86,
+"lastDate": "2026-11-13",
+"prev": 81.35
 }
 },
 "opt": {}

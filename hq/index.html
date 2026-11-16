@@ -272,6 +272,15 @@ body{overflow-x:hidden}
 .enav .sp{flex:1}
 .enav .lk{border:0;color:var(--dim)}
 .bud iframe{width:100%;height:calc(100vh - 190px);border:1px solid var(--line);border-radius:14px;background:#000;display:block}
+.hub{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 0 18px}
+.hubc{position:relative;text-align:left;background:linear-gradient(160deg,#16140F,#0D0C0B);border:1px solid var(--line2);border-radius:16px;padding:20px 20px 18px;display:flex;flex-direction:column;gap:4px;min-height:132px;transition:border-color .15s,transform .15s}
+.hubc:hover{border-color:var(--gold);transform:translateY(-1px)}
+.hubc .hi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(201,164,92,.12);color:var(--gold-hi);margin-bottom:10px}
+.hubc .hi svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+.hubc b{font-family:var(--disp);font-size:24px;font-weight:600;line-height:1.1}
+.hubc small{color:var(--muted);font-size:13px}
+.hubc i{position:absolute;top:18px;right:18px;font-style:normal;color:var(--gold)}
+@media (max-width:900px){.hub{grid-template-columns:1fr 1fr;gap:10px}.hubc{min-height:118px;padding:16px}.hubc b{font-size:21px}}
 .gate{max-width:420px;margin:56px auto;text-align:center}
 .gate img{width:110px;display:block;margin:0 auto 6px}
 .gate h1{font-size:34px}
@@ -291,9 +300,8 @@ body{overflow-x:hidden}
   .ewrap .main{padding:10px 0 calc(var(--bot) + 96px)}
   .enav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px 12px}
   .enav button{flex:none}
-  .tabbar{grid-template-columns:repeat(8,1fr)!important}
-  .tabbar button{font-size:8.5px!important;letter-spacing:0!important}
-  .tabbar svg{width:20px!important;height:20px!important}
+  .tabbar{grid-template-columns:repeat(5,1fr)!important}
+  .tabbar button{font-size:10px!important;letter-spacing:.02em!important}
   .bud iframe{height:calc(100vh - 210px - var(--top) - var(--bot))!important}
 }
 
@@ -404,21 +412,21 @@ const IC = {
   updates: '<svg viewBox="0 0 24 24"><path d="M4 5.5h16v10.5H9.5L5.5 19.5V16H4z"/><path d="M8.5 9.5h7M8.5 12.5h4.5"/></svg>',
   eddie: '<svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>'
 };
-const TABS = [["firm","Home"],["investments","Invest"],["about","About"],["investors","Investors"],["finds","Finds"],["room","Underwrite"],["budget","Budget"],["updates","Claude"]];
+const TABS = [["firm","Home"],["investments","Invest"],["about","About"],["investors","Investors"],["eddie","Eddie"]];
 const LOCKED = ["finds","room","budget","updates"];
-const ENAV = [["eddie","Overview"],["finds","Deal Finds"],["room","Underwriting"],["budget","Budget"],["updates","Claude"],["settings","Settings"]];
+const ENAV = [["eddie","Eddie"],["finds","Finds"],["room","Underwrite"],["budget","Budget"],["updates","Claude"],["settings","Settings"]];
 const SITE_GO = { firm:["home","top"], investments:["investments","platform"], portfolio:["portfolio"], about:["leadership"], contact:["contact"], investors:["login"] };
 const SITE_TAB = v => v === "home" ? "firm" : ["investments","realestate","fixedincome","privateequity","venture","operating","services","equities"].includes(v) ? "investments" : v === "portfolio" ? "portfolio" : v === "leadership" ? "about" : v === "contact" ? "contact" : (v === "login" || v === "room") ? "investors" : "firm";
 const EDDIE_VIEWS = ["eddie","finds","room","budget","updates","settings"];
 function buildNav(){
   $("#tabbar").innerHTML = TABS.map(([k, l]) => `<button data-go="${k}">${IC[k]}${l}</button>`).join("");
-  $("#ahlocked").innerHTML = [["finds","Deal Finds"],["room","Underwriting"],["budget","Budget"],["updates","Claude"]].map(([k, l]) => `<button class="ahlock" data-go="${k}">${IC.eddie}${l}</button>`).join("");
+  $("#ahlocked").innerHTML = `<button class="ahlock" data-go="eddie">${IC.eddie}Eddie</button>`;
   $("#enav").innerHTML = ENAV.map(([k, l]) => `<button data-go="${k}">${l}<span class="ct" id="ct-${k}" style="margin-left:6px;color:var(--dim);font-size:12px"></span></button>`).join("") + `<span class="sp"></span><button data-go="send" class="btn sm" style="color:#120E05">Send a deal</button><button class="lk" id="lockBtn">Lock</button>`;
   document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => b.dataset.go === "send" ? openSend() : go(b.dataset.go));
   $("#lockBtn").onclick = lock;
 }
 function mark(k){
-  const top = k;
+  const top = EDDIE_VIEWS.includes(k) ? "eddie" : k;
   document.querySelectorAll(".ahnav [data-go], #tabbar [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === top));
   document.querySelectorAll("#enav [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === k));
 }
@@ -501,7 +509,7 @@ function gate(){
   const setup = !hasVault();
   const plain = plainToken();
   $("#main").innerHTML = `<div class="gate"><img src="../crest-head.jpg" alt=""><div class="eyebrow">Eddie only</div><h1>${setup ? "Set your code" : "Enter your code"}</h1>
-    <p>${setup ? "Deal Finds, Underwriting, Budget and Claude are only for you. Pick a code (at least 4 digits). Your GitHub key is locked with it on this device." : "Deal Finds, Underwriting, Budget and Claude."}</p>
+    <p>${setup ? "Only you can open Eddie: Deal Finds, Underwrite, Budget and Claude. Pick a code (at least 4 digits). Your GitHub key is locked with it on this device." : "Deal Finds, Underwrite, Budget and Claude."}</p>
     <form id="gf"><input class="pin" id="g1" type="password" inputmode="numeric" autocomplete="off" placeholder="••••" aria-label="Code">
     ${setup ? `<input class="pin" id="g2" type="password" inputmode="numeric" autocomplete="off" placeholder="again" aria-label="Code again" style="font-size:18px;letter-spacing:.2em">
     <div class="field"><label for="g3">GitHub key ${plain ? "(found on this device)" : ""}</label><input id="g3" type="password" autocomplete="off" placeholder="github_pat_…" value="${esc(plain)}"></div>
@@ -641,6 +649,8 @@ function home(){
   let h = `<div class="head"><div><div class="eyebrow">${esc(today)}</div><h1>${greet}, Eddie</h1></div><div class="grow"></div><button class="btn" onclick="openSend()">Send a deal</button></div>`;
   if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
   const F = S.finds.slice().sort((a, b) => b.score - a.score);
+  const HUB = [["finds","Deal Finds", S.finds.length + " finds · " + F.filter(d => d.score >= 72).length + " strong"],["room","Underwrite", (S.index.deals || []).length + " memos · send an OM"],["budget","Budget","2027 money plan"],["updates","Claude","Send changes for this app"]];
+  h += `<div class="hub">${HUB.map(([k, l, sub]) => `<button class="hubc" onclick="go('${k}')"><span class="hi">${IC[k]}</span><b>${l}</b><small>${esc(sub)}</small><i>→</i></button>`).join("")}</div>`;
   const strong = F.filter(d => d.score >= 72).length;
   const D = S.index.deals || [];
   const ready = D.filter(d => /ready/i.test(d.status || "")).length;

@@ -1,0 +1,947 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>ELK</title>
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#000000">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<link rel="icon" href="../crest-icon.jpg">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ELK">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600&family=Cormorant+Garamond:wght@500;600&family=Figtree:wght@400;500;600;700&display=swap">
+<style>
+/* ELK app: the ELK Holdings website first, plus an Eddie-only area (code lock) for Deal Finds, Underwriting and Updates. */
+:root{
+  --bg:#000;--card:#0D0C0B;--card2:#16140F;--line:rgba(201,164,92,.16);--line2:rgba(201,164,92,.30);--hair:rgba(255,255,255,.07);
+  --ink:#F3EDE1;--muted:#A69E90;--dim:#6F685D;--gold:#C9A45C;--gold-hi:#E8CB8A;--pos:#7CC99A;--warn:#E3B26F;--neg:#E3826F;
+  --mark:"Cinzel",Georgia,serif;--disp:"Cormorant Garamond",Georgia,serif;--body:"Figtree",-apple-system,system-ui,sans-serif;
+  --top:env(safe-area-inset-top,0px);--bot:env(safe-area-inset-bottom,0px);color-scheme:dark;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--body);font-size:15.5px;line-height:1.5;-webkit-font-smoothing:antialiased}
+button,input,textarea,select{font:inherit;color:inherit}
+button{background:none;border:0;padding:0;cursor:pointer}
+a{color:var(--gold-hi);text-decoration:none}
+a:hover{text-decoration:underline}
+[hidden]{display:none!important}
+:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.num{font-variant-numeric:tabular-nums}
+.muted{color:var(--muted)}.dim{color:var(--dim)}
+
+/* frame */
+.frame{display:grid;grid-template-columns:236px minmax(0,1fr);min-height:100vh}
+.rail{position:sticky;top:0;height:100vh;border-right:1px solid var(--line);display:flex;flex-direction:column;padding:26px 16px 18px;background:#000}
+.crest{width:96px;display:block;margin:0 auto 4px}
+.house{font-family:var(--mark);color:var(--gold);text-align:center;font-size:21px;letter-spacing:.32em;padding-left:.32em;line-height:1}
+.house small{display:block;font-size:9.5px;letter-spacing:.5em;padding-left:.5em;color:var(--muted);margin-top:7px}
+.nav{display:flex;flex-direction:column;gap:2px;margin-top:30px}
+.nav button{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:8px;color:var(--muted);font-weight:500;text-align:left}
+.nav button svg{width:19px;height:19px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round;flex:none}
+.nav button:hover{color:var(--ink);background:var(--card2)}
+.nav button[aria-current="true"]{color:var(--ink);background:var(--card2);box-shadow:inset 2px 0 0 var(--gold)}
+.nav .ct{margin-left:auto;font-size:12px;color:var(--dim)}
+.rail .foot{margin-top:auto;display:flex;flex-direction:column;gap:2px}
+.rail .foot .nav{margin:0}
+.rail .sync{font-size:12px;color:var(--dim);padding:8px 12px 0}
+.main{min-width:0;padding:34px 44px 80px;max-width:1160px;width:100%}
+.mtop,.tabbar{display:none}
+
+/* type */
+.eyebrow{font-family:var(--mark);font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:var(--gold)}
+h1{font-family:var(--disp);font-weight:600;font-size:40px;line-height:1.05;margin:6px 0 0;letter-spacing:.005em}
+h2{font-family:var(--disp);font-weight:600;font-size:25px;line-height:1.15;margin:0}
+h3{font-family:var(--mark);font-weight:500;font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);margin:0 0 12px}
+.head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:24px}
+.head .grow{flex:1}
+.head .sub{color:var(--muted);margin-top:6px}
+
+/* controls */
+.btn{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:10px 18px;font-weight:600;font-size:14.5px;background:var(--gold);color:#120E05;white-space:nowrap}
+.btn:hover{background:var(--gold-hi);text-decoration:none}
+.btn.line{background:transparent;color:var(--ink);border:1px solid var(--line2)}
+.btn.line:hover{border-color:var(--gold);background:transparent}
+.btn.sm{padding:7px 13px;font-size:13.5px}
+.btn:disabled{opacity:.5;cursor:default}
+.search{background:var(--card);border:1px solid var(--line);border-radius:999px;padding:10px 16px;width:250px;outline:none}
+.search:focus{border-color:var(--gold)}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin:-8px 0 20px}
+.chip{border:1px solid var(--line);border-radius:999px;padding:6px 13px;font-size:13.5px;color:var(--muted)}
+.chip[aria-pressed="true"]{border-color:var(--gold);color:var(--gold-hi);background:rgba(201,164,92,.08)}
+
+/* cards */
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px}
+.grid{display:grid;gap:16px}
+.g2{grid-template-columns:repeat(2,minmax(0,1fr))}
+.g3{grid-template-columns:repeat(3,minmax(0,1fr))}
+.g4{grid-template-columns:repeat(4,minmax(0,1fr))}
+.stat b{display:block;font-family:var(--disp);font-size:38px;font-weight:600;line-height:1;color:var(--ink)}
+.stat span{display:block;font-size:13px;color:var(--muted);margin-top:8px}
+.stat.gold b{color:var(--gold-hi)}
+.stat{cursor:pointer;transition:border-color .15s}
+.stat:hover{border-color:var(--line2)}
+
+/* finds list */
+.finds{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px}
+.fcard{background:var(--card);border:1px solid var(--line);border-radius:14px;overflow:hidden;cursor:pointer;display:flex;flex-direction:column;transition:border-color .15s,transform .15s}
+.fcard:hover{border-color:var(--line2);transform:translateY(-1px)}
+.fcard .ph{height:132px;background:linear-gradient(135deg,#1A1710,#0D0C0B);position:relative;overflow:hidden}
+.fcard .ph img{width:100%;height:100%;object-fit:cover;opacity:.82}
+.ph .mono{position:absolute;inset:0;display:grid;place-items:center;font-family:var(--mark);color:rgba(201,164,92,.35);font-size:30px;letter-spacing:.2em}
+.fit{position:absolute;top:12px;right:12px;background:rgba(0,0,0,.72);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid var(--line2);border-radius:999px;padding:3px 10px;font-size:12px;font-weight:600;color:var(--gold-hi)}
+.fcard .bd{padding:16px 18px 18px;display:flex;flex-direction:column;gap:6px;flex:1}
+.fcard .nm{font-family:var(--disp);font-size:22px;font-weight:600;line-height:1.1}
+.fcard .ad{font-size:13px;color:var(--muted)}
+.fcard .hl{font-size:14px;color:#D9D1C2;margin-top:4px}
+.facts{display:flex;gap:14px;font-size:13px;color:var(--muted);margin-top:auto;padding-top:10px;border-top:1px solid var(--hair)}
+.facts b{color:var(--ink);font-weight:600}
+.tags{display:flex;gap:6px;flex-wrap:wrap}
+.tag{font-size:11.5px;border-radius:5px;padding:2px 7px;background:rgba(201,164,92,.10);color:var(--gold-hi);border:1px solid var(--line)}
+.tag.red{background:rgba(227,130,111,.10);color:#F0A493;border-color:rgba(227,130,111,.25)}
+
+/* find detail */
+.back{color:var(--muted);margin-bottom:16px;display:inline-flex;gap:6px;align-items:center}
+.back:hover{color:var(--ink)}
+.hero{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--card)}
+.hero .ph{height:220px;position:relative;background:linear-gradient(135deg,#1A1710,#0D0C0B)}
+.hero .ph img{width:100%;height:100%;object-fit:cover;opacity:.8}
+.hero .mono{display:none}
+.hero .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 35%,rgba(13,12,11,.96))}
+.hero .cap{position:absolute;left:26px;right:26px;bottom:18px;z-index:2}
+.hero .cap h1{font-size:40px;margin-top:4px}
+.hero .credit{position:absolute;right:10px;top:8px;font-size:10.5px;color:rgba(255,255,255,.55);z-index:2}
+.hero .row{display:grid;grid-template-columns:repeat(5,1fr);border-top:1px solid var(--line)}
+.hero .row div{padding:14px 18px;border-left:1px solid var(--line)}
+.hero .row div:first-child{border-left:0}
+.hero .row b{display:block;font-family:var(--disp);font-size:24px;font-weight:600;line-height:1.1}
+.hero .row span{font-size:12px;color:var(--muted)}
+.cols{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(0,1fr);gap:18px;margin-top:18px;align-items:start}
+.cols.wide{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+.stack{display:flex;flex-direction:column;gap:18px}
+.lede{font-size:16.5px;color:#E2DACB;margin:0}
+ul.clean{list-style:none;margin:0;padding:0}
+ul.clean li{padding:8px 0 8px 18px;position:relative;border-top:1px solid var(--hair)}
+ul.clean li:first-child{border-top:0}
+ul.clean li::before{content:"";position:absolute;left:2px;top:17px;width:6px;height:6px;border-radius:50%;background:var(--gold)}
+ol.steps{margin:0;padding:0;list-style:none;counter-reset:s}
+ol.steps li{counter-increment:s;padding:8px 0 8px 32px;position:relative;border-top:1px solid var(--hair)}
+ol.steps li:first-child{border-top:0}
+ol.steps li::before{content:counter(s);position:absolute;left:0;top:8px;width:21px;height:21px;border-radius:50%;border:1px solid var(--line2);color:var(--gold-hi);font-size:12px;display:grid;place-items:center}
+.box li{display:flex;gap:10px;padding:8px 0;border-top:1px solid var(--hair)}
+.box li:first-child{border-top:0}
+.box i{flex:none;width:20px;height:20px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px;font-weight:700;margin-top:1px}
+.box i.y{background:rgba(124,201,154,.14);color:var(--pos)}
+.box i.n{background:rgba(227,130,111,.14);color:var(--neg)}
+.box i.q{background:rgba(227,178,111,.12);color:var(--warn)}
+.box small{display:block;color:var(--muted);font-size:13px}
+table.kv{width:100%;border-collapse:collapse;font-size:14.5px}
+table.kv td{padding:8px 0;border-top:1px solid var(--hair);vertical-align:top}
+table.kv tr:first-child td{border-top:0}
+table.kv td:first-child{color:var(--muted);width:38%;padding-right:12px}
+.who{padding:12px 0;border-top:1px solid var(--hair)}
+.who:first-of-type{border-top:0;padding-top:0}
+.who b{display:block;font-weight:600}
+.who .wr{font-size:13px;color:var(--muted)}
+.who .ln{display:flex;gap:14px;flex-wrap:wrap;margin-top:5px;font-size:14px}
+.out{background:var(--card2);border:1px solid var(--line2)}
+.out .best{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;flex-wrap:wrap}
+.field{margin-top:12px}
+.field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:5px;font-weight:500}
+.field input,.field textarea,.field select{width:100%;background:#000;border:1px solid var(--line);border-radius:9px;padding:10px 12px;outline:none}
+.field input:focus,.field textarea:focus{border-color:var(--gold)}
+.field textarea{min-height:170px;resize:vertical;line-height:1.5}
+.btns{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.srcs a{display:block;padding:5px 0;font-size:14px}
+
+/* deal room */
+.area{margin-bottom:26px}
+.atab{display:inline-flex;align-items:baseline;gap:10px;padding:9px 16px 8px;border:1px solid var(--line);border-bottom:0;border-radius:10px 10px 0 0;background:var(--card2)}
+.atab h2{font-size:20px}
+.atab span{font-size:12.5px;color:var(--muted)}
+.ledger{background:var(--card);border:1px solid var(--line);border-radius:0 12px 12px 12px;overflow:hidden}
+.drow{display:grid;grid-template-columns:minmax(0,1fr) 96px 80px 70px 76px 140px;gap:14px;align-items:center;padding:15px 20px;border-top:1px solid var(--hair);cursor:pointer}
+.drow:first-child{border-top:0}
+.drow:hover{background:var(--card2)}
+.drow.th{cursor:default;background:transparent;padding:10px 20px;font-size:12px;color:var(--dim)}
+.drow .nm{font-family:var(--disp);font-size:20px;font-weight:600;line-height:1.15}
+.drow .ad{font-size:13px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.r{text-align:right}
+.st{display:inline-flex;align-items:center;gap:7px;font-size:13px;color:var(--muted);justify-self:end}
+.st i{width:8px;height:8px;border-radius:50%;background:var(--dim)}
+.st.ok{color:var(--gold-hi);font-weight:600}.st.ok i{background:var(--gold)}
+.waiting{border:1px solid var(--line2);background:rgba(201,164,92,.06);border-radius:12px;padding:14px 18px;margin-bottom:24px}
+.waiting div{padding:3px 0;font-size:14.5px}
+.figs{display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--line)}
+.figs div{padding:14px 18px;border-left:1px solid var(--line)}
+.figs div:first-child{border-left:0}
+.figs b{display:block;font-family:var(--disp);font-size:24px;font-weight:600}
+.figs .hi b{color:var(--gold-hi)}
+.figs span{font-size:12px;color:var(--muted)}
+.file{display:flex;align-items:center;gap:12px;padding:10px 0;border-top:1px solid var(--hair)}
+.file:first-of-type{border-top:0}
+.file button{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-align:left}
+.file button:hover{color:var(--gold-hi)}
+.ext{flex:0 0 40px;height:24px;border-radius:5px;background:var(--card2);border:1px solid var(--line);color:var(--muted);font-size:10.5px;font-weight:700;display:grid;place-items:center}
+.ext.pdf{color:#F0A493;border-color:rgba(227,130,111,.3)}
+.sz{margin-left:auto;color:var(--dim);font-size:13px;flex:none}
+.checks p{margin:0 0 4px;padding-left:12px;text-indent:-12px;font-size:14px}
+.checks strong{display:block;font-family:var(--disp);font-size:18px;margin:12px 0 3px}
+.checks strong:first-child{margin-top:0}
+
+/* empty / notice */
+.empty{border:1px dashed var(--line2);border-radius:14px;padding:42px 28px;text-align:center}
+.empty h2{margin-bottom:6px}
+.empty p{color:var(--muted);max-width:470px;margin:0 auto 16px}
+.notice{border:1px solid rgba(227,178,111,.35);background:rgba(227,178,111,.07);border-radius:12px;padding:12px 16px;font-size:14px;margin-bottom:18px}
+
+/* website */
+.site{display:flex;flex-direction:column;height:calc(100vh - 68px)}
+.seg{display:inline-flex;border:1px solid var(--line2);border-radius:999px;padding:3px}
+.seg button{padding:7px 15px;border-radius:999px;font-size:13.5px;color:var(--muted);font-weight:500}
+.seg button[aria-pressed="true"]{background:var(--gold);color:#120E05}
+.frame-wrap{flex:1;border:1px solid var(--line);border-radius:14px;overflow:hidden;background:#000;margin-top:14px;min-height:420px}
+.frame-wrap iframe{width:100%;height:100%;border:0;display:block}
+
+/* sheet */
+.scrim{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;z-index:60}
+.sheet{position:fixed;top:0;right:0;bottom:0;width:min(500px,100%);background:#0B0A09;border-left:1px solid var(--line2);z-index:61;transform:translateX(100%);transition:transform .25s ease;display:flex;flex-direction:column}
+.open .scrim{display:block}.open .sheet{transform:none}
+.sheet header{padding:calc(var(--top) + 20px) 24px 14px;border-bottom:1px solid var(--line);display:flex;align-items:center}
+.sheet header h2{flex:1}
+.sheet header button{font-size:26px;color:var(--muted);padding:0 4px}
+.sheet .body{padding:16px 24px;overflow:auto;flex:1}
+.sheet footer{padding:14px 24px calc(var(--bot) + 14px);border-top:1px solid var(--line);display:flex;align-items:center;gap:12px}
+.drop{border:1.5px dashed var(--line2);border-radius:12px;padding:26px 18px;text-align:center;cursor:pointer;color:var(--muted)}
+.drop b{color:var(--ink);display:block;font-size:16px;margin-bottom:2px}
+.drop.on{border-color:var(--gold);background:rgba(201,164,92,.07)}
+.picked{list-style:none;margin:10px 0 0;padding:0}
+.picked li{display:flex;gap:10px;padding:6px 0;font-size:14px;border-top:1px solid var(--hair)}
+.picked li span{margin-left:auto;color:var(--muted)}
+.picked li button{color:var(--muted);padding:0 4px}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.two .field textarea{min-height:0}
+
+.toast{position:fixed;left:50%;bottom:calc(var(--bot) + 90px);transform:translateX(-50%);background:var(--card2);border:1px solid var(--line2);color:var(--ink);padding:11px 18px;border-radius:999px;display:none;z-index:80;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
+.setup ol{padding-left:20px;color:var(--muted);line-height:1.8}
+.setup ol b{color:var(--ink)}
+
+
+/* updates */
+.thread{display:flex;flex-direction:column;gap:12px;margin-bottom:16px}
+.msg{max-width:78%;padding:12px 15px;border-radius:14px;font-size:15px;line-height:1.5;white-space:pre-wrap;word-wrap:break-word}
+.msg.me{align-self:flex-end;background:var(--gold);color:#120E05;border-bottom-right-radius:4px}
+.msg.cl{align-self:flex-start;background:var(--card2);border:1px solid var(--line);border-bottom-left-radius:4px}
+.msg small{display:block;margin-top:6px;font-size:11.5px;opacity:.7}
+.msg.cl small{color:var(--gold)}
+.compose{display:flex;gap:10px;align-items:flex-end;position:sticky;bottom:0;background:var(--bg);padding:10px 0 4px}
+.compose textarea{flex:1;resize:none;background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px 14px;outline:none;min-height:52px;line-height:1.45}
+.compose textarea:focus{border-color:var(--gold)}
+.chipsug{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 14px}
+@media (max-width:900px){.compose{bottom:calc(var(--bot) + 60px)}.msg{max-width:88%}}
+
+
+/* ===== app chrome: the website first ===== */
+body{overflow-x:hidden}
+.ah{position:fixed;top:0;left:0;right:0;z-index:45;background:rgba(0,0,0,.9);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid #2B261E;padding-top:var(--top)}
+.ah-in{max-width:1240px;margin:0 auto;padding:0 28px;height:68px;display:flex;align-items:center;justify-content:space-between;gap:18px}
+.brand{display:flex;align-items:center;gap:12px}
+.brand img{width:42px;height:42px;object-fit:cover;mix-blend-mode:screen}
+.brand span{display:flex;flex-direction:column;align-items:flex-start;line-height:1}
+.brand b{font-family:var(--mark);font-weight:600;font-size:1.4rem;letter-spacing:.14em;color:var(--gold-hi)}
+.brand small{font-family:var(--mark);font-size:.5rem;letter-spacing:.62em;color:var(--gold);margin-top:5px;padding-left:2px}
+.ahnav{display:flex;align-items:center;gap:4px}
+.ahnav button{font-size:.76rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);padding:8px 10px}
+.ahnav button:hover,.ahnav button[aria-current="true"]{color:var(--gold-hi)}
+.ahnav .ahlogin{border:1px solid #8C6E35;color:var(--gold-hi);padding:8px 16px;margin-left:8px}
+.ahnav .ahlogin:hover{background:var(--gold);color:#000}
+.ahlocked{display:inline-flex;gap:4px;margin-left:6px}
+.ahnav .ahlock{display:inline-flex;align-items:center;gap:7px;margin-left:6px;border:1px solid var(--line);border-radius:999px;padding:7px 14px}
+.ahnav .ahlock svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8}
+#sitewrap{position:fixed;left:0;right:0;bottom:0;top:calc(var(--top) + 69px)}
+#sitewrap iframe{width:100%;height:100%;border:0;display:block;background:#000}
+#eddiewrap{padding-top:calc(var(--top) + 69px)}
+.ewrap{max-width:1180px;margin:0 auto;padding:22px 32px 0}
+.ewrap .main{padding:10px 0 80px;max-width:none}
+.enav{display:flex;gap:6px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--line);padding-bottom:14px}
+.enav button{border:1px solid var(--line);border-radius:999px;padding:7px 14px;font-size:13.5px;color:var(--muted)}
+.enav button[aria-current="true"]{border-color:var(--gold);color:var(--gold-hi);background:rgba(201,164,92,.08)}
+.enav .sp{flex:1}
+.enav .lk{border:0;color:var(--dim)}
+.gate{max-width:420px;margin:56px auto;text-align:center}
+.gate img{width:110px;display:block;margin:0 auto 6px}
+.gate h1{font-size:34px}
+.gate p{color:var(--muted)}
+.pin{width:100%;text-align:center;font-size:26px;letter-spacing:.5em;padding:12px;background:var(--card);border:1px solid var(--line2);border-radius:12px;outline:none;margin-top:16px}
+.pin:focus{border-color:var(--gold)}
+.gate .field{text-align:left}
+.gate .btn{width:100%;justify-content:center;margin-top:16px}
+.gate .err{color:var(--neg);font-size:14px;min-height:20px;margin-top:10px}
+@media (max-width:900px){
+  .ah-in{height:56px;padding:0 16px}
+  .brand img{width:34px;height:34px}.brand b{font-size:1.15rem}
+  .ahnav{display:none}
+  #sitewrap{top:calc(var(--top) + 57px);bottom:calc(var(--bot) + 58px)}
+  #eddiewrap{padding-top:calc(var(--top) + 57px)}
+  .ewrap{padding:14px 16px 0}
+  .ewrap .main{padding:10px 0 calc(var(--bot) + 96px)}
+  .enav{flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;margin:0 -16px;padding:0 16px 12px}
+  .enav button{flex:none}
+  .tabbar{grid-template-columns:repeat(7,1fr)!important}
+  .tabbar button{font-size:9.5px!important;letter-spacing:.02em!important}
+}
+
+/* phone */
+@media (max-width:900px){
+  body{font-size:15px}
+  .frame{display:block}
+  .rail{display:none}
+  .mtop{display:flex;position:sticky;top:0;z-index:40;align-items:center;gap:10px;padding:calc(var(--top) + 8px) 18px 10px;background:rgba(0,0,0,.86);backdrop-filter:saturate(1.3) blur(18px);-webkit-backdrop-filter:saturate(1.3) blur(18px);border-bottom:1px solid var(--line)}
+  .mtop img{width:30px;height:30px;object-fit:cover;object-position:center 30%;border-radius:50%}
+  .mtop .t{font-family:var(--mark);letter-spacing:.28em;color:var(--gold);font-size:15px}
+  .mtop button{margin-left:auto;color:var(--muted);display:grid;place-items:center;width:36px;height:36px}
+  .mtop svg{width:21px;height:21px;stroke:currentColor;fill:none;stroke-width:1.6}
+  .tabbar{display:grid;grid-template-columns:repeat(5,1fr);position:fixed;left:0;right:0;bottom:0;z-index:40;background:rgba(0,0,0,.9);backdrop-filter:saturate(1.3) blur(18px);-webkit-backdrop-filter:saturate(1.3) blur(18px);border-top:1px solid var(--line);padding-bottom:var(--bot)}
+  .tabbar button{display:flex;flex-direction:column;align-items:center;gap:3px;padding:9px 0 7px;color:var(--dim);font-size:10.5px;font-weight:600;letter-spacing:.04em}
+  .tabbar svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round}
+  .tabbar button[aria-current="true"]{color:var(--gold-hi)}
+  .main{padding:20px 16px calc(var(--bot) + 96px)}
+  h1{font-size:32px}
+  .hero .cap h1{font-size:30px}
+  .hero .ph{height:180px}
+  .search{width:100%}
+  .g3,.g4{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .g2,.cols,.cols.wide{grid-template-columns:1fr}
+  .hero .row{grid-template-columns:repeat(3,1fr)}
+  .hero .row div:nth-child(4){border-left:0}
+  .hero .row div:nth-child(n+4){border-top:1px solid var(--line)}
+  .figs{grid-template-columns:repeat(3,1fr)}
+  .figs div:nth-child(4){border-left:0}
+  .figs div:nth-child(n+4){border-top:1px solid var(--line)}
+  .drow{grid-template-columns:minmax(0,1fr) auto;row-gap:4px}
+  .drow.th,.drow .hide{display:none}
+  .site{height:calc(100vh - 150px - var(--top) - var(--bot))}
+  .two{grid-template-columns:1fr}
+  .stat b{font-size:32px}
+}
+@media (prefers-reduced-motion:reduce){.sheet,.fcard{transition:none}}
+</style>
+</head>
+<body>
+<header class="ah"><div class="ah-in">
+  <button class="brand" data-go="firm" aria-label="ELK Holdings home"><img src="../crest-icon.jpg" alt=""><span><b>ELK</b><small>HOLDINGS</small></span></button>
+  <nav class="ahnav" aria-label="Main">
+    <button data-go="firm">Firm</button><button data-go="investments">Investments</button><button data-go="about">About</button><button data-go="contact">Contact</button>
+    <button class="ahlogin" data-go="investors">Investor Login</button>
+    <span id="ahlocked" class="ahlocked"></span>
+  </nav>
+</div></header>
+<div id="sitewrap"><iframe id="sitef" title="ELK Holdings"></iframe></div>
+<div id="eddiewrap" hidden>
+  <div class="ewrap"><nav class="enav" id="enav" aria-label="Eddie only"></nav><main class="main" id="main"></main></div>
+</div>
+<nav class="tabbar" id="tabbar" aria-label="Sections"></nav>
+<div id="send-wrap">
+  <div class="scrim" id="scrim"></div>
+  <aside class="sheet" aria-label="Send a deal">
+    <header><h2>Send a deal</h2><button id="close" aria-label="Close">×</button></header>
+    <div class="body">
+      <p class="muted" style="margin:0 0 14px">Add the OM and anything that came with it. The next build turns it into an ELK investor memo in its own folder.</p>
+      <div class="drop" id="drop" tabindex="0"><b>Drop files here</b>or tap to choose: OM, rent roll, P&amp;L, photos, broker email</div>
+      <input type="file" id="pick" multiple hidden>
+      <ul class="picked" id="picked"></ul>
+      <div class="two">
+        <div class="field"><label for="f-name">Property name</label><input id="f-name" placeholder="Perryville III"></div>
+        <div class="field"><label for="f-addr">Address</label><input id="f-addr" placeholder="53 Frontage Rd, Hampton, NJ"></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="f-from">Sent by</label><input id="f-from" placeholder="Broker and firm"></div>
+        <div class="field"><label for="f-price">Price or terms</label><input id="f-price" placeholder="Buy at a 14 cap"></div>
+      </div>
+      <div class="field"><label for="f-note">Notes for the memo</label><textarea id="f-note" style="min-height:96px" placeholder="Call notes, guidance, what I want to offer, exit cap…"></textarea></div>
+    </div>
+    <footer><button class="btn" id="send">Send to underwriting</button><span class="muted" id="sendst"></span></footer>
+  </aside>
+</div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const LS = { get(k, d){ try{ const v = localStorage.getItem("elkhq-" + k); return v == null ? d : JSON.parse(v); }catch(e){ return d; } },
+             set(k, v){ try{ localStorage.setItem("elkhq-" + k, JSON.stringify(v)); }catch(e){} } };
+let cfg = Object.assign({ finds: "EdwardSKhezrie/elk-deal-finds", room: "EdwardSKhezrie/elk-deal-room" }, LS.get("cfg", {}));
+cfg.token = ""; /* the key only comes out of the vault with Eddie's code */
+["finds","fcache","index","upcache"].forEach(k => { try{ localStorage.removeItem("elkhq-" + k); }catch(e){} });
+let FC = {}, UPC = {};
+const FULL_FINDS = "https://elk-deal-finds.vercel.app";
+const SITE = "../";
+
+function toast(t, ms){ const e = $("#toast"); e.textContent = t; e.style.display = "block"; clearTimeout(e._t); e._t = setTimeout(() => e.style.display = "none", ms || 2800); }
+const fmtM = x => x == null ? "—" : "$" + (x / 1e6).toFixed(x >= 1e8 ? 0 : 1) + "M";
+const pct = x => x == null ? "—" : (x * 100).toFixed(1) + "%";
+const size = b => b > 1e6 ? (b / 1e6).toFixed(1) + " MB" : Math.max(1, Math.round(b / 1e3)) + " KB";
+const fmtSf = n => n ? Number(n).toLocaleString("en-US") + " SF" : "—";
+const fmtDate = s => { if (!s) return ""; const [y, m] = String(s).split("-"); return m ? ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"][+m - 1] + " " + y : y; };
+
+/* ---------- icons + nav ---------- */
+const IC = {
+  firm: '<svg viewBox="0 0 24 24"><path d="M3.5 10.5 12 4l8.5 6.5V20a.5.5 0 0 1-.5.5h-5v-6h-6v6H4a.5.5 0 0 1-.5-.5z"/></svg>',
+  investments: '<svg viewBox="0 0 24 24"><path d="M4 19.5h16M6.5 16v-5M11 16V7.5M15.5 16v-3.5M20 16V5"/></svg>',
+  portfolio: '<svg viewBox="0 0 24 24"><rect x="3.5" y="7" width="17" height="12.5" rx="1.5"/><path d="M9 7V5.5a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1V7M3.5 12.5h17"/></svg>',
+  about: '<svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.6"/><path d="M5 20c.8-3.6 3.6-5.6 7-5.6s6.2 2 7 5.6"/></svg>',
+  investors: '<svg viewBox="0 0 24 24"><path d="M14 4.5h5a1 1 0 0 1 1 1v13a1 1 0 0 1-1 1h-5M10 16.5l4.5-4.5L10 7.5M14.5 12H4"/></svg>',
+  finds: '<svg viewBox="0 0 24 24"><circle cx="10.5" cy="10.5" r="6"/><path d="m15 15 5.5 5.5"/></svg>',
+  room: '<svg viewBox="0 0 24 24"><path d="M6 3.5h8.5L18.5 7.5V20a.5.5 0 0 1-.5.5H6a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z"/><path d="M14 3.5V8h4.5M8.5 12.5h7M8.5 16h5"/></svg>',
+  updates: '<svg viewBox="0 0 24 24"><path d="M4 5.5h16v10.5H9.5L5.5 19.5V16H4z"/><path d="M8.5 9.5h7M8.5 12.5h4.5"/></svg>',
+  eddie: '<svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>'
+};
+const TABS = [["firm","Home"],["investments","Invest"],["about","About"],["investors","Investors"],["finds","Finds"],["room","Underwrite"],["updates","Claude"]];
+const LOCKED = ["finds","room","updates"];
+const ENAV = [["eddie","Overview"],["finds","Deal Finds"],["room","Underwriting"],["updates","Claude"],["settings","Settings"]];
+const SITE_GO = { firm:["home","top"], investments:["investments","platform"], portfolio:["portfolio"], about:["leadership"], contact:["contact"], investors:["login"] };
+const SITE_TAB = v => v === "home" ? "firm" : ["investments","realestate","fixedincome","privateequity","venture","operating","services","equities"].includes(v) ? "investments" : v === "portfolio" ? "portfolio" : v === "leadership" ? "about" : v === "contact" ? "contact" : (v === "login" || v === "room") ? "investors" : "firm";
+const EDDIE_VIEWS = ["eddie","finds","room","updates","settings"];
+function buildNav(){
+  $("#tabbar").innerHTML = TABS.map(([k, l]) => `<button data-go="${k}">${IC[k]}${l}</button>`).join("");
+  $("#ahlocked").innerHTML = [["finds","Deal Finds"],["room","Underwriting"],["updates","Claude"]].map(([k, l]) => `<button class="ahlock" data-go="${k}">${IC.eddie}${l}</button>`).join("");
+  $("#enav").innerHTML = ENAV.map(([k, l]) => `<button data-go="${k}">${l}<span class="ct" id="ct-${k}" style="margin-left:6px;color:var(--dim);font-size:12px"></span></button>`).join("") + `<span class="sp"></span><button data-go="send" class="btn sm" style="color:#120E05">Send a deal</button><button class="lk" id="lockBtn">Lock</button>`;
+  document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => b.dataset.go === "send" ? openSend() : go(b.dataset.go));
+  $("#lockBtn").onclick = lock;
+}
+function mark(k){
+  const top = k;
+  document.querySelectorAll(".ahnav [data-go], #tabbar [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === top));
+  document.querySelectorAll("#enav [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === k));
+}
+function go(view){ if (location.hash !== "#" + view) location.hash = view; else route(); }
+
+/* the website, shown inside the app with its own header hidden (same site, so the app controls it) */
+let siteReady = false, sitePending = null;
+function siteGo(tab){
+  const f = $("#sitef"), args = SITE_GO[tab] || SITE_GO.firm;
+  if (!f.src){ f.src = "../#" + (args[1] || args[0]); sitePending = args; return; }
+  if (!siteReady){ sitePending = args; return; }
+  try{ f.contentWindow.go(args[0], args[1]); }catch(e){ f.src = "../#" + (args[1] || args[0]); }
+}
+$("#sitef").addEventListener("load", () => {
+  const f = $("#sitef");
+  try{
+    const w = f.contentWindow, d = f.contentDocument;
+    const st = d.createElement("style"); st.textContent = "header.top{display:none!important}"; d.head.appendChild(st);
+    const orig = w.go;
+    if (typeof orig === "function" && !orig._elk){
+      const wrapped = function(v, to){ const r = orig.apply(this, arguments); const t = SITE_TAB(v === "login" && w.session ? "room" : v); if (!EDDIE_VIEWS.includes(cur) && t !== cur){ cur = t; try{ history.replaceState(null, "", "#" + t); }catch(e){} mark(t); } return r; };
+      wrapped._elk = true; w.go = wrapped;
+    }
+    siteReady = true;
+    if (sitePending){ const a = sitePending; sitePending = null; try{ w.go(a[0], a[1]); }catch(e){} }
+  }catch(e){ siteReady = false; }
+});
+let cur = "firm";
+function route(){
+  const h = decodeURIComponent(location.hash.slice(1)) || "firm";
+  const [v, ...rest] = h.split("/"); const arg = rest.join("/");
+  cur = v;
+  const eddie = EDDIE_VIEWS.includes(v);
+  $("#sitewrap").hidden = eddie; $("#eddiewrap").hidden = !eddie;
+  mark(v);
+  if (!eddie){ siteGo(SITE_GO[v] ? v : "firm"); return; }
+  window.scrollTo(0, 0);
+  $("#enav").hidden = !unlocked();
+  if (!unlocked()) return gate();
+  if (v === "finds" && arg) return findPage(arg);
+  if (v === "finds") return findsList();
+  if (v === "room" && arg) return folder(arg);
+  if (v === "room") return roomList();
+  if (v === "updates") return updates();
+  if (v === "settings") return settings();
+  return home();
+}
+addEventListener("hashchange", route);
+
+/* ---------- Eddie lock: the GitHub key is kept encrypted with Eddie's code ---------- */
+const VKEY = "elkhq-vault";
+const enc = new TextEncoder(), dec = new TextDecoder();
+const u8 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const b64s = a => btoa(String.fromCharCode(...new Uint8Array(a)));
+async function kdf(code, salt){
+  const km = await crypto.subtle.importKey("raw", enc.encode(code), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 250000, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+async function sealKey(code, token){
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await kdf(code, salt), enc.encode(JSON.stringify({ token })));
+  localStorage.setItem(VKEY, JSON.stringify({ salt: b64s(salt), iv: b64s(iv), ct: b64s(ct) }));
+}
+async function openKey(code){
+  const v = JSON.parse(localStorage.getItem(VKEY));
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: u8(v.iv) }, await kdf(code, u8(v.salt)), u8(v.ct));
+  return JSON.parse(dec.decode(pt)).token;
+}
+const hasVault = () => { try{ return !!localStorage.getItem(VKEY); }catch(e){ return false; } };
+const unlocked = () => !!cfg.token;
+let CODE = "";
+function plainToken(){ try{ return (JSON.parse(localStorage.getItem("elkhq-cfg")) || {}).token || ""; }catch(e){ return ""; } }
+function scrubPlain(){ try{ const c = JSON.parse(localStorage.getItem("elkhq-cfg")) || {}; delete c.token; localStorage.setItem("elkhq-cfg", JSON.stringify(c)); }catch(e){} }
+function lock(){ cfg.token = ""; CODE = ""; S.finds = []; S.index = { deals: [], waiting: [] }; S.inbox = []; UP = []; FC = {}; UPC = {}; counts(); toast("Locked"); route(); }
+let idleT = null;
+document.addEventListener("visibilitychange", () => { clearTimeout(idleT); if (document.hidden && unlocked()) idleT = setTimeout(lock, 15 * 60 * 1000); });
+function gate(){
+  mark(cur);
+  const setup = !hasVault();
+  const plain = plainToken();
+  $("#main").innerHTML = `<div class="gate"><img src="../crest-head.jpg" alt=""><div class="eyebrow">Eddie only</div><h1>${setup ? "Set your code" : "Enter your code"}</h1>
+    <p>${setup ? "Deal Finds, Underwriting and Updates are only for you. Pick a code (at least 4 digits). Your GitHub key is locked with it on this device." : "Deal Finds, Underwriting and Updates."}</p>
+    <form id="gf"><input class="pin" id="g1" type="password" inputmode="numeric" autocomplete="off" placeholder="••••" aria-label="Code">
+    ${setup ? `<input class="pin" id="g2" type="password" inputmode="numeric" autocomplete="off" placeholder="again" aria-label="Code again" style="font-size:18px;letter-spacing:.2em">
+    <div class="field"><label for="g3">GitHub key ${plain ? "(found on this device)" : ""}</label><input id="g3" type="password" autocomplete="off" placeholder="github_pat_…" value="${esc(plain)}"></div>
+    <p style="font-size:13px;margin:8px 0 0;text-align:left">Make it at <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>: only select repositories → <b>elk-deal-finds</b> and <b>elk-deal-room</b>, Contents → Read and write.</p>` : ""}
+    <button class="btn" type="submit">${setup ? "Save and open" : "Open"}</button><div class="err" id="gerr"></div></form>
+    ${setup ? "" : `<button class="dim" id="gforget" style="margin-top:22px;font-size:13px">Forgot the code? Reset it</button>`}</div>`;
+  $("#g1").focus();
+  $("#gf").onsubmit = async e => {
+    e.preventDefault();
+    const c = $("#g1").value.trim(), er = $("#gerr");
+    if (c.length < 4) return er.textContent = "Use at least 4 digits.";
+    try{
+      if (setup){
+        if (c !== $("#g2").value.trim()) return er.textContent = "The two codes don't match.";
+        const t = $("#g3").value.trim(); if (!t) return er.textContent = "Paste your GitHub key.";
+        er.textContent = "Saving…"; await sealKey(c, t); scrubPlain(); cfg.token = t;
+      } else {
+        er.textContent = "Opening…";
+        try{ cfg.token = await openKey(c); }catch(x){ cfg.token = ""; return er.textContent = "Wrong code."; }
+        const p = plainToken(); if (p && p !== cfg.token){ cfg.token = p; await sealKey(c, p); } scrubPlain();
+      }
+      CODE = c; route(); refresh();
+    }catch(x){ er.textContent = "Something went wrong. Try again."; }
+  };
+  const fg = $("#gforget"); if (fg) fg.onclick = () => { localStorage.removeItem(VKEY); toast("Code reset. Set a new one."); gate(); };
+}
+
+/* ---------- GitHub ---------- */
+async function gh(repo, path, opts = {}){
+  const r = await fetch("https://api.github.com/repos/" + repo + path, Object.assign({}, opts, { headers: Object.assign({ Authorization: "Bearer " + cfg.token, Accept: "application/vnd.github+json" }, opts.headers || {}) }));
+  if (!r.ok){
+    const t = await r.text();
+    const e = new Error(r.status === 401 ? "Your GitHub key isn't working. Paste a new one in Settings." : r.status === 404 ? `Your key can't see ${repo}. In Settings, check the key includes that repo.` : r.status + " " + t.slice(0, 140));
+    e.status = r.status; throw e;
+  }
+  return opts.raw ? r : (r.status === 204 ? null : r.json());
+}
+const P = p => "/contents/" + p.split("/").map(encodeURIComponent).join("/");
+const raw = { headers: { Accept: "application/vnd.github.raw" }, raw: true };
+const decode = b64 => new TextDecoder().decode(Uint8Array.from(atob(b64.replace(/\n/g, "")), c => c.charCodeAt(0)));
+
+/* ---------- data ---------- */
+const S = { finds: [], findsErr: "", findsAt: null, index: { deals: [], waiting: [] }, inbox: [], roomErr: "", branch: "main", loading: false };
+const TAGS = { reo:["Lender-owned",30], note:["Note for sale",28], fc:["Foreclosure / auction",24], matured:["Loan past maturity",20], ss:["Special servicing",16], owner:["Owner under pressure",12], watch:["Watchlist",6] };
+const MKT = { NJ: "New Jersey", NYC: "New York", Miami: "Miami", National: "Nationwide" };
+
+async function loadFinds(){
+  const cache = FC;
+  const list = (await gh(cfg.finds, P("data/deals"))).filter(x => x.type === "file" && /\.json$/.test(x.name));
+  let removed = [];
+  try{ removed = await (await gh(cfg.finds, P("data/removed.json"), raw)).json(); }catch(e){}
+  const out = [], fresh = {};
+  await Promise.all(list.map(async x => {
+    let d = cache[x.sha];
+    if (!d){ try{ d = await (await gh(cfg.finds, P(x.path), raw)).json(); }catch(e){ return; } }
+    if (!d || !d.name) return;
+    if (!d.id) d.id = x.name.replace(/\.json$/, "");
+    fresh[x.sha] = d; out.push(d);
+  }));
+  FC = fresh;
+  S.finds = out.filter(d => !removed.includes(d.id)).map(norm);
+}
+function norm(d){
+  d.tags = (Array.isArray(d.tags) ? d.tags : []).filter(t => TAGS[t]); if (!d.tags.length) d.tags = ["watch"];
+  ["highlights","debt","path","gaps","src","contacts"].forEach(k => { if (!Array.isArray(d[k])) d[k] = []; });
+  if (d.year == null) d.year = 2026;
+  d.score = fit(d); return d;
+}
+async function loadRoom(){
+  const repo = await gh(cfg.room, "");
+  S.branch = repo.default_branch || "main";
+  try{ S.index = JSON.parse(decode((await gh(cfg.room, P("deals/index.json"))).content)); }catch(e){ S.index = { deals: [], waiting: [] }; }
+  try{ S.inbox = (await gh(cfg.room, P("inbox"))).filter(x => x.type === "dir"); }catch(e){ S.inbox = []; }
+}
+async function refresh(){
+  if (!cfg.token) return;
+  S.loading = true;
+  const [a, b] = await Promise.allSettled([loadFinds(), loadRoom()]);
+  S.findsErr = a.status === "rejected" ? a.reason.message : "";
+  S.roomErr = b.status === "rejected" ? b.reason.message : "";
+  S.loading = false;
+  if ($("#sync")) $("#sync").textContent = "Updated " + new Date().toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  counts();
+  const h = location.hash.slice(1).split("/")[0] || "firm";
+  if (unlocked() && ["eddie","finds","room"].includes(h) && !document.body.classList.contains("open")) route();
+}
+function counts(){
+  const set = (k, v) => { const e = $("#ct-" + k); if (e) e.textContent = v || ""; };
+  set("finds", S.finds.length); set("room", (S.index.deals || []).length);
+}
+
+/* ---------- fit (same scoring as Deal Finds) ---------- */
+function boxCheck(d){
+  const occ = d.occ, items = [];
+  items.push(occ == null ? ["q","About 60% occupied", d.occBelow ? "Under 50%" : "Not public yet"] : (occ >= 50 && occ <= 70) ? ["y","About 60% occupied", occ + "%" + (d.occAsOf ? " (" + d.occAsOf + ")" : "")] : ["n","About 60% occupied", occ + "%"]);
+  const longLease = /1[0-9]-year|10-year|12-year|anchor|consulate|school|WALT/i.test((d.tenants || "") + " " + d.highlights.join(" "));
+  items.push(longLease ? ["y","Long leases in place","Long lease or anchor reported"] : ["q","Long leases in place","WALT not public"]);
+  const way = d.tags.some(t => ["reo","note","fc"].includes(t));
+  items.push(way ? ["y","A way in right now", d.tags.map(t => TAGS[t][0]).join(", ")] : ["q","A way in right now","Owner or servicer conversation"]);
+  const strong = d.strongMkt != null ? d.strongMkt : (d.mkt === "NYC" || /Waterfront|Coral Gables|Downtown Miami/.test(d.sub || ""));
+  items.push(strong ? ["y","Strong, lower-vacancy market", d.sub || MKT[d.mkt]] : ["q","Strong, lower-vacancy market", d.sub || MKT[d.mkt]]);
+  items.push(d.year >= 2026 ? ["y","Recent information","News from " + fmtDate(d.news)] : ["q","Recent information","Latest public data " + d.year]);
+  return items;
+}
+function fit(d){
+  let s = 0;
+  if (d.occ != null){ if (d.occ >= 55 && d.occ <= 65) s += 34; else if (d.occ >= 50 && d.occ <= 70) s += 28; else if (d.occ > 70 && d.occ <= 75) s += 10; if (d.occEst) s -= 4; }
+  else if (!d.occBelow) s += 12;
+  const pts = d.tags.map(t => TAGS[t] ? TAGS[t][1] : 0).sort((a, b) => b - a);
+  if (pts.length) s += pts[0] + Math.min(6, (pts.length - 1) * 3);
+  s += d.year >= 2026 ? 14 : d.year === 2025 ? 8 : 0;
+  const b = boxCheck(d); if (b[1][0] === "y") s += 8; if (b[3][0] === "y") s += 6;
+  return Math.max(0, Math.min(100, Math.round(s)));
+}
+const fitWord = n => n >= 72 ? "Strong fit" : n >= 55 ? "Good fit" : n >= 40 ? "Worth a call" : "Long shot";
+const occTxt = d => d.occ != null ? (d.occEst ? "~" : "") + d.occ + "%" : d.occBelow ? "<50%" : "n/a";
+function bestContact(d){
+  const rank = o => { const r = (o.role || "").toLowerCase(); return /broker|receiver/.test(r) ? 0 : /servicer|lender|reo/.test(r) ? 1 : /owner|sponsor/.test(r) ? 2 : 3; };
+  return d.contacts.slice().sort((a, b) => ((b.email ? 1 : 0) - (a.email ? 1 : 0)) || (rank(a) - rank(b)))[0] || null;
+}
+function draftFor(d, c){
+  const nm = c && c.person ? c.person.split(/[,(]/)[0].trim() : "";
+  const first = /^[A-Z][a-z]+ [A-Z][A-Za-z.'-]+$/.test(nm) && !/group|team|management|servic|desk|office|asset|line|department|capital|partners/i.test(nm) ? nm.split(" ")[0] : "";
+  return { to: c && c.email ? c.email : "", subject: d.name + " – Global Group Acquisitions",
+    body: `Hi ${first || "there"},\n\nHope you're doing well. I'm Eddie Khezrie, and I work with my father's family office, Global Group Acquisitions. We're all-cash buyers, and I came across ${d.name}. It seems like it could be a great fit for us.\n\nWould you be able to share some financials? If it makes sense, we can move quickly.\n\nLooking forward to hearing from you.\n\nBest,\nEddie Khezrie\nGlobal Group Acquisitions\n718-668-4514` };
+}
+const tel = p => "tel:" + String(p).replace(/[^0-9+]/g, "");
+
+/* ---------- home ---------- */
+function needKey(){
+  return `<div class="empty"><div class="eyebrow">Welcome</div><h2 style="margin-top:8px">Connect your GitHub key once</h2><p>Deal Finds and Underwriting read straight from your private repos. Nothing private lives on this page.</p><button class="btn" onclick="go('settings')">Open settings</button></div>`;
+}
+function home(){
+  mark("home");
+  const hr = new Date().getHours(), greet = hr < 12 ? "Good morning" : hr < 18 ? "Good afternoon" : "Good evening";
+  const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+  let h = `<div class="head"><div><div class="eyebrow">${esc(today)}</div><h1>${greet}, Eddie</h1></div><div class="grow"></div><button class="btn" onclick="openSend()">Send a deal</button></div>`;
+  if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
+  const F = S.finds.slice().sort((a, b) => b.score - a.score);
+  const strong = F.filter(d => d.score >= 72).length;
+  const D = S.index.deals || [];
+  const ready = D.filter(d => /ready/i.test(d.status || "")).length;
+  const wait = S.inbox.length + (S.index.waiting || []).length;
+  const week = Date.now() - 7 * 864e5;
+  const fresh = F.filter(d => d.added && Date.parse(d.added) > week).length;
+  h += `<div class="grid g4">
+    <div class="card stat" onclick="go('finds')"><b class="num">${F.length}</b><span>Deal finds${fresh ? ` · ${fresh} new this week` : ""}</span></div>
+    <div class="card stat gold" onclick="go('finds')"><b class="num">${strong}</b><span>Strong fits</span></div>
+    <div class="card stat" onclick="go('room')"><b class="num">${ready}</b><span>Memos underwritten</span></div>
+    <div class="card stat" onclick="go('room')"><b class="num">${wait}</b><span>Waiting to be built</span></div></div>`;
+  if (S.findsErr || S.roomErr) h += `<div class="notice" style="margin-top:18px">${S.findsErr ? "Deal Finds: " + esc(S.findsErr) + "<br>" : ""}${S.roomErr ? "Underwriting: " + esc(S.roomErr) : ""}</div>`;
+  h += `<div class="cols wide"><div class="card"><div style="display:flex;align-items:baseline;justify-content:space-between"><h3>Best finds right now</h3><a href="#finds" style="font-size:13.5px">See all</a></div>`;
+  h += F.slice(0, 5).map(d => { const c = bestContact(d); return `<div class="who" style="cursor:pointer" onclick="go('finds/${esc(d.id)}')"><div style="display:flex;gap:12px;justify-content:space-between"><b style="font-family:var(--disp);font-size:19px">${esc(d.name)}</b><span class="tag">${d.score} · ${fitWord(d.score)}</span></div><div class="wr">${esc(d.sub || MKT[d.mkt] || "")} · ${occTxt(d)} occupied · ${esc(d.tags.map(t => TAGS[t][0]).join(", "))}</div>${c ? `<div class="wr" style="margin-top:3px">Call first: ${esc(c.person || c.org)}${c.phone ? " · " + esc(c.phone) : ""}</div>` : ""}</div>`; }).join("") || '<p class="muted">No finds loaded yet.</p>';
+  h += `</div><div class="stack"><div class="card"><h3>Underwriting</h3>`;
+  h += D.slice(0, 4).map(d => `<div class="who" style="cursor:pointer" onclick="go('room/${esc(encodeURIComponent(d.folder))}')"><b>${esc(d.name)}</b><div class="wr">${esc(d.area || "")} · ${esc(d.status || "In progress")}${d.moic ? " · " + d.moic.toFixed(1) + "x" : ""}</div></div>`).join("") || `<p class="muted" style="margin:0 0 12px">No memos yet. Send in an OM and it gets built into an ELK memo.</p>`;
+  h += `<div class="btns"><button class="btn sm" onclick="openSend()">Send a deal</button><button class="btn line sm" onclick="go('room')">Open Underwriting</button></div></div>
+    <div class="card"><h3>Website</h3><p class="muted" style="margin:0 0 4px">The public site and the partner portal.</p><div class="btns"><button class="btn line sm" onclick="go('firm')">Open here</button><a class="btn line sm" href="${SITE}" target="_blank" rel="noopener">New tab ↗</a></div></div></div></div>`;
+  $("#main").innerHTML = h;
+}
+
+/* ---------- deal finds ---------- */
+const F_ST = Object.assign({ q: "", mkt: "all" }, LS.get("fst", {}));
+function findsList(){
+  mark("finds");
+  let h = `<div class="head"><div><div class="eyebrow">Off-market and distressed office</div><h1>Deal Finds</h1><div class="sub">Ranked by fit to the ELK box: ~60% occupied, long leases, a way in, strong market.</div></div><div class="grow"></div><input class="search" id="fq" placeholder="Search name, owner, broker, servicer" value="${esc(F_ST.q)}" aria-label="Search finds"></div>`;
+  if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
+  h += `<div class="chips">${[["all","All"],["NJ","New Jersey"],["NYC","New York"],["Miami","Miami"],["National","Nationwide"]].map(([k, l]) => `<button class="chip" data-m="${k}" aria-pressed="${F_ST.mkt === k}">${l} <span class="dim">${k === "all" ? S.finds.length : S.finds.filter(d => d.mkt === k).length}</span></button>`).join("")}</div>`;
+  if (S.findsErr) h += `<div class="notice">${esc(S.findsErr)}</div>`;
+  const q = F_ST.q.toLowerCase();
+  const list = S.finds.filter(d => (F_ST.mkt === "all" || d.mkt === F_ST.mkt) && (!q || [d.name, d.addr, d.sub, d.owner, d.summary, d.tenants, d.contacts.map(c => c.org + " " + c.person).join(" "), d.debt.map(r => r.join(" ")).join(" ")].join(" ").toLowerCase().includes(q))).sort((a, b) => b.score - a.score);
+  if (!S.finds.length && S.loading) h += '<p class="muted">Loading finds…</p>';
+  else if (!list.length) h += `<div class="empty"><h2>Nothing matches</h2><p>Try another market or search.</p></div>`;
+  h += `<div class="finds">${list.map(card).join("")}</div>`;
+  h += `<p class="dim" style="font-size:13px;margin-top:22px">New finds are added at 7 AM and 1 PM. Outreach tracking and Outlook sending stay in the <a href="${FULL_FINDS}" target="_blank" rel="noopener">full Deal Finds app ↗</a>.</p>`;
+  $("#main").innerHTML = h;
+  document.querySelectorAll(".chip").forEach(b => b.onclick = () => { F_ST.mkt = b.dataset.m; LS.set("fst", F_ST); findsList(); });
+  const fq = $("#fq"); fq.oninput = () => { F_ST.q = fq.value; LS.set("fst", F_ST); clearTimeout(window._fq); window._fq = setTimeout(() => { findsList(); const i = $("#fq"); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 220); };
+}
+function photo(d, cls){
+  return d.photo ? `<img src="${esc(d.photo)}" alt="" loading="lazy" referrerpolicy="no-referrer" onerror="this.remove()">` : `<div class="mono">ELK</div>`;
+}
+function card(d){
+  const red = t => ["reo","note","fc"].includes(t);
+  return `<article class="fcard" tabindex="0" onclick="go('finds/${esc(d.id)}')" onkeydown="if(event.key==='Enter')go('finds/${esc(d.id)}')">
+    <div class="ph">${photo(d)}<span class="fit">${d.score} · ${fitWord(d.score)}</span></div>
+    <div class="bd"><div class="tags">${d.tags.map(t => `<span class="tag ${red(t) ? "red" : ""}">${TAGS[t][0]}</span>`).join("")}</div>
+      <div class="nm">${esc(d.name)}</div><div class="ad">${esc(d.addr)}</div>
+      <div class="hl">${esc(d.headline || "")}</div>
+      <div class="facts"><span><b>${occTxt(d)}</b> occ.</span><span><b>${d.sf ? Math.round(d.sf / 1000) + "K" : "—"}</b> SF</span><span>${esc(MKT[d.mkt] || d.mkt)}</span><span style="margin-left:auto">${fmtDate(d.news)}</span></div></div></article>`;
+}
+function findPage(id){
+  mark("finds");
+  const d = S.finds.find(x => x.id === id);
+  if (!d){ $("#main").innerHTML = `<button class="back" onclick="go('finds')">← All finds</button>` + (S.loading || !cfg.token ? (cfg.token ? '<p class="muted">Loading…</p>' : needKey()) : `<div class="empty"><h2>Not found</h2><p>This find may have been removed.</p></div>`); return; }
+  const c = bestContact(d), dr = draftFor(d, c);
+  const fig = (v, l) => `<div><b class="num">${v}</b><span>${l}</span></div>`;
+  let h = `<button class="back" onclick="go('finds')">← All finds</button>
+  <div class="hero"><div class="ph">${photo(d)}${d.photoCredit ? `<span class="credit">${esc(d.photoCredit)}</span>` : ""}<div class="cap"><div class="tags">${d.tags.map(t => `<span class="tag">${TAGS[t][0]}</span>`).join("")}</div><h1>${esc(d.name)}</h1><div class="muted">${esc(d.addr)} · <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.addr)}" target="_blank" rel="noopener">Map ↗</a></div></div></div>
+    <div class="row">${fig(d.score, fitWord(d.score))}${fig(occTxt(d), "Occupied")}${fig(fmtSf(d.sf).replace(" SF", ""), "Square feet")}${fig(d.stories || "—", "Stories")}${fig(esc(d.built || "—"), "Built")}</div></div>
+  <div class="cols"><div class="stack">
+    <div class="card"><h3>The story</h3><p class="lede">${esc(d.summary)}</p>${d.highlights.length ? `<ul class="clean" style="margin-top:12px">${d.highlights.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</div>
+    <div class="card"><h3>Against the ELK box</h3><ul class="box" style="list-style:none;padding:0;margin:0">${boxCheck(d).map(([k, l, s]) => `<li><i class="${k}">${k === "y" ? "✓" : k === "n" ? "✕" : "?"}</i><div>${esc(l)}<small>${esc(s)}</small></div></li>`).join("")}</ul></div>
+    <div class="card"><h3>Debt and situation</h3><table class="kv">${[["Owner", d.owner]].concat(d.debt).filter(r => r[1]).map(r => `<tr><td>${esc(r[0])}</td><td>${esc(r[1])}</td></tr>`).join("")}</table></div>
+    ${d.tenants ? `<div class="card"><h3>Tenants</h3><p style="margin:0">${esc(d.tenants)}</p></div>` : ""}
+    ${d.path.length ? `<div class="card"><h3>How we get it</h3><ol class="steps">${d.path.map(x => `<li>${esc(x)}</li>`).join("")}</ol></div>` : ""}
+    ${d.gaps.length ? `<div class="card"><h3>Still unknown</h3><ul class="clean">${d.gaps.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
+  </div><div class="stack">
+    <div class="card out"><h3>Reach out</h3>
+      <div class="best"><div><div class="muted" style="font-size:12.5px">Best contact</div><b style="font-size:17px">${c ? esc(c.person || c.org) : "No contact on file yet"}</b>${c && c.person ? `<div class="muted" style="font-size:13.5px">${esc(c.org)} · ${esc(c.role || "")}</div>` : ""}</div>
+      ${c && c.phone ? `<a class="btn sm" href="${tel(c.phone)}">Call ${esc(c.phone)}</a>` : ""}</div>
+      ${c && !c.email ? '<p class="muted" style="font-size:13.5px;margin:12px 0 0">No public email yet. Call the number, or type the email once you have it.</p>' : ""}
+      <div class="field"><label for="oTo">To</label><input id="oTo" value="${esc(dr.to)}" placeholder="name@company.com"></div>
+      <div class="field"><label for="oSub">Subject</label><input id="oSub" value="${esc(dr.subject)}"></div>
+      <div class="field"><label for="oBody">Email</label><textarea id="oBody">${esc(dr.body)}</textarea></div>
+      <div class="btns"><a class="btn sm" id="oApp" href="#">Open in Outlook</a><a class="btn line sm" id="oWeb" href="#" target="_blank" rel="noopener">Outlook web</a><a class="btn line sm" id="oMail" href="#">Mail</a><button class="btn line sm" id="oCopy">Copy</button></div>
+    </div>
+    <div class="card"><h3>Everyone involved</h3>${d.contacts.map(x => `<div class="who"><b>${esc(x.person || x.org)}</b><div class="wr">${x.person ? esc(x.org) + " · " : ""}${esc(x.role || "")}</div><div class="ln">${x.phone ? `<a href="${tel(x.phone)}">${esc(x.phone)}</a>` : ""}${x.email ? `<a href="mailto:${esc(x.email)}">${esc(x.email)}</a>` : ""}${x.web ? `<a href="${esc(x.web)}" target="_blank" rel="noopener">${esc(x.src || "Source")} ↗</a>` : ""}</div></div>`).join("") || '<p class="muted" style="margin:0">None yet.</p>'}</div>
+    <div class="card"><h3>Got the OM?</h3><p class="muted" style="margin:0">Send it to Underwriting and it comes back as a full ELK investor memo.</p><div class="btns"><button class="btn sm" id="toRoom">Send to Underwriting</button></div></div>
+    ${d.src.length ? `<div class="card srcs"><h3>Sources</h3>${d.src.map(s => `<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])} ↗</a>`).join("")}</div>` : ""}
+  </div></div>`;
+  $("#main").innerHTML = h;
+  const links = () => { const to = encodeURIComponent($("#oTo").value.trim()).replace(/%40/g, "@"), s = encodeURIComponent($("#oSub").value), b = encodeURIComponent($("#oBody").value);
+    $("#oApp").href = "ms-outlook://compose?to=" + to + "&subject=" + s + "&body=" + b;
+    $("#oWeb").href = "https://outlook.office.com/mail/deeplink/compose?to=" + to + "&subject=" + s + "&body=" + b;
+    $("#oMail").href = "mailto:" + to + "?subject=" + s + "&body=" + b; };
+  ["#oTo", "#oSub", "#oBody"].forEach(s => $(s).oninput = links); links();
+  $("#oCopy").onclick = async () => { try{ await navigator.clipboard.writeText($("#oBody").value); toast("Email copied"); }catch(e){ toast("Couldn't copy. Select the text and copy it."); } };
+  $("#toRoom").onclick = () => { $("#f-name").value = d.name; $("#f-addr").value = d.addr; const k = bestContact(d); if (k) $("#f-from").value = (k.person ? k.person + ", " : "") + k.org; openSend(); };
+}
+
+/* ---------- deal room ---------- */
+function roomList(){
+  mark("room");
+  const all = S.index.deals || [];
+  const q = (LS.get("rq", "") || "").toLowerCase();
+  const list = all.filter(d => !q || [d.name, d.address, d.area, d.source, d.status].join(" ").toLowerCase().includes(q));
+  const ready = all.filter(d => /ready/i.test(d.status || "")).length, nA = new Set(all.map(d => d.area)).size;
+  let h = `<div class="head"><div><div class="eyebrow">OM in, ELK memo out</div><h1>Underwriting</h1><div class="sub">${all.length ? `${all.length} deal${all.length > 1 ? "s" : ""} in ${nA} area${nA > 1 ? "s" : ""}, ${ready} with a finished memo` : "Every OM you send in becomes an ELK investor memo, filed by area."}</div></div><div class="grow"></div>
+    <input class="search" id="rq" placeholder="Search name, address, broker" value="${esc(q)}" aria-label="Search deals"><button class="btn" onclick="openSend()">Send a deal</button></div>`;
+  if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
+  if (S.roomErr) h += `<div class="notice">${esc(S.roomErr)}</div>`;
+  const wait = S.index.waiting || [];
+  if (S.inbox.length || wait.length){
+    h += `<div class="waiting"><h3>Waiting for the next build</h3>`;
+    h += S.inbox.map(x => `<div>${esc(x.name.replace(/^\d{4}-\d{2}-\d{2}-/, "").replace(/-/g, " ").replace(/\b\w/g, c => c.toUpperCase()))} <span class="muted">— received, memo coming</span></div>`).join("");
+    h += wait.map(w => `<div>${esc(w.name || w.address || "Deal")} <span class="muted">— ${esc(w.note || "needs a file")}${w.from ? ", from " + esc(w.from) : ""}</span></div>`).join("");
+    h += `</div>`;
+  }
+  if (!all.length) h += `<div class="empty"><h2>No memos yet</h2><p>Drop in an OM, rent roll or P&amp;L. Builds run at 7:43 AM, 1:43 PM, 5:43 PM and 9:43 PM.</p><button class="btn" onclick="openSend()">Send a deal</button></div>`;
+  else if (!list.length) h += `<div class="empty"><h2>Nothing matches</h2><p>Try a city, a street or a broker.</p></div>`;
+  const areas = {}; list.forEach(d => (areas[d.area] = areas[d.area] || []).push(d));
+  Object.keys(areas).sort().forEach(a => {
+    h += `<section class="area"><div class="atab"><h2>${esc(a)}</h2><span>${areas[a].length} deal${areas[a].length > 1 ? "s" : ""}</span></div><div class="ledger"><div class="drow th"><div>Property</div><div class="r">Price</div><div class="r">Cap today</div><div class="r">MOIC</div><div class="r">IRR</div><div class="r">Status</div></div>`;
+    areas[a].forEach(d => { const ok = /ready/i.test(d.status || "");
+      h += `<div class="drow" tabindex="0" data-f="${esc(d.folder)}"><div><div class="nm">${esc(d.name)}</div><div class="ad">${esc(d.address)}${d.source ? ", from " + esc(d.source) : ""}</div></div>
+        <div class="r num hide"><b>${fmtM(d.price)}</b></div><div class="r num hide">${pct(d.cap_now)}</div><div class="r num"><b>${d.moic ? d.moic.toFixed(1) + "x" : "—"}</b></div><div class="r num hide">${pct(d.irr)}</div>
+        <div class="st ${ok ? "ok" : ""}"><i></i>${esc(d.status || "In progress")}</div></div>`; });
+    h += `</div></section>`;
+  });
+  $("#main").innerHTML = h;
+  document.querySelectorAll(".drow[data-f]").forEach(e => { const f = () => go("room/" + encodeURIComponent(e.dataset.f)); e.onclick = f; e.onkeydown = k => { if (k.key === "Enter") f(); }; });
+  const qi = $("#rq"); qi.oninput = () => { LS.set("rq", qi.value); clearTimeout(window._rq); window._rq = setTimeout(() => { roomList(); const i = $("#rq"); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 220); };
+}
+async function folder(f){
+  mark("room");
+  if (!cfg.token){ $("#main").innerHTML = needKey(); return; }
+  $("#main").innerHTML = '<p class="muted">Opening the folder…</p>';
+  const d = (S.index.deals || []).find(x => x.folder === f) || { name: f };
+  let items = [], src = [];
+  try{ items = await gh(cfg.room, P("deals/" + f)); }catch(e){}
+  try{ src = await gh(cfg.room, P(`deals/${f}/source`)); }catch(e){}
+  const inv = items.find(x => /Investor Memorandum\.pdf$/.test(x.name)), full = items.find(x => /Full Underwriting\)\.pdf$/.test(x.name));
+  const html = items.filter(x => /\.html$/.test(x.name));
+  const ext = n => (n.split(".").pop() || "").toUpperCase().slice(0, 4);
+  const row = x => `<div class="file"><span class="ext ${/\.pdf$/i.test(x.name) ? "pdf" : ""}">${esc(ext(x.name))}</span><button data-p="${esc(x.path)}" data-n="${esc(x.name)}">${esc(x.name)}</button><span class="sz">${size(x.size)}</span></div>`;
+  const fig = (v, l, hi) => `<div class="${hi ? "hi" : ""}"><b class="num">${v}</b><span>${l}</span></div>`;
+  let h = `<button class="back" onclick="go('room')">← All underwriting</button>
+  <div class="hero"><div style="padding:24px 26px 20px"><div class="eyebrow">${esc(d.area || "")}</div><h1>${esc(d.name)}</h1><div class="muted">${esc(d.address || "")}${d.source ? " · from " + esc(d.source) : ""}</div></div>
+   <div class="figs">${fig(fmtM(d.price), "Price")}${fig(pct(d.cap_now), "Cap today")}${fig(pct(d.occupancy), "Occupied")}${fig(d.walt != null ? d.walt.toFixed(1) + " yrs" : "—", "WALT")}${fig(d.moic ? d.moic.toFixed(1) + "x" : "—", "MOIC", 1)}${fig(pct(d.irr), "IRR", 1)}</div></div>
+  <div class="btns" style="margin:18px 0">${inv ? `<button class="btn" data-p="${esc(inv.path)}" data-n="${esc(inv.name)}">Open investor memo</button>` : `<span class="muted">The memo isn't built yet. It shows up here after the next build.</span>`}${full ? `<button class="btn line" data-p="${esc(full.path)}" data-n="${esc(full.name)}">Full underwriting</button>` : ""}</div>
+  <div class="cols"><div class="stack"><div class="card"><h3>Documents</h3>${src.filter(x => x.type === "file").map(row).join("") || '<p class="muted" style="margin:0">No source files yet.</p>'}</div>
+   ${html.length ? `<div class="card"><h3>Editable memo files</h3>${html.map(row).join("")}</div>` : ""}</div>
+   <div class="card"><h3>What to confirm with the broker</h3><div class="checks muted" id="checks">Nothing yet.</div></div></div>`;
+  $("#main").innerHTML = h;
+  document.querySelectorAll("[data-p]").forEach(b => b.onclick = () => openFile(b.dataset.p, b.dataset.n));
+  const ck = items.find(x => x.name === "CHECKS.md");
+  if (ck){ try{
+    const t = (await (await gh(cfg.room, P(ck.path), raw)).text()).split("\n").filter(l => !/^# /.test(l));
+    $("#checks").innerHTML = t.filter(l => l.trim() && !/^MOIC /.test(l)).map(l => /^## /.test(l) ? `<strong>${esc(l.slice(3).replace("Missing ([NEED])", "Still missing"))}</strong>` : `<p>${esc(l.replace(/^- /, "• "))}</p>`).join("");
+    $("#checks").classList.remove("muted");
+  }catch(e){} }
+}
+async function openFile(p, n){
+  const type = /\.pdf$/i.test(n) ? "application/pdf" : /\.html$/i.test(n) ? "text/html" : /\.(md|txt)$/i.test(n) ? "text/plain" : /\.jpe?g$/i.test(n) ? "image/jpeg" : /\.png$/i.test(n) ? "image/png" : "";
+  const w = type ? window.open("", "_blank") : null;
+  toast("Opening " + n);
+  try{
+    const r = await gh(cfg.room, P(p), raw);
+    const url = URL.createObjectURL(new Blob([await r.arrayBuffer()], { type: type || "application/octet-stream" }));
+    if (w) w.location = url; else { const a = document.createElement("a"); a.href = url; a.download = n; a.click(); }
+  }catch(e){ if (w) w.close(); toast("Couldn't open it. " + e.message, 4500); }
+}
+
+/* ---------- send a deal ---------- */
+let FILES = [];
+function openSend(){ if (!cfg.token) return go("eddie"); document.body.classList.add("open"); showPicked(); }
+function closeSend(){ document.body.classList.remove("open"); }
+function showPicked(){
+  $("#picked").innerHTML = FILES.map((f, i) => `<li>${esc(f.name)}<span>${size(f.size)}</span><button data-i="${i}" aria-label="Remove ${esc(f.name)}">×</button></li>`).join("");
+  document.querySelectorAll("#picked button").forEach(b => b.onclick = () => { FILES.splice(+b.dataset.i, 1); showPicked(); });
+}
+(() => {
+  const drop = $("#drop"), pick = $("#pick");
+  drop.onclick = () => pick.click();
+  drop.onkeydown = e => { if (e.key === "Enter" || e.key === " "){ e.preventDefault(); pick.click(); } };
+  pick.onchange = () => { FILES = FILES.concat([...pick.files]); pick.value = ""; showPicked(); };
+  drop.ondragover = e => { e.preventDefault(); drop.classList.add("on"); };
+  drop.ondragleave = () => drop.classList.remove("on");
+  drop.ondrop = e => { e.preventDefault(); drop.classList.remove("on"); FILES = FILES.concat([...e.dataTransfer.files]); showPicked(); };
+  $("#scrim").onclick = closeSend; $("#close").onclick = closeSend;
+  document.addEventListener("keydown", e => { if (e.key === "Escape") closeSend(); });
+})();
+const b64 = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(",")[1]); r.onerror = rej; r.readAsDataURL(f); });
+$("#send").onclick = async () => {
+  const name = $("#f-name").value.trim(), addr = $("#f-addr").value.trim();
+  if (!FILES.length && !$("#f-note").value.trim()) return toast("Add a file or a note first");
+  const big = FILES.find(f => f.size > 95e6); if (big) return toast(big.name + " is over 95 MB, GitHub's limit. Split or compress it.", 5000);
+  const btn = $("#send"), st = $("#sendst"); btn.disabled = true;
+  try{
+    const R = cfg.room;
+    const slug = (name || addr || FILES[0]?.name || "deal").toLowerCase().replace(/\.[a-z0-9]+$/, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 50);
+    const dir = `inbox/${new Date().toISOString().slice(0, 10)}-${slug}`, tree = [];
+    for (let i = 0; i < FILES.length; i++){
+      st.textContent = `Uploading ${i + 1} of ${FILES.length}`;
+      const blob = await gh(R, "/git/blobs", { method: "POST", body: JSON.stringify({ content: await b64(FILES[i]), encoding: "base64" }) });
+      tree.push({ path: `${dir}/${FILES[i].name.replace(/[\\/]/g, "-")}`, mode: "100644", type: "blob", sha: blob.sha });
+    }
+    const note = { name, address: addr, from: $("#f-from").value.trim(), price: $("#f-price").value.trim(), note: $("#f-note").value.trim(), files: FILES.map(f => f.name), sent: new Date().toISOString(), via: "ELK app" };
+    const nb = await gh(R, "/git/blobs", { method: "POST", body: JSON.stringify({ content: JSON.stringify(note, null, 1), encoding: "utf-8" }) });
+    tree.push({ path: `${dir}/note.json`, mode: "100644", type: "blob", sha: nb.sha });
+    st.textContent = "Saving";
+    const ref = await gh(R, `/git/ref/heads/${S.branch}`);
+    const head = await gh(R, `/git/commits/${ref.object.sha}`);
+    const t = await gh(R, "/git/trees", { method: "POST", body: JSON.stringify({ base_tree: head.tree.sha, tree }) });
+    const c = await gh(R, "/git/commits", { method: "POST", body: JSON.stringify({ message: `Inbox: ${name || addr || FILES.map(f => f.name).join(", ")}`, tree: t.sha, parents: [ref.object.sha] }) });
+    await gh(R, `/git/refs/heads/${S.branch}`, { method: "PATCH", body: JSON.stringify({ sha: c.sha }) });
+    FILES = []; ["#f-name", "#f-addr", "#f-from", "#f-price", "#f-note"].forEach(s => $(s).value = "");
+    st.textContent = ""; closeSend(); toast("Sent. The memo gets built on the next run.", 3800);
+    refresh();
+  }catch(e){ st.textContent = ""; toast("Didn't send. " + e.message, 5500); }
+  btn.disabled = false;
+};
+
+/* ---------- website ---------- */
+const SITE_VIEWS = [["../", "Website"], ["../app/", "iPhone app"], ["../#login", "Partner login"]];
+let siteView = LS.get("site", "../");
+function site(){
+  mark("site");
+  $("#main").innerHTML = `<div class="site"><div class="head" style="margin-bottom:0"><div><div class="eyebrow">elk holdings · live</div><h1>Website</h1></div><div class="grow"></div>
+    <div class="seg" role="group" aria-label="Which view">${SITE_VIEWS.map(([u, l]) => `<button data-u="${u}" aria-pressed="${u === siteView}">${l}</button>`).join("")}</div>
+    <a class="btn line sm" id="sitenew" href="${siteView}" target="_blank" rel="noopener">New tab ↗</a></div>
+    <div class="frame-wrap"><iframe id="sitef" src="${siteView}" title="ELK Holdings website"></iframe></div></div>`;
+  document.querySelectorAll(".seg button").forEach(b => b.onclick = () => { siteView = b.dataset.u; LS.set("site", siteView); site(); });
+}
+
+
+/* ---------- updates (Claude) ---------- */
+const UPDIR = "app-updates";
+let UP = [], upErr = "";
+async function loadUpdates(){
+  const cache = UPC;
+  let list = [];
+  try{ list = (await gh(cfg.room, P(UPDIR))).filter(x => x.type === "file" && /\.json$/.test(x.name)); }
+  catch(e){ if (e.status !== 404) throw e; }
+  const fresh = {}, out = [];
+  await Promise.all(list.map(async x => {
+    let m = cache[x.sha];
+    if (!m){ try{ m = await (await gh(cfg.room, P(x.path), raw)).json(); }catch(e){ return; } }
+    m.file = x.name; fresh[x.sha] = m; out.push(m);
+  }));
+  UPC = fresh;
+  UP = out.sort((a, b) => String(a.at).localeCompare(String(b.at)));
+}
+function upStatus(m){
+  const rs = UP.filter(r => r.from === "claude" && r.re === m.file);
+  const last = rs[rs.length - 1];
+  if (!last) return "Sent · Claude picks it up within the hour";
+  return last.status === "done" ? "Done ✓" : last.status === "needs-info" ? "Claude has a question" : last.status === "working" ? "Working on it" : "Claude replied";
+}
+const whenTxt = s => { try{ return new Date(s).toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" }); }catch(e){ return ""; } };
+async function updates(){
+  mark("updates");
+  let h = `<div class="head"><div><div class="eyebrow">Eddie only</div><h1>Claude</h1><div class="sub">Tell Claude what to change, add or fix in this app. Claude makes the change and answers here, usually within the hour (7 AM to 11 PM).</div></div></div>`;
+  if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
+  $("#main").innerHTML = h + '<p class="muted">Loading…</p>';
+  upErr = "";
+  try{ await loadUpdates(); }catch(e){ upErr = e.message; }
+  if (location.hash.slice(1) !== "updates") return;
+  h += upErr ? `<div class="notice">${esc(upErr)}</div>` : "";
+  h += `<div class="thread">${UP.length ? UP.map(m => `<div class="msg ${m.from === "eddie" ? "me" : "cl"}">${esc(m.text)}<small>${m.from === "eddie" ? whenTxt(m.at) + " · " + upStatus(m) : "Claude · " + whenTxt(m.at)}</small></div>`).join("") : `<div class="empty"><h2>Nothing yet</h2><p>Ask for anything: a new column on Deal Finds, a change to the memo, a new page, a fix on the website.</p></div>`}</div>
+  <div class="chipsug">${["Add a filter for price", "Change the website's home page photo", "Show WALT on every deal card"].map(t => `<button class="chip" data-s="${esc(t)}">${esc(t)}</button>`).join("")}</div>
+  <form class="compose" id="upf"><textarea id="upt" rows="2" placeholder="What should I change?"></textarea><button class="btn" id="ups" type="submit">Send</button></form>`;
+  $("#main").innerHTML = h;
+  window.scrollTo(0, document.body.scrollHeight);
+  document.querySelectorAll(".chipsug .chip").forEach(b => b.onclick = () => { $("#upt").value = b.dataset.s; $("#upt").focus(); });
+  $("#upt").onkeydown = e => { if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) $("#upf").requestSubmit(); };
+  $("#upf").onsubmit = async e => {
+    e.preventDefault();
+    const t = $("#upt").value.trim(); if (!t) return;
+    $("#ups").disabled = true;
+    try{
+      const at = new Date().toISOString(), name = at.replace(/[:.]/g, "-") + "-eddie.json";
+      const body = JSON.stringify({ from: "eddie", app: "elk", text: t, at }, null, 1);
+      await gh(cfg.room, P(UPDIR + "/" + name), { method: "PUT", body: JSON.stringify({ message: "App update request: " + t.slice(0, 60), content: btoa(unescape(encodeURIComponent(body))) }) });
+      toast("Sent to Claude");
+      updates();
+    }catch(err){ toast("Didn't send. " + err.message, 5000); $("#ups").disabled = false; }
+  };
+}
+
+/* ---------- settings ---------- */
+function settings(){
+  mark("settings");
+  $("#main").innerHTML = `<div class="setup" style="max-width:620px"><div class="head"><div><div class="eyebrow">Eddie only</div><h1>Settings</h1></div></div>
+  <p class="muted">Deal Finds and Underwriting load straight from your private GitHub repos. No deal data is saved in this app. Your GitHub key is kept on this device, locked with your code.</p>
+  <div class="card"><h3>New GitHub key</h3><p class="muted" style="margin:0 0 6px">Only if the old one expired. Make it at <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>: only select repositories → elk-deal-finds and elk-deal-room, Contents → Read and write.</p>
+   <div class="field"><label for="s-tok">GitHub key</label><input id="s-tok" type="password" placeholder="github_pat_…" autocomplete="off"></div>
+   <div class="btns"><button class="btn sm" id="s-key">Save key</button></div></div>
+  <div class="card" style="margin-top:16px"><h3>Change your code</h3>
+   <div class="two"><div class="field"><label for="s-c1">New code</label><input id="s-c1" type="password" inputmode="numeric" autocomplete="off"></div><div class="field"><label for="s-c2">Again</label><input id="s-c2" type="password" inputmode="numeric" autocomplete="off"></div></div>
+   <div class="btns"><button class="btn sm" id="s-code">Change code</button></div></div>
+  <div class="card" style="margin-top:16px"><h3>Repos</h3>
+   <div class="two"><div class="field"><label for="s-f">Deal Finds</label><input id="s-f" value="${esc(cfg.finds)}"></div><div class="field"><label for="s-r">Underwriting</label><input id="s-r" value="${esc(cfg.room)}"></div></div>
+   <div class="btns"><button class="btn line sm" id="s-repo">Save</button><button class="btn line sm" id="s-wipe">Remove key and code from this device</button></div></div>
+  <div class="card" style="margin-top:16px"><h3>Put it on your phone and computer</h3>
+   <p style="margin:0 0 6px"><b>iPhone:</b> open this page in Safari, tap Share, then <b>Add to Home Screen</b>.</p>
+   <p style="margin:0"><b>Computer:</b> in Chrome or Edge, click the install icon at the right of the address bar.</p></div></div>`;
+  $("#s-key").onclick = async () => { const t = $("#s-tok").value.trim(); if (!t) return toast("Paste the key first"); await sealKey(CODE, t); cfg.token = t; toast("Key saved"); refresh(); };
+  $("#s-code").onclick = async () => { const a = $("#s-c1").value.trim(); if (a.length < 4) return toast("Use at least 4 digits"); if (a !== $("#s-c2").value.trim()) return toast("The codes don't match"); await sealKey(a, cfg.token); CODE = a; toast("Code changed"); settings(); };
+  $("#s-repo").onclick = () => { cfg.finds = $("#s-f").value.trim(); cfg.room = $("#s-r").value.trim(); LS.set("cfg", { finds: cfg.finds, room: cfg.room }); toast("Saved"); refresh(); };
+  $("#s-wipe").onclick = () => { localStorage.removeItem(VKEY); scrubPlain(); lock(); };
+}
+
+/* ---------- start ---------- */
+buildNav(); counts(); route();
+setInterval(() => { if (document.visibilityState === "visible" && unlocked()) refresh(); }, 10 * 60 * 1000);
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+</body></html>

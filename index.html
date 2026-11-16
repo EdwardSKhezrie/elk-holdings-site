@@ -1,0 +1,1726 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="description" content="ELK Holdings is a family office investing across real estate, fixed income, private equity, venture capital, operating businesses, service and trade businesses and public equities.">
+<link rel="icon" href="crest-icon.jpg">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#000000">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ELK">
+<title>ELK Holdings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600&family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Figtree:wght@400;500;600&display=swap">
+<style>
+/* Layout: a private-bank stillness. Black ground from the crest film, gold used only for marks of value; the crest leads, the type follows. Single dark theme by design. */
+:root{
+  --bg:#000000; --bg-2:#0B0A08; --surface:#100E0B; --line:#2B261E; --line-2:#3A3328;
+  --ink:#EEE7D8; --muted:#A39A8A; --dim:#6E665A;
+  --gold:#C9A45C; --gold-hi:#E8CB8A; --gold-lo:#8C6E35;
+  --good:#7FBF95;
+  --mark:"Cinzel", "Trajan Pro", Georgia, serif;
+  --display:"Cormorant Garamond", Georgia, "Times New Roman", serif;
+  --body:"Figtree", system-ui, -apple-system, "Segoe UI", sans-serif;
+  color-scheme:dark;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+body{background:var(--bg);color:var(--ink);font-family:var(--body);font-size:16px;line-height:1.65;margin:0;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:24px}
+h1,h2,h3{font-family:var(--display);font-weight:500;margin:0;line-height:1.08;text-wrap:balance;letter-spacing:-.005em}
+h1{font-size:clamp(2.8rem,7vw,5.6rem);font-weight:400}
+h2{font-size:clamp(2.1rem,4.6vw,3.4rem);font-weight:400}
+h3{font-size:1.6rem}
+p{margin:0}
+em.g{font-style:italic;color:var(--gold-hi)}
+.eyebrow{font-family:var(--mark);font-size:.72rem;letter-spacing:.32em;text-transform:uppercase;color:var(--gold)}
+.muted{color:var(--muted)}
+.num{font-variant-numeric:tabular-nums}
+button{font:inherit;cursor:pointer;color:inherit}
+:focus-visible{outline:1px solid var(--gold-hi);outline-offset:3px}
+.rule{height:1px;background:linear-gradient(90deg,transparent,var(--gold-lo),transparent);border:0;margin:0}
+
+/* Header */
+header.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:20;background:color-mix(in srgb,var(--bg) 86%,transparent);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.bar{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-block:16px;flex-wrap:wrap}
+.mark{display:flex;align-items:center;gap:12px;line-height:1;background:none;border:0;padding:0}
+.mark-icon{width:42px;height:42px;object-fit:cover;mix-blend-mode:screen}
+.mark-words{display:flex;flex-direction:column;align-items:flex-start}
+.mark b{font-family:var(--mark);font-weight:600;font-size:1.45rem;letter-spacing:.14em;color:var(--gold-hi)}
+.mark-words span{font-family:var(--mark);font-size:.52rem;letter-spacing:.62em;color:var(--gold);margin-top:5px;padding-left:2px}
+nav{display:flex;align-items:center;gap:6px;flex-wrap:wrap}
+nav a,nav button{font-family:var(--body);font-size:.78rem;letter-spacing:.14em;text-transform:uppercase;color:var(--muted);text-decoration:none;background:none;border:0;padding:8px 10px}
+nav a:hover,nav button:hover{color:var(--ink)}
+nav .login{border:1px solid var(--gold-lo);color:var(--gold-hi);padding:8px 16px;margin-left:8px}
+nav .login:hover{background:var(--gold);color:var(--bg)}
+
+/* Hero */
+.hero{position:relative;overflow:hidden;border-bottom:1px solid var(--line)}
+.hero::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 70% at 72% 45%,rgba(201,164,92,.16),transparent 70%);pointer-events:none}
+.hero-grid{position:relative;display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding-block:56px 64px;min-height:min(760px,88vh)}
+.hero-copy{display:flex;flex-direction:column;gap:26px;min-width:0}
+.hero-copy .lead{font-size:1.15rem;color:var(--muted);max-width:50ch}
+.crest{position:relative;justify-self:center;width:min(100%,460px);aspect-ratio:2/3;max-width:100%}
+.crest::after{content:"";position:absolute;inset:8% 0 0;background:radial-gradient(50% 40% at 50% 40%,rgba(232,203,138,.10),transparent 70%);pointer-events:none}
+.crest img{width:100%;height:100%;object-fit:cover;display:block;mix-blend-mode:screen}
+.cta{display:flex;gap:14px;flex-wrap:wrap}
+.btn{font-family:var(--body);font-size:.8rem;letter-spacing:.16em;text-transform:uppercase;border:1px solid var(--gold);background:var(--gold);color:var(--bg);padding:14px 24px;text-decoration:none;display:inline-block}
+.btn:hover{background:var(--gold-hi);border-color:var(--gold-hi)}
+.btn.ghost{background:transparent;color:var(--gold-hi)}
+.btn.ghost:hover{background:var(--gold);color:var(--bg)}
+.focus-strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line);position:relative}
+.focus-strip div{padding:22px 24px;border-right:1px solid var(--line);display:flex;flex-direction:column;gap:4px;min-width:0}
+.focus-strip div:last-child{border-right:0}
+.focus-strip dt{font-family:var(--mark);font-size:.62rem;letter-spacing:.28em;color:var(--dim);text-transform:uppercase}
+.focus-strip dd{margin:0;font-family:var(--display);font-size:1.35rem;color:var(--ink)}
+
+/* Sections */
+section.sec{padding-block:110px;border-bottom:1px solid var(--line)}
+.sec-head{display:grid;grid-template-columns:1fr 1.2fr;gap:48px;align-items:end;margin-bottom:64px}
+.sec-head p{color:var(--muted);font-size:1.08rem;max-width:56ch}
+.sec-head .eyebrow{margin-bottom:18px;display:block}
+
+.statement{font-family:var(--display);font-size:clamp(1.7rem,3.4vw,2.6rem);line-height:1.3;max-width:28ch;font-weight:400}
+.firm-grid{display:grid;grid-template-columns:1fr 1fr;gap:64px;align-items:start}
+.firm-grid .body{display:flex;flex-direction:column;gap:18px;color:var(--muted);font-size:1.05rem}
+.firm-grid .body strong{color:var(--ink);font-weight:500}
+
+.strategies{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--line-2)}
+.strategies article{padding:32px 26px 36px 0;display:flex;flex-direction:column;gap:14px;border-right:1px solid var(--line);padding-left:26px;min-width:0}
+.strategies article:first-child{padding-left:0}
+.strategies article:last-child{border-right:0}
+.strategies .n{font-family:var(--mark);color:var(--gold);font-size:.75rem;letter-spacing:.2em}
+.strategies p{color:var(--muted);font-size:.95rem}
+
+.principles{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.principles article{background:var(--bg);padding:40px;display:flex;flex-direction:column;gap:12px}
+.principles h3{color:var(--gold-hi)}
+.principles p{color:var(--muted)}
+
+/* Portfolio */
+.feature{display:grid;grid-template-columns:1.25fr 1fr;gap:0;border:1px solid var(--line-2);background:var(--surface)}
+.feature .media{position:relative;min-height:420px;overflow:hidden}
+.feature .media img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s ease}
+.feature:hover .media img{transform:scale(1.03)}
+.feature .media .credit{position:absolute;left:18px;bottom:14px;right:18px;font-size:.72rem;color:var(--ink);text-shadow:0 1px 3px rgba(0,0,0,.8)}
+.feature .media .tag{position:absolute;left:18px;top:18px;background:rgba(10,9,7,.78);border:1px solid var(--gold-lo);color:var(--gold-hi);font-family:var(--mark);font-size:.62rem;letter-spacing:.24em;padding:7px 12px;text-transform:uppercase}
+.feature .info{padding:40px;display:flex;flex-direction:column;gap:20px;min-width:0}
+.facts{display:grid;grid-template-columns:1fr 1fr;gap:18px 24px;margin:0}
+.facts dt{font-family:var(--mark);font-size:.6rem;letter-spacing:.24em;color:var(--dim);text-transform:uppercase}
+.facts dd{margin:4px 0 0;font-family:var(--display);font-size:1.3rem}
+.thumbs{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:12px}
+.thumbs figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.thumbs img{width:100%;aspect-ratio:16/10;object-fit:cover;display:block;border:1px solid var(--line)}
+.thumbs figcaption{font-size:.78rem;color:var(--dim)}
+.realized{margin-top:56px;border-top:1px solid var(--line-2);padding-top:28px;display:grid;grid-template-columns:1fr 2fr;gap:32px}
+.realized p{color:var(--muted)}
+
+/* Leadership */
+.leader{display:grid;grid-template-columns:.9fr 1.1fr;gap:64px;align-items:start}
+.portrait{border:1px solid var(--line-2);background:var(--surface);aspect-ratio:4/5;display:flex;align-items:flex-end;padding:28px;position:relative;overflow:hidden;max-width:100%}
+.portrait img{position:absolute;inset:0;width:100%;height:78%;object-fit:cover;opacity:.9;mix-blend-mode:screen}
+.portrait::after{content:"";position:absolute;inset:0;background:linear-gradient(to top,var(--surface) 22%,transparent 55%)}
+.portrait .cap{z-index:1}
+.portrait .cap{position:relative;display:flex;flex-direction:column;gap:6px}
+.portrait .cap b{font-family:var(--display);font-weight:500;font-size:2rem;line-height:1}
+.leader .body{display:flex;flex-direction:column;gap:20px;color:var(--muted);font-size:1.05rem}
+.leader .body .statement{color:var(--ink)}
+.career{list-style:none;margin:8px 0 0;padding:0;border-top:1px solid var(--line)}
+.career li{display:grid;grid-template-columns:1fr auto;gap:16px;padding:14px 0;border-bottom:1px solid var(--line);font-size:.95rem}
+.career li span:first-child{color:var(--ink)}
+.career li span:last-child{color:var(--dim);text-align:right}
+
+/* Contact */
+.contact{display:grid;grid-template-columns:1.2fr 1fr;gap:48px;align-items:end}
+.contact dl{margin:0;display:flex;flex-direction:column;gap:18px}
+.contact dt{font-family:var(--mark);font-size:.6rem;letter-spacing:.24em;color:var(--dim);text-transform:uppercase}
+.contact dd{margin:4px 0 0;font-family:var(--display);font-size:1.5rem;user-select:all}
+
+footer{padding-block:40px;color:var(--dim);font-size:.8rem}
+footer .wrap{display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap}
+
+/* Login + room */
+.view-pad{padding-block:72px 96px}
+.loginbox{max-width:440px;margin:0 auto;border:1px solid var(--line-2);background:var(--surface);padding:40px;display:flex;flex-direction:column;gap:20px;width:100%}
+.loginbox .crest-sm{width:88px;height:88px;object-fit:cover;align-self:center;mix-blend-mode:screen}
+label{font-size:.72rem;letter-spacing:.18em;text-transform:uppercase;color:var(--muted);display:flex;flex-direction:column;gap:8px}
+input{font:inherit;font-size:1rem;letter-spacing:normal;text-transform:none;padding:13px 14px;border:1px solid var(--line-2);background:var(--bg);color:var(--ink);width:100%;border-radius:0}
+input:focus{border-color:var(--gold)}
+.err{color:#E39B7B;font-size:.88rem;min-height:1.3em}
+.room-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:32px}
+.room-head .eyebrow{display:block;margin-bottom:12px}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px}
+.tabs button{border:1px solid var(--line-2);background:none;padding:8px 14px;font-size:.85rem}
+.tabs button[aria-selected="true"]{border-color:var(--gold);color:var(--gold-hi)}
+#dealView{display:flex;flex-direction:column;gap:24px}
+.kpis{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.kpis div{background:var(--surface);padding:22px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.kpis span{font-family:var(--mark);font-size:.6rem;letter-spacing:.22em;color:var(--dim);text-transform:uppercase}
+.kpis b{font-family:var(--display);font-weight:500;font-size:1.9rem;color:var(--gold-hi);font-variant-numeric:tabular-nums;line-height:1.1}
+.kpis em{font-style:normal;font-size:.8rem;color:var(--muted)}
+.two{display:grid;grid-template-columns:1.35fr 1fr;gap:24px}
+.panel{background:var(--surface);border:1px solid var(--line);padding:26px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.photo.real{position:relative;aspect-ratio:16/9;max-width:100%;overflow:hidden;background:var(--bg)}
+.photo.real img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.photo.real small{position:absolute;left:12px;bottom:12px;background:rgba(10,9,7,.8);color:var(--ink);font-size:.72rem;padding:4px 10px}
+.gallery{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+.gallery button{border:1px solid var(--line);padding:0;overflow:hidden;background:none;aspect-ratio:4/3}
+.gallery button[aria-pressed="true"]{border-color:var(--gold)}
+.gallery img{width:100%;height:100%;object-fit:cover;display:block}
+.chip{display:inline-flex;align-items:center;gap:8px;font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;padding:5px 12px;border:1px solid var(--gold-lo);color:var(--gold-hi);width:fit-content}
+.chip i{width:6px;height:6px;border-radius:50%;background:var(--gold)}
+.chip.good i{background:var(--good)}
+.stages{display:flex;list-style:none;margin:0;padding:0;gap:4px}
+.stages li{flex:1;display:flex;flex-direction:column;gap:8px;font-size:.72rem;color:var(--dim);min-width:0}
+.stages li::before{content:"";height:3px;background:var(--line-2)}
+.stages li.done::before{background:var(--gold-lo)}
+.stages li.now::before{background:var(--gold-hi)}
+.stages li.now{color:var(--gold-hi)}
+.update h4{margin:6px 0 10px;font-family:var(--display);font-weight:500;font-size:1.4rem}
+.update ul{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:6px;color:var(--muted)}
+.sens{display:flex;flex-direction:column;gap:8px}
+.sens label{flex-direction:row;justify-content:space-between;letter-spacing:.1em}
+.sens p{font-size:.8rem}
+input[type=range]{padding:0;accent-color:var(--gold);background:none;border:0}
+.valrow{display:flex;justify-content:space-between;gap:12px;font-size:.92rem;padding:9px 0;border-bottom:1px solid var(--line);color:var(--muted)}
+.valrow b{font-weight:500;color:var(--ink);font-variant-numeric:tabular-nums}
+.valrow.total{color:var(--ink)}
+.valrow.total b{color:var(--gold-hi)}
+.done-list{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.done-list li{display:flex;gap:12px;font-size:.92rem;color:var(--muted)}
+.done-list li::before{content:"";flex:none;width:7px;height:7px;transform:rotate(45deg);margin-top:8px;background:var(--gold-lo)}
+.done-list li.next{color:var(--ink)}
+.done-list li.next::before{background:var(--gold-hi)}
+.history{display:flex;flex-direction:column}
+.history button{display:flex;justify-content:space-between;gap:12px;background:none;border:0;border-bottom:1px solid var(--line);padding:12px 0;text-align:left;font-size:.92rem}
+.docs{display:flex;flex-direction:column;gap:8px}
+.docs div{display:flex;justify-content:space-between;gap:12px;font-size:.9rem;padding:11px 14px;border:1px solid var(--line)}
+
+
+/* Process */
+.process{display:grid;grid-template-columns:repeat(5,1fr);position:relative;counter-reset:s}
+.process::before{content:"";position:absolute;left:0;right:0;top:27px;height:1px;background:linear-gradient(90deg,var(--gold-lo),var(--line-2) 80%)}
+.process li{list-style:none;display:flex;flex-direction:column;gap:12px;padding-right:22px;min-width:0}
+.process .dot{width:55px;height:55px;border:1px solid var(--gold-lo);background:var(--bg);display:grid;place-items:center;font-family:var(--mark);color:var(--gold-hi);font-size:.85rem;position:relative}
+.process h3{font-size:1.35rem}
+.process p{color:var(--muted);font-size:.92rem}
+/* Quote band */
+.band{padding-block:96px;text-align:center;border-bottom:1px solid var(--line);background:radial-gradient(50% 80% at 50% 50%,rgba(201,164,92,.08),transparent 70%)}
+.band blockquote{margin:0 auto;max-width:30ch;font-family:var(--display);font-size:clamp(1.8rem,4vw,3rem);line-height:1.25;font-style:italic;color:var(--ink)}
+.band cite{display:block;margin-top:24px;font-style:normal}
+.orn{display:flex;align-items:center;justify-content:center;gap:16px;margin-bottom:28px}
+.orn::before,.orn::after{content:"";width:72px;height:1px;background:var(--gold-lo)}
+.orn img{width:38px;height:38px;object-fit:cover;mix-blend-mode:screen}
+/* Footer */
+footer.site-foot{border-top:1px solid var(--line);padding-block:64px 32px;color:var(--muted);font-size:.88rem}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr 1.2fr;gap:36px}
+.foot-grid h4{font-family:var(--mark);font-weight:500;font-size:.62rem;letter-spacing:.26em;color:var(--gold);text-transform:uppercase;margin:0 0 16px}
+.foot-grid ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:10px}
+.foot-grid a,.foot-grid button{color:var(--muted);text-decoration:none;background:none;border:0;padding:0;font-size:.88rem;text-align:left}
+.foot-grid a:hover,.foot-grid button:hover{color:var(--gold-hi)}
+.foot-legal{margin-top:48px;padding-top:24px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:20px;flex-wrap:wrap;color:var(--dim);font-size:.78rem}
+.scroll-cue{position:absolute;left:50%;bottom:22px;transform:translateX(-50%);font-family:var(--mark);font-size:.58rem;letter-spacing:.3em;color:var(--dim);display:flex;flex-direction:column;align-items:center;gap:10px}
+.scroll-cue::after{content:"";width:1px;height:34px;background:linear-gradient(var(--gold-lo),transparent)}
+@media (max-width:900px){.process{grid-template-columns:1fr;gap:28px}.process::before{display:none}.process li{flex-direction:row;align-items:flex-start;gap:18px}.process li>div{display:flex;flex-direction:column;gap:6px}.foot-grid{grid-template-columns:1fr 1fr}.scroll-cue{display:none}.hero-grid{min-height:0}}
+
+
+/* Site plan */
+.plan-wrap{display:grid;grid-template-columns:1.5fr 1fr;gap:24px;margin-top:24px}
+.siteplan{margin:0;border:1px solid var(--line-2);background:var(--surface);padding:16px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.siteplan svg{width:100%;height:auto;display:block}
+.siteplan figcaption{font-size:.78rem;color:var(--dim)}
+.sp-ground{fill:var(--bg-2)}
+.sp-street{fill:#1C1914}
+.sp-st{fill:var(--dim);font-family:var(--mark);font-size:11px;letter-spacing:3px;text-anchor:middle}
+.sp-exist{fill:#17140F;stroke:var(--line-2)}
+.sp-muted{fill:var(--dim);font-family:var(--body);font-size:12px;text-anchor:middle}
+.sp-site{fill:none;stroke:var(--gold);stroke-width:1.5;stroke-dasharray:6 5}
+.sp-lane{fill:#1F1B15;stroke:var(--line-2)}
+.sp-lot rect{fill:#1A1610;stroke:var(--gold-lo)}
+.sp-lab text{fill:var(--ink);font-family:var(--display);font-size:17px;text-anchor:middle}
+.sp-water-lot{fill:rgba(201,164,92,.16);stroke:var(--gold-hi)}
+.sp-lab-g{fill:var(--gold-hi);font-family:var(--display);font-size:18px;text-anchor:middle}
+.sp-corner{fill:rgba(227,155,123,.08);stroke:#B9765C;stroke-dasharray:4 4}
+.sp-lab-c{fill:#E3A98F;font-family:var(--display);font-size:16px;text-anchor:middle}
+.sp-small{fill:var(--muted);font-family:var(--body);font-size:11px;text-anchor:middle}
+.sp-bay{fill:#14202A}
+.sp-bay-t{fill:#5E7A8C}
+.paths{display:flex;flex-direction:column;gap:14px;min-width:0}
+.path{border:1px solid var(--line-2);padding:20px;display:flex;flex-direction:column;gap:8px;background:var(--surface)}
+.path h4{margin:0;font-family:var(--display);font-weight:500;font-size:1.3rem;color:var(--gold-hi)}
+.path p{color:var(--muted);font-size:.92rem}
+.path.inspo{border-style:dashed}
+.principles{grid-template-columns:repeat(3,1fr)!important}
+.rz-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.rz-grid div{background:var(--bg-2);padding:16px;display:flex;flex-direction:column;gap:4px;min-width:0}
+.rz-grid span{font-family:var(--mark);font-size:.56rem;letter-spacing:.2em;color:var(--dim);text-transform:uppercase}
+.rz-grid b{font-family:var(--display);font-weight:500;font-size:1.5rem;color:var(--ink)}
+.rz-grid b.g{color:var(--gold-hi)}
+.toggles{display:flex;gap:18px;flex-wrap:wrap}
+.toggles label{flex-direction:row;align-items:center;gap:8px;letter-spacing:.06em;text-transform:none;font-size:.88rem;color:var(--ink)}
+.toggles input{width:auto;accent-color:var(--gold)}
+@media (max-width:900px){.plan-wrap{grid-template-columns:1fr}.principles{grid-template-columns:1fr!important}.rz-grid{grid-template-columns:1fr 1fr}}
+
+
+/* Platform */
+.platform{border-top:1px solid var(--line-2)}
+.pf-head,.pf-row{display:grid;grid-template-columns:1.15fr 1fr 1.5fr .6fr 1.1fr;gap:28px}
+.pf-head{padding:14px 0;border-bottom:1px solid var(--line)}
+.pf-head span{font-family:var(--mark);font-size:.58rem;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+.pf-row{padding:30px 0;border-bottom:1px solid var(--line);align-items:start}
+.pf-row>div{min-width:0}
+.pf-row p{color:var(--muted);font-size:.93rem}
+.pf-row h3{font-size:1.7rem;margin:6px 0 8px}
+.pf-row .pf-tags{color:var(--gold-hi);font-size:.8rem;letter-spacing:.04em}
+.pf-row .pf-hold{color:var(--ink);font-family:var(--display);font-size:1.25rem}
+.pf-core{background:linear-gradient(90deg,rgba(201,164,92,.09),transparent 45%)}
+.pf-core .pf-name{padding-left:14px;border-left:2px solid var(--gold)}
+.pf-lab{display:none;font-family:var(--mark);font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.pf-note{margin-top:20px;font-size:.85rem}
+@media (max-width:900px){.pf-head{display:none}.pf-row{grid-template-columns:1fr;gap:16px}.pf-lab{display:block}}
+
+/* Portfolio overview (portal) */
+.ov-tiles{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:24px}
+.ov-tiles div{background:var(--surface);padding:22px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.ov-tiles span{font-family:var(--mark);font-size:.58rem;letter-spacing:.22em;color:var(--dim);text-transform:uppercase}
+.ov-tiles b{font-family:var(--display);font-weight:500;font-size:1.9rem;line-height:1.1;font-variant-numeric:tabular-nums}
+.ov-tiles em{font-style:normal;font-size:.8rem;color:var(--muted)}
+.pos{color:var(--good)!important}.neg{color:#E39B7B!important}
+.holdings{border:1px solid var(--line);background:var(--surface);margin-bottom:32px;overflow-x:auto}
+.holdings table{width:100%;border-collapse:collapse;min-width:720px}
+.holdings th{font-family:var(--mark);font-weight:500;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);text-align:left;padding:14px 18px;border-bottom:1px solid var(--line)}
+.holdings td{padding:16px 18px;border-bottom:1px solid var(--line);font-size:.92rem;font-variant-numeric:tabular-nums}
+.holdings th.r,.holdings td.r{text-align:right}
+.holdings tr.cat td{background:var(--bg-2);font-family:var(--mark);font-size:.6rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold);padding:10px 18px}
+.holdings tr.h{cursor:pointer}
+.holdings tr.h:hover td{background:rgba(201,164,92,.05)}
+.holdings tr.h[aria-selected="true"] td{background:rgba(201,164,92,.09)}
+.holdings tr.h[aria-selected="true"] td:first-child{box-shadow:inset 2px 0 0 var(--gold)}
+.holdings .nm{display:flex;flex-direction:column;gap:2px}
+.holdings .nm b{font-weight:500;color:var(--ink)}
+.holdings .nm small{color:var(--dim);font-size:.78rem}
+.kpis.k6{grid-template-columns:repeat(3,1fr)}
+.promo{border:1px solid var(--gold-lo);background:linear-gradient(135deg,rgba(201,164,92,.10),transparent 55%),var(--surface);padding:24px 26px;margin:0 0 28px;display:flex;flex-direction:column;gap:16px}
+.promo-top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
+.promo-top h3{font-size:2rem;margin-top:8px}
+.promo-big{text-align:right}.promo-big b{font-family:var(--display);font-weight:500;font-size:2.6rem;color:var(--gold-hi);line-height:1;display:block;font-variant-numeric:tabular-nums}.promo-big span{font-size:.8rem;color:var(--muted)}
+.promo table{width:100%;border-collapse:collapse;font-size:.9rem}.promo th{font-family:var(--mark);font-weight:500;font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim);text-align:left;padding:10px 12px;border-bottom:1px solid var(--line)}
+.promo td{padding:11px 12px;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}.promo .r{text-align:right}.promo tr.tot td{border-top:1px solid var(--line-2);color:var(--ink);font-weight:600}.promo td small{color:var(--dim);font-size:.76rem;display:block}
+.promo .you{color:var(--gold-hi);font-weight:600}
+.op-head{margin-top:36px;padding-bottom:4px;scroll-margin-top:110px}
+.detail-head{scroll-margin-top:110px;margin-top:28px;display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:18px;padding-top:8px;border-top:1px solid var(--line-2)}
+.detail-head h3{font-size:2rem;margin-top:14px}
+.cmp{display:flex;flex-direction:column;gap:12px}
+.cmp .bar{height:12px;background:var(--line);position:relative}
+.cmp .bar i{position:absolute;inset:0 auto 0 0;background:var(--gold-lo)}
+.cmp .bar.v i{background:var(--gold-hi)}
+.cmp .lbl{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted)}
+@media (max-width:900px){.ov-tiles{grid-template-columns:1fr 1fr}}
+
+
+/* Areas + category sections */
+.areas{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.area{background:var(--bg);padding:34px 28px;display:flex;flex-direction:column;gap:10px;text-decoration:none;color:var(--ink);min-width:0;transition:background .3s}
+.area:hover{background:var(--surface)}
+.area .n{font-family:var(--mark);color:var(--gold);font-size:.8rem;letter-spacing:.2em}
+.area h3{font-size:1.8rem}
+.area p{color:var(--muted);font-size:.92rem;flex:1}
+.area .cnt{font-family:var(--mark);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-hi)}
+.cat-sec{background:linear-gradient(180deg,var(--bg-2),var(--bg) 40%)}
+.cat-head{display:grid;grid-template-columns:1fr 1.4fr;gap:48px;align-items:end;margin-bottom:48px;padding-bottom:32px;border-bottom:1px solid var(--line-2)}
+.cat-head h2{font-size:clamp(2.4rem,5vw,3.8rem);margin-top:14px}
+.cat-head p{color:var(--muted);font-size:1.05rem;max-width:62ch}
+.types3{grid-template-columns:repeat(3,1fr)!important}
+@media (max-width:900px){.types3{grid-template-columns:1fr!important}}
+.types{display:grid;grid-template-columns:repeat(2,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.type{background:var(--bg);padding:28px;display:flex;flex-direction:column;gap:16px;min-width:0}
+.type.is-on{background:linear-gradient(135deg,rgba(201,164,92,.10),transparent 55%),var(--surface)}
+.type-top{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap}
+.type h3{font-size:1.5rem}
+.pill{font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;padding:5px 10px;border:1px solid var(--line-2);color:var(--dim);white-space:nowrap}
+.pill.on{border-color:var(--gold);color:var(--gold-hi)}
+.type dl{margin:0;display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.type dt{font-family:var(--mark);font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);margin-bottom:6px}
+.type dd{margin:0;color:var(--muted);font-size:.92rem}
+@media (max-width:900px){.areas{grid-template-columns:1fr 1fr}.cat-head{grid-template-columns:1fr;gap:16px}.types{grid-template-columns:1fr}}
+@media (max-width:520px){.areas{grid-template-columns:1fr}.type dl{grid-template-columns:1fr}}
+
+
+/* Pages */
+nav a[aria-current="page"]{color:var(--gold-hi)}
+.pager{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;padding-block:0 96px}
+.pn{font-family:var(--mark);font-size:.68rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-hi);text-decoration:none;border:1px solid var(--line-2);padding:14px 20px}
+.pn:hover{border-color:var(--gold)}
+.next-cta{padding-block:80px;border-bottom:0}
+.next-in{display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.cat-sec{border-bottom:0}
+
+
+/* Private portfolio */
+.vault{position:relative;border:1px solid var(--line-2);background:var(--surface);overflow:hidden;min-height:420px}
+.vault-list{filter:blur(5px);opacity:.45;padding:24px;display:flex;flex-direction:column}
+.vrow{display:grid;grid-template-columns:2fr 1fr 1fr 40px;gap:20px;padding:26px 8px;border-bottom:1px solid var(--line);font-family:var(--display);font-size:1.3rem;color:var(--ink)}
+.vrow span:nth-child(n+2){font-family:var(--body);font-size:.9rem;color:var(--muted)}
+.lock-i{width:14px;height:14px;border:1px solid var(--gold);border-radius:2px}
+.vault-cta{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:16px;padding:32px;background:radial-gradient(60% 70% at 50% 50%,rgba(0,0,0,.85),rgba(0,0,0,.55))}
+.vault-cta h3{font-size:2rem}
+.vault-cta p{max-width:44ch}
+.vault-crest{width:64px;height:64px;object-fit:cover;mix-blend-mode:screen}
+@media (max-width:600px){.vrow{grid-template-columns:1fr 40px}.vrow span:nth-child(2),.vrow span:nth-child(3){display:none}}
+
+
+.abar{height:4px;background:var(--line);margin-top:8px;max-width:260px}
+.abar i{display:block;height:100%;background:var(--gold)}
+.holdings tfoot td{border-top:1px solid var(--line-2);border-bottom:0;padding:16px 18px;font-size:.92rem}
+
+.exl{list-style:none;margin:10px 0 0;padding:0;display:flex;flex-direction:column;gap:4px;max-width:420px}
+.exl li{display:flex;justify-content:space-between;gap:16px;font-size:.8rem;color:var(--muted)}
+.exl li span:last-child{color:var(--dim);white-space:nowrap}
+.holdings td{vertical-align:top}
+.grp-head{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin:40px 0 16px}
+.grp-head:first-of-type{margin-top:0}
+.grp-head h3{font-size:1.6rem;color:var(--gold-hi)}
+.grp-head span{font-family:var(--mark);font-size:.6rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+
+.svc-look{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin-bottom:12px}
+.svc-look div{background:var(--surface);padding:20px 22px;display:flex;flex-direction:column;gap:6px}
+.svc-look span{font-family:var(--mark);font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:var(--gold)}
+.svc-look p{color:var(--ink);font-size:.95rem}
+.grp-desc{margin:-8px 0 16px;font-size:.92rem}
+.svc-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line)}
+.svc{background:var(--bg);padding:22px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.svc:hover{background:var(--surface)}
+.svc h4{margin:0;font-family:var(--display);font-weight:500;font-size:1.25rem;color:var(--ink)}
+.svc p{color:var(--muted);font-size:.86rem}
+@media (max-width:900px){.svc-grid{grid-template-columns:1fr 1fr}.svc-look{grid-template-columns:1fr}}
+@media (max-width:520px){.svc-grid{grid-template-columns:1fr}}
+
+.area-cta{background:linear-gradient(150deg,rgba(201,164,92,.14),transparent 60%),var(--surface)}
+.svc-grid.c5{grid-template-columns:repeat(5,1fr)}
+@media (max-width:900px){.svc-grid.c5{grid-template-columns:1fr 1fr}}
+@media (max-width:520px){.svc-grid.c5{grid-template-columns:1fr}}
+.tk{margin-top:auto;padding-top:12px;border-top:1px solid var(--line);display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap}
+.tk span{font-family:var(--mark);font-size:.52rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.tk b{font-family:var(--body);font-weight:600;font-size:.82rem;letter-spacing:.06em;color:var(--gold-hi)}
+.svc .tk{margin-top:auto}
+.tk-note{color:var(--dim);font-size:.78rem;padding-block:0 20px;margin:0 auto}
+.holdings tr.grp td{background:var(--bg-2);font-size:.88rem}
+
+/* All stocks */
+.stocks{margin:8px 0 40px;display:flex;flex-direction:column;gap:18px}
+.stocks-head{display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap;padding-top:28px;border-top:1px solid var(--line-2)}
+.stocks-head h3{font-size:2rem;margin-top:10px}
+.stocks-sum{display:flex;gap:28px;flex-wrap:wrap}
+.stocks-sum div{display:flex;flex-direction:column;gap:2px}
+.stocks-sum span{font-family:var(--mark);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--dim)}
+.stocks-sum b{font-family:var(--display);font-weight:500;font-size:1.5rem;font-variant-numeric:tabular-nums}
+.allocbar{display:flex;height:12px;border:1px solid var(--line);overflow:hidden}
+.allocbar i{display:block;height:100%}
+.legend{display:flex;flex-wrap:wrap;gap:8px}
+.lg{display:inline-flex;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);padding:9px 14px;font-size:.84rem;color:var(--ink);white-space:nowrap}
+.lg span{width:10px;height:10px;border-radius:2px}
+.lg b{font-weight:500;font-variant-numeric:tabular-nums;color:var(--muted)}
+.lg em{font-style:normal;color:var(--dim);font-size:.75rem}
+.lg.on{border-color:var(--gold);background:var(--bg-2)}
+.stocks-tools{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.stocks-tools input{max-width:320px}
+.stocks-table{margin-bottom:0;max-height:640px;overflow:auto}
+.stocks-table table{min-width:980px}
+.stocks-table thead th{position:sticky;top:0;background:var(--surface);cursor:pointer;user-select:none;z-index:1}
+.stocks-table th.sorted{color:var(--gold-hi)}
+.stocks-table th.sorted::after{content:" " attr(data-dir)}
+.tkr{font-family:var(--body);font-weight:600;letter-spacing:.06em;color:var(--gold-hi)}
+.dot{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:8px;vertical-align:middle}
+
+/* Reveal */
+@media (prefers-reduced-motion:no-preference){
+  .rise{animation:rise .9s cubic-bezier(.2,.7,.2,1) both}
+  .rise.d2{animation-delay:.12s}.rise.d3{animation-delay:.24s}.rise.d4{animation-delay:.36s}
+  @keyframes rise{from{opacity:.001;transform:translateY(14px)}to{opacity:1;transform:none}}
+}
+
+@media (max-width:900px){
+  .hero-grid,.sec-head,.firm-grid,.feature,.leader,.contact,.two,.realized{grid-template-columns:1fr}
+  .hero-grid{padding-block:40px 56px;gap:28px}
+  .crest{order:-1;width:min(70%,300px)}
+  .strategies{grid-template-columns:1fr 1fr}
+  .strategies article{padding-left:0!important;border-right:0;border-bottom:1px solid var(--line);padding-right:16px}
+  .focus-strip{grid-template-columns:1fr 1fr}
+  .focus-strip div:nth-child(2){border-right:0}
+  .focus-strip div{border-bottom:1px solid var(--line)}
+  .principles{grid-template-columns:1fr}
+  .kpis{grid-template-columns:1fr 1fr}
+  section.sec{padding-block:72px}
+  .sec-head{margin-bottom:40px;gap:20px}
+  .feature .media{min-height:260px}
+  .thumbs{grid-template-columns:1fr 1fr 1fr}
+  nav a.hide-sm{display:none}
+}
+@media (max-width:520px){.strategies{grid-template-columns:1fr}.feature .info,.principles article,.loginbox{padding:26px}}
+
+/* Performance + category tabs */
+.perf{border:1px solid var(--line);background:var(--surface);padding:22px 24px 0;display:flex;flex-direction:column;gap:14px}
+.rtabs{display:flex;gap:4px}
+.rtabs button{background:none;border:1px solid transparent;color:var(--muted);font-size:.8rem;font-weight:600;letter-spacing:.06em;padding:7px 14px}
+.rtabs button.on{border-color:var(--gold);color:var(--gold-hi)}
+.pchart{position:relative}
+.pchart svg{width:100%;height:240px;display:block}
+.pc-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.92rem;text-align:center;padding:0 24px}
+.pc-axis{display:flex;justify-content:space-between;font-size:.74rem;color:var(--dim);padding-top:6px}
+.rets{display:grid;grid-template-columns:repeat(6,1fr);border-top:1px solid var(--line);margin:0 -24px}
+.ret{background:none;border:0;border-right:1px solid var(--line);padding:16px 20px;display:flex;flex-direction:column;gap:4px;text-align:left;min-width:0}
+.ret:last-child{border-right:0}
+.ret span{font-family:var(--mark);font-size:.56rem;letter-spacing:.22em;text-transform:uppercase;color:var(--dim)}
+.ret b{font-family:var(--body);font-weight:600;font-size:1.25rem;font-variant-numeric:tabular-nums;color:var(--ink)}
+.ret em{font-style:normal;font-size:.76rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ret.on{background:rgba(201,164,92,.07);box-shadow:inset 0 2px 0 var(--gold)}
+.ctabs{display:grid;grid-template-columns:repeat(auto-fit,minmax(118px,1fr));gap:1px;border:1px solid var(--line);background:var(--line)}
+.ctab{min-width:0;background:var(--surface);border:0;padding:13px 12px;display:grid;grid-template-columns:auto 1fr;gap:3px 8px;text-align:left;align-items:start}
+.stocks-table td small.muted{white-space:nowrap}
+.stocks-table tr.sub td{background:var(--bg-2);border-top:1px solid var(--line-2);font-variant-numeric:tabular-nums}
+.stocks-table tr.sub td:first-child b{font-family:var(--mark);font-weight:500;font-size:.64rem;letter-spacing:.2em;text-transform:uppercase;color:var(--gold-hi);margin-right:12px}
+.stocks-table tr.sub small{color:var(--dim);font-size:.76rem}
+.stocks-table tr.srow{cursor:pointer}.stocks-table tr.srow:hover td{background:rgba(201,164,92,.05)}.stocks-table tr.srow.open td{background:rgba(201,164,92,.08)}
+.stocks-table .info{color:var(--gold);font-size:.75rem;font-weight:400}
+.stocks-table tr.sdesc td{background:var(--bg-2);color:var(--muted);font-size:.9rem;line-height:1.55;padding:12px 18px 14px;white-space:normal}.stocks-table tr.sdesc b{color:var(--gold-hi);font-weight:500}
+.ctab-op{background:linear-gradient(135deg,rgba(201,164,92,.10),transparent 60%)}
+.ctab-op em{color:var(--gold)!important}
+.ctab .sw{width:9px;height:9px;border-radius:2px;grid-row:span 3;align-self:start;margin-top:6px}
+.ctab .ct-n{font-size:.82rem;color:var(--ink);line-height:1.25}.ctab b,.ctab em{grid-column:2}
+.ctab b{font-weight:500;font-size:.9rem;color:var(--muted);font-variant-numeric:tabular-nums}
+.ctab em{font-style:normal;font-size:.76rem;font-variant-numeric:tabular-nums;color:var(--dim)}
+.ctab:hover{background:var(--bg-2)}
+.ctab.on{background:var(--bg-2);box-shadow:inset 0 -2px 0 var(--gold)}
+.ctab.on .ct-n{color:var(--gold-hi)}
+.cat-perf{display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;padding:4px 2px}
+.cp-name{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;align-items:center}
+.cp-name .sw{width:10px;height:10px;border-radius:2px}
+.cp-name b{font-family:var(--display);font-weight:500;font-size:1.6rem}
+.cp-name em{grid-column:2;font-style:normal;font-size:.84rem;color:var(--muted)}
+.cp-rets{display:flex;gap:22px}
+.cp-rets div{display:flex;flex-direction:column;gap:2px;text-align:right}
+.cp-rets span{font-family:var(--mark);font-size:.54rem;letter-spacing:.2em;color:var(--dim)}
+.cp-rets b{font-weight:600;font-size:.98rem;font-variant-numeric:tabular-nums}
+@media (max-width:900px){.rets{grid-template-columns:repeat(3,1fr)}.ret:nth-child(3){border-right:0}.ret:nth-child(n+4){border-top:1px solid var(--line)}.cp-rets{flex-wrap:wrap;gap:14px}}
+</style>
+
+</head>
+<body>
+
+<header class="top">
+  <div class="wrap bar">
+    <button class="mark" data-go="home" data-to="top" aria-label="ELK Holdings home"><img src="crest-icon.jpg" alt="" class="mark-icon"><span class="mark-words"><b>ELK</b><span>HOLDINGS</span></span></button>
+    <nav aria-label="Main">
+      <a href="#top" data-page="home">Firm</a>
+      <a href="#platform" data-page="investments">Investments</a>
+      <a href="#portfolio" data-page="portfolio">Portfolio</a>
+      <a href="#leadership" data-page="leadership" class="hide-sm">Leadership</a>
+      <a href="#contact" data-page="contact" class="hide-sm">Contact</a>
+      <button data-go="login" class="login" id="navLogin">Investor Login</button>
+    </nav>
+  </div>
+</header>
+
+<!-- PUBLIC SITE -->
+<!-- PAGE: home -->
+<div class="view page" id="v-home">
+<section class="hero" id="top">
+  <div class="wrap hero-grid">
+    <div class="hero-copy">
+      <p class="eyebrow rise">Family Office</p>
+      <h1 class="rise d2">Conviction where others <em class="g">hesitate.</em></h1>
+      <p class="lead rise d3">ELK Holdings is a family office investing across real estate, fixed income, private equity, venture capital, operating businesses, service and trade businesses and public equities, and acting with the speed and certainty that sellers, lenders and partners can count on.</p>
+      <div class="cta rise d4">
+        <a class="btn" href="#platform">What we invest in</a>
+        <button class="btn ghost" data-go="login">Investor login</button>
+      </div>
+    </div>
+    <div class="crest">
+      <img src="crest.jpg" alt="ELK Holdings crest">
+    </div>
+  </div>
+  <dl class="wrap focus-strip">
+    <div><dt>Strategy</dt><dd>Distressed &amp; Value-Add</dd></div>
+    <div><dt>Categories</dt><dd>Seven areas of investment</dd></div>
+    <div><dt>Markets</dt><dd>United States</dd></div>
+    <div><dt>Structure</dt><dd>Family Office</dd></div>
+  </dl>
+</section><section class="sec" id="firm">
+  <div class="wrap firm-grid">
+    <div>
+      <span class="eyebrow" style="display:block;margin-bottom:22px">The Firm</span>
+      <p class="statement">A family office built to move when others wait.</p>
+    </div>
+    <div class="body">
+      <p>ELK Holdings is a <strong>family office</strong>. We invest across <strong>real estate, fixed income, private equity, venture capital, operating businesses, service and trade businesses and public equities</strong>, and treat every category as a core business. In each one we look for the same thing: situations where the price has fallen behind the value.</p>
+      <p>The firm grew out of LKE Group, founded by Eddie Khezrie in New Jersey in January 2026, and draws on the Khezrie family's long history of building and running businesses. That background shapes how we invest: we think like owners and operators, not just buyers.</p>
+      <p>We are a partnership, not a fund. Our partners know the deal, see the progress, and hear from us every month. We put our own capital in alongside theirs, and we only make money when they make money.</p>
+    </div>
+  </div>
+</section><section class="sec" id="approach">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">Our Fundamentals</span><h2>How we work with partners</h2></div>
+      <p>Investing with ELK should feel like owning the deal yourself, not handing money to a big fund and hoping for an update. These are the rules we hold ourselves to on every investment.</p>
+    </div>
+    <div class="principles">
+      <article><span class="eyebrow">01 · Aligned</span><h3>We win when you win</h3><p>We are not interested in making money before our partners do. When everyone in the deal is making money, that is when we make money.</p></article>
+      <article><span class="eyebrow">02 · Always informed</span><h3>You always know where your money is</h3><p>Regular updates, photos, documents and current numbers on a private portal built for each partner. Good news or bad, you hear it from us first.</p></article>
+      <article><span class="eyebrow">03 · Committed</span><h3>We strike fast and we follow through</h3><p>When we are ready to buy, we move quickly and decisively. We do not back out of deals we commit to, and sellers and brokers know it.</p></article>
+      <article><span class="eyebrow">04 · Honest</span><h3>Straight answers, every time</h3><p>We tell partners what we see, including the risks. Trust is built over many deals, and we plan on doing many deals together.</p></article>
+      <article><span class="eyebrow">05 · Disciplined</span><h3>Downside first</h3><p>Every deal is tested against the worst case before the best case. If the numbers only work when everything goes right, we pass.</p></article>
+      <article><span class="eyebrow">06 · Hands-on</span><h3>In the details</h3><p>We visit the property or the business, talk to the tenants, managers and customers, and stay close to the work from the day we invest to the day we exit.</p></article>
+    </div>
+  </div>
+</section><section class="sec" id="process">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">Our Process</span><h2>From first look to full value</h2></div>
+      <p>Every investment follows the same path. Each step has one job: make sure we buy right and finish strong.</p>
+    </div>
+    <ol class="process" style="margin:0;padding:0">
+      <li><span class="dot">I</span><div><h3>Source</h3><p>Direct relationships with brokers, bankers, lenders and business owners nationwide, including off-market opportunities.</p></div></li>
+      <li><span class="dot">II</span><div><h3>Underwrite</h3><p>Financials, leases, collateral and costs, all tested against the downside before we make an offer.</p></div></li>
+      <li><span class="dot">III</span><div><h3>Acquire</h3><p>When we are ready, we strike fast with a clear offer, and we do not back out once we commit.</p></div></li>
+      <li><span class="dot">IV</span><div><h3>Execute</h3><p>A written plan for each investment, managed hands-on, whether that means leasing a building, collecting on a loan or growing a company.</p></div></li>
+      <li><span class="dot">V</span><div><h3>Realize</h3><p>Sale, refinance, repayment or long-term hold, timed to return capital and maximize value for partners.</p></div></li>
+    </ol>
+  </div>
+</section><section class="band">
+  <div class="wrap">
+    <div class="orn"><img src="crest-icon.jpg" alt=""></div>
+    <blockquote>When my partners are making money, that is when I am making money. Not before.</blockquote>
+    <cite class="eyebrow">Eddie Khezrie · Founder &amp; CEO</cite>
+  </div>
+</section><section class="sec next-cta"><div class="wrap next-in"><p class="statement">See what we invest in, category by category.</p><a class="btn ghost" href="#platform">Our investments</a></div></section>
+</div>
+
+<!-- PAGE: investments -->
+<div class="view page" id="v-investments" hidden>
+<section class="sec" id="platform">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">What We Invest In</span><h2>Seven areas of investment</h2></div>
+      <p>As a family office, we invest across seven categories with a long view and always alongside our partners. No single category comes first. Choose a category to see every type of investment it covers and what we look for in each.</p>
+    </div>
+    <div class="areas">
+      <a class="area" href="#realestate"><span class="n">I</span><h3>Real Estate</h3><p>Property and development</p><span class="cnt">8 investment types →</span></a>
+      <a class="area" href="#fixedincome"><span class="n">II</span><h3>Fixed Income</h3><p>Lending, debt and currencies</p><span class="cnt">9 investment types →</span></a>
+      <a class="area" href="#privateequity"><span class="n">III</span><h3>Private Equity</h3><p>Ownership in private companies</p><span class="cnt">6 investment types →</span></a>
+      <a class="area" href="#venture"><span class="n">IV</span><h3>Venture Capital</h3><p>Early-stage companies</p><span class="cnt">4 investment types →</span></a>
+      <a class="area" href="#operating"><span class="n">V</span><h3>Operating Businesses</h3><p>Run hands-on by Eddie</p><span class="cnt">3 investment types →</span></a>
+      <a class="area" href="#services"><span class="n">VI</span><h3>Service &amp; Trade Businesses</h3><p>Trades, home services and wholesale</p><span class="cnt">40 business types →</span></a>
+      <a class="area" href="#equities"><span class="n">VII</span><h3>Public Equities</h3><p>Stocks and public markets, every industry</p><span class="cnt">21 investment types →</span></a>
+      <a class="area area-cta" href="#portfolio"><span class="n">Partners</span><h3>Our Portfolio</h3><p>See the investments you hold in the partner portal</p><span class="cnt">Partner access →</span></a>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- PAGE: realestate -->
+<div class="view page" id="v-realestate" hidden>
+<section class="sec cat-sec" id="realestate">
+  <div class="wrap">
+    <div class="cat-head">
+      <div><span class="eyebrow">I · Property and development</span><h2>Real Estate</h2></div>
+      <p>We buy, reposition and build across property types, always looking for a price that sits below what the property can become. Below is every type of real estate we invest in and what we look for in each.</p>
+    </div>
+    <div class="types">
+      <article class="type">
+        <div class="type-top"><h3>Office</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Buildings leased to businesses, from single tenants to downtown towers.</dd></div><div><dt>What we look for</dt><dd>Distressed or under-leased buildings in growing markets, bought well below replacement cost, with a clear plan to lease up.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>BXP · VNO</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Retail</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Shopping centers, strip centers, storefronts and single-tenant retail.</dd></div><div><dt>What we look for</dt><dd>Vacant or under-performing centers we can re-tenant with the right mix of stores and services.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>SPG · O</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Multifamily</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Apartment buildings, from small walk-ups to large communities.</dd></div><div><dt>What we look for</dt><dd>Buildings with below-market rents, deferred upkeep or weak management that we can fix.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>VMRK · MAA</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Residential Development</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Building new homes to sell, from single homes to small communities.</dd></div><div><dt>What we look for</dt><dd>Sites where approvals, a fixed-price contractor and presales can take most of the risk out before we build.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>DHI · LEN</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Land &amp; Entitlements</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Raw or underused land bought to rezone, approve and sell or build.</dd></div><div><dt>What we look for</dt><dd>Land with a clear path to a higher use, where approvals add value on their own.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>HHH · JOE</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Industrial &amp; Flex</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Warehouses, distribution and light industrial space.</dd></div><div><dt>What we look for</dt><dd>Older or vacant buildings near population centers where demand is strong.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>PLD · REXR</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Mixed-Use</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Buildings that combine apartments, retail and office.</dd></div><div><dt>What we look for</dt><dd>Neighborhood properties where one part is under-used and can lift the whole.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>FRT · HHH</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Hospitality</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Hotels and short-stay properties.</dd></div><div><dt>What we look for</dt><dd>Properties that need new management, a brand change or a renovation.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>HST · PK</b></div>
+      </article>
+    </div>
+  </div>
+</section><p class="wrap tk-note">Tickers are examples of publicly traded companies in each area that can be bought on Robinhood. They are not recommendations or ELK holdings.</p><div class="wrap pager"><a href="#platform" class="pn">← All investments</a><a href="#fixedincome" class="pn">Next: Fixed Income →</a></div>
+</div>
+
+<!-- PAGE: fixedincome -->
+<div class="view page" id="v-fixedincome" hidden>
+<section class="sec cat-sec" id="fixedincome">
+  <div class="wrap">
+    <div class="cat-head">
+      <div><span class="eyebrow">II · Lending, debt and currencies</span><h2>Fixed Income</h2></div>
+      <p>Fixed income means owning debt: getting paid interest and principal instead of owning the asset outright. It covers loans secured by real estate and other assets, as well as traditional bonds for steady income and liquidity, and a small amount held in other currencies to protect against a weaker dollar.</p>
+    </div>
+    <div class="types">
+      <article class="type">
+        <div class="type-top"><h3>Performing Notes</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Buying loans that are being paid on time.</dd></div><div><dt>What we look for</dt><dd>Loans at a discount to face value, backed by collateral we understand.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>STWD · BXMT</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Non-Performing Notes &amp; Loan-to-Own</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Buying loans in default directly from banks and lenders.</dd></div><div><dt>What we look for</dt><dd>Notes where, if the borrower cannot pay, we convert the debt into ownership and take control of the asset.</dd></div></dl>
+        <div class="tk"><span>On Robinhood · closest match</span><b>RITM</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Bridge Loans</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Short-term loans between a purchase and permanent financing.</dd></div><div><dt>What we look for</dt><dd>Low loan-to-value loans on assets we would be happy to own.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>ABR · KREF · RC</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Mezzanine &amp; Preferred Equity</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Capital that sits between senior debt and the owner's equity.</dd></div><div><dt>What we look for</dt><dd>Deals with strong sponsors where our position is protected by real value below it.</dd></div></dl>
+        <div class="tk"><span>On Robinhood · closest match</span><b>LADR</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Private Credit</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Direct loans to private companies.</dd></div><div><dt>What we look for</dt><dd>Senior, secured loans to established businesses with steady cash flow.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>ARCC · MAIN · BIZD</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Government Bonds</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>U.S. Treasury bills, notes and bonds.</dd></div><div><dt>What we look for</dt><dd>Safe, liquid income for capital waiting to be deployed.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>SGOV · IEF · TLT</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Corporate Bonds</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Debt issued by public and private companies.</dd></div><div><dt>What we look for</dt><dd>Investment-grade and select high-yield issuers with strong coverage.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>LQD · HYG</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Municipal Bonds</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Debt issued by cities, states and public agencies.</dd></div><div><dt>What we look for</dt><dd>Tax-efficient income from well-run issuers.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>MUB</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Currencies &amp; Cash Abroad</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Holding money in other currencies, like the euro, yen or Swiss franc, a basket of emerging-market currencies such as the Mexican peso and Chinese yuan, and gold, which earns that country's interest and rises when the dollar falls.</dd></div><div><dt>What we look for</dt><dd>A small hedge against a weaker dollar that moves differently from stocks, sized to protect the portfolio rather than drive returns.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>FXE · FXF · GLD · CEW</b></div>
+      </article>
+    </div>
+  </div>
+</section><p class="wrap tk-note">Tickers are examples of publicly traded companies in each area that can be bought on Robinhood. They are not recommendations or ELK holdings.</p><div class="wrap pager"><a href="#platform" class="pn">← All investments</a><a href="#privateequity" class="pn">Next: Private Equity →</a></div>
+</div>
+
+<!-- PAGE: privateequity -->
+<div class="view page" id="v-privateequity" hidden>
+<section class="sec cat-sec" id="privateequity">
+  <div class="wrap">
+    <div class="cat-head">
+      <div><span class="eyebrow">III · Ownership in private companies</span><h2>Private Equity</h2></div>
+      <p>Private equity means owning stakes in companies that are not traded on a stock exchange. We invest directly and alongside experienced sponsors, across company sizes and deal types.</p>
+    </div>
+    <div class="types">
+      <article class="type">
+        <div class="type-top"><h3>Buyouts</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Buying a controlling stake in an established company.</dd></div><div><dt>What we look for</dt><dd>Profitable businesses where new ownership, better systems and capital can grow earnings.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>BX · KKR · APO</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Growth Equity</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Minority investments in fast-growing companies.</dd></div><div><dt>What we look for</dt><dd>Proven products and revenue, with capital needed to scale.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>TPG</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Minority Stakes</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Partnering with founders and family owners without taking control.</dd></div><div><dt>What we look for</dt><dd>Owner-led companies that want a long-term partner, not a quick flip.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>OWL</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Co-Investments</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Investing directly in a deal alongside a private equity sponsor.</dd></div><div><dt>What we look for</dt><dd>Sponsors with strong records, on terms that line up with theirs.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>HLNE</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Secondaries</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Buying existing stakes in private funds or companies from other investors.</dd></div><div><dt>What we look for</dt><dd>Quality assets bought at a discount from sellers who need liquidity.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>STEP · HLNE</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Fund Investments</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Committing capital to private equity funds managed by others.</dd></div><div><dt>What we look for</dt><dd>Managers with a clear edge in their market and their own money in the fund.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>PSP</b></div>
+      </article>
+    </div>
+  </div>
+</section><p class="wrap tk-note">Tickers are examples of publicly traded companies in each area that can be bought on Robinhood. They are not recommendations or ELK holdings.</p><div class="wrap pager"><a href="#platform" class="pn">← All investments</a><a href="#venture" class="pn">Next: Venture Capital →</a></div>
+</div>
+
+<!-- PAGE: venture -->
+<div class="view page" id="v-venture" hidden>
+<section class="sec cat-sec" id="venture">
+  <div class="wrap">
+    <div class="cat-head">
+      <div><span class="eyebrow">IV · Early-stage companies</span><h2>Venture Capital</h2></div>
+      <p>Venture capital means backing young companies with high growth potential. Most of the return in venture comes from a small number of winners, so we size these investments carefully and look for founders we believe in.</p>
+    </div>
+    <div class="types">
+      <article class="type">
+        <div class="type-top"><h3>Pre-Seed &amp; Seed</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>The first outside capital a company raises.</dd></div><div><dt>What we look for</dt><dd>Strong founders solving a real problem in a large market.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>RVII</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Early Stage</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Series A and B rounds for companies with early traction.</dd></div><div><dt>What we look for</dt><dd>Growing revenue and customers who keep coming back.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>RVII · ARKK</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Late Stage &amp; Pre-IPO</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Larger rounds for established, scaling companies.</dd></div><div><dt>What we look for</dt><dd>Clear paths to profit or a public listing, at sensible valuations.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>RVI · XOVR · DXYZ</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Venture Funds</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Commitments to funds run by venture investors.</dd></div><div><dt>What we look for</dt><dd>Managers with access to the best deals in their area.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>RVI · DXYZ</b></div>
+      </article>
+    </div>
+  </div>
+</section><p class="wrap tk-note">Tickers are examples of publicly traded companies in each area that can be bought on Robinhood. They are not recommendations or ELK holdings.</p><div class="wrap pager"><a href="#platform" class="pn">← All investments</a><a href="#operating" class="pn">Next: Operating Businesses →</a></div>
+</div>
+
+<!-- PAGE: operating -->
+<div class="view page" id="v-operating" hidden>
+<section class="sec cat-sec" id="operating">
+  <div class="wrap">
+    <div class="cat-head">
+      <div><span class="eyebrow">V · Run hands-on by Eddie</span><h2>Operating Businesses</h2></div>
+      <p>Operating businesses are the investments Eddie runs hands-on: development projects, companies we buy and run, and options trading. Investments in other industries through public companies are covered under Public Equities, and service, trade and wholesale companies under Service &amp; Trade Businesses.</p>
+    </div>
+    <div class="types types3">
+      <article class="type is-on">
+        <div class="type-top"><h3>Real Estate Development</h3><span class="pill on">Active investment</span></div>
+        <dl><div><dt>What it is</dt><dd>Building and selling new homes, buildings and communities that we run ourselves, from the site to the sale.</dd></div><div><dt>What we look for</dt><dd>Sites where we control approvals, cost and sales from start to finish.</dd></div></dl>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Business Acquisitions</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Buying established private companies outright and running them hands-on, in industries like healthcare, services and manufacturing.</dd></div><div><dt>What we look for</dt><dd>Steady cash flow, a clear way to grow, and owners ready to hand over a business that works.</dd></div></dl>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Options Trading</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Trading listed options, managed directly by Eddie, to act on a specific view with a set amount at risk.</dd></div><div><dt>What we look for</dt><dd>A clear catalyst and a payoff that is large compared with what can be lost.</dd></div></dl>
+      </article>
+    </div>
+  </div>
+</section><p class="wrap tk-note">Tickers are examples of publicly traded companies in each area that can be bought on Robinhood. They are not recommendations or ELK holdings.</p><div class="wrap pager"><a href="#platform" class="pn">← All investments</a><a href="#services" class="pn">Next: Service &amp; Trade Businesses →</a></div>
+</div>
+
+<!-- PAGE: services -->
+<div class="view page" id="v-services" hidden>
+<section class="sec cat-sec" id="services">
+  <div class="wrap">
+    <div class="cat-head">
+      <div><span class="eyebrow">VI · Main Street businesses</span><h2>Service &amp; Trade Businesses</h2></div>
+      <p>Service and trade businesses are the companies people and buildings depend on every day: landscapers, pool services, plumbers, HVAC, cleaning, wholesale suppliers and more. We invest in established, profitable owner-run businesses in these fields, often with recurring customers and room to grow. Below is every type we look at.</p>
+    </div>
+    <div class="svc-look">
+      <div><span>What we look for</span><p>Steady, repeat customers and service contracts</p></div>
+      <div><span>Size</span><p>Profitable businesses with experienced crews and managers</p></div>
+      <div><span>How we help</span><p>Better systems, pricing, marketing and access to capital</p></div>
+    </div>
+    <div class="grp-head"><h3>Home Services</h3><span>10 types</span></div>
+    <p class="muted grp-desc">Recurring services homeowners pay for every week, month or season.</p>
+    <div class="svc-grid c5">
+      <article class="svc"><h4>Landscaping &amp; Lawn Care</h4><p>Grass cutting, planting, cleanups and seasonal care.</p><div class="tk"><span>On Robinhood</span><b>BV · SMG</b></div></article>
+      <article class="svc"><h4>Pool Service</h4><p>Weekly cleaning, chemicals, openings, closings and repairs.</p><div class="tk"><span>On Robinhood</span><b>POOL · LESL</b></div></article>
+      <article class="svc"><h4>Pest Control</h4><p>Recurring treatments for homes and businesses.</p><div class="tk"><span>On Robinhood</span><b>ROL · RTO</b></div></article>
+      <article class="svc"><h4>House Cleaning</h4><p>Recurring residential cleaning and move-out cleans.</p><div class="tk"><span>On Robinhood · closest match</span><b>FTDR</b></div></article>
+      <article class="svc"><h4>Window &amp; Gutter Cleaning</h4><p>Exterior cleaning and gutter maintenance.</p><div class="tk"><span>On Robinhood · closest match</span><b>ABM</b></div></article>
+      <article class="svc"><h4>Tree Service</h4><p>Trimming, removal and stump grinding.</p><div class="tk"><span>On Robinhood · closest match</span><b>BV</b></div></article>
+      <article class="svc"><h4>Snow Removal</h4><p>Plowing and salting for homes and lots.</p><div class="tk"><span>On Robinhood</span><b>BV</b></div></article>
+      <article class="svc"><h4>Junk Removal &amp; Hauling</h4><p>Clean-outs, debris and bulk removal.</p><div class="tk"><span>On Robinhood · closest match</span><b>WM · RSG</b></div></article>
+      <article class="svc"><h4>Moving &amp; Storage</h4><p>Local moves, packing and storage units.</p><div class="tk"><span>On Robinhood</span><b>UHAL · PSA · EXR</b></div></article>
+      <article class="svc"><h4>Irrigation &amp; Sprinklers</h4><p>Install, startup, winterizing and repair.</p><div class="tk"><span>On Robinhood</span><b>TTC · SITE</b></div></article>
+    </div>
+    <div class="grp-head"><h3>Skilled Trades</h3><span>10 types</span></div>
+    <p class="muted grp-desc">Licensed trades with steady repair and replacement demand.</p>
+    <div class="svc-grid c5">
+      <article class="svc"><h4>Plumbing</h4><p>Repairs, drain cleaning, water heaters and new installs.</p><div class="tk"><span>On Robinhood</span><b>FERG · WTS</b></div></article>
+      <article class="svc"><h4>HVAC</h4><p>Heating and air conditioning service, repair and replacement.</p><div class="tk"><span>On Robinhood</span><b>FIX · LII · CARR · WSO</b></div></article>
+      <article class="svc"><h4>Electrical</h4><p>Residential and commercial electrical work.</p><div class="tk"><span>On Robinhood</span><b>EME · IESC · PWR</b></div></article>
+      <article class="svc"><h4>Roofing</h4><p>Repairs, replacements and inspections.</p><div class="tk"><span>On Robinhood</span><b>QXO · OC · CSL</b></div></article>
+      <article class="svc"><h4>Painting</h4><p>Interior and exterior, residential and commercial.</p><div class="tk"><span>On Robinhood</span><b>SHW</b></div></article>
+      <article class="svc"><h4>Flooring</h4><p>Tile, wood, carpet install and refinishing.</p><div class="tk"><span>On Robinhood</span><b>MHK · FND</b></div></article>
+      <article class="svc"><h4>Fencing &amp; Decking</h4><p>Installation and repair of fences and decks.</p><div class="tk"><span>On Robinhood</span><b>TREX</b></div></article>
+      <article class="svc"><h4>Paving &amp; Masonry</h4><p>Driveways, sidewalks, patios and stonework.</p><div class="tk"><span>On Robinhood</span><b>VMC · MLM</b></div></article>
+      <article class="svc"><h4>Garage Doors</h4><p>Installation, openers and repair.</p><div class="tk"><span>On Robinhood</span><b>GFF</b></div></article>
+      <article class="svc"><h4>Handyman &amp; Repairs</h4><p>Small jobs and general home repair.</p><div class="tk"><span>On Robinhood · closest match</span><b>HD · LOW</b></div></article>
+    </div>
+    <div class="grp-head"><h3>Commercial Services</h3><span>8 types</span></div>
+    <p class="muted grp-desc">Contract services businesses and buildings rely on.</p>
+    <div class="svc-grid">
+      <article class="svc"><h4>Janitorial</h4><p>Office and commercial cleaning contracts.</p><div class="tk"><span>On Robinhood</span><b>ABM</b></div></article>
+      <article class="svc"><h4>Security Services</h4><p>Guards, patrols and monitoring.</p><div class="tk"><span>On Robinhood</span><b>ADT · BCO</b></div></article>
+      <article class="svc"><h4>Fire &amp; Life Safety</h4><p>Sprinkler, alarm and extinguisher inspections.</p><div class="tk"><span>On Robinhood</span><b>APG</b></div></article>
+      <article class="svc"><h4>Elevator Service</h4><p>Maintenance and inspection contracts.</p><div class="tk"><span>On Robinhood</span><b>OTIS</b></div></article>
+      <article class="svc"><h4>Waste &amp; Recycling</h4><p>Hauling, dumpsters and recycling.</p><div class="tk"><span>On Robinhood</span><b>WM · RSG</b></div></article>
+      <article class="svc"><h4>Laundry &amp; Linen</h4><p>Commercial laundry for hotels, gyms and clinics.</p><div class="tk"><span>On Robinhood</span><b>CTAS · UNF</b></div></article>
+      <article class="svc"><h4>Facility Maintenance</h4><p>Repairs and upkeep for commercial properties.</p><div class="tk"><span>On Robinhood</span><b>ABM · CTAS</b></div></article>
+      <article class="svc"><h4>Staffing</h4><p>Temporary and permanent staffing services.</p><div class="tk"><span>On Robinhood</span><b>RHI · MAN</b></div></article>
+    </div>
+    <div class="grp-head"><h3>Wholesale &amp; Distribution</h3><span>8 types</span></div>
+    <p class="muted grp-desc">Buying in bulk and supplying stores, contractors and businesses.</p>
+    <div class="svc-grid">
+      <article class="svc"><h4>Food &amp; Beverage Distribution</h4><p>Supplying restaurants, grocers and stores.</p><div class="tk"><span>On Robinhood</span><b>SYY · USFD · PFGC</b></div></article>
+      <article class="svc"><h4>Consumer Goods Wholesale</h4><p>Bulk products sold to retailers and online sellers.</p><div class="tk"><span>On Robinhood · closest match</span><b>COST</b></div></article>
+      <article class="svc"><h4>Apparel &amp; Footwear Wholesale</h4><p>Clothing, sneakers and accessories to stores.</p><div class="tk"><span>On Robinhood</span><b>GIII</b></div></article>
+      <article class="svc"><h4>Building Materials &amp; Industrial Supply</h4><p>Lumber, fixtures, tools and parts.</p><div class="tk"><span>On Robinhood</span><b>GWW · FAST · BLDR</b></div></article>
+      <article class="svc"><h4>Medical &amp; Healthcare Supply</h4><p>Products and equipment for providers and pharmacies.</p><div class="tk"><span>On Robinhood</span><b>MCK · COR · HSIC</b></div></article>
+      <article class="svc"><h4>Auto Parts Distribution</h4><p>Parts and accessories for shops and dealers.</p><div class="tk"><span>On Robinhood</span><b>GPC · LKQ</b></div></article>
+      <article class="svc"><h4>Electronics &amp; Technology Distribution</h4><p>Devices and components to resellers.</p><div class="tk"><span>On Robinhood</span><b>ARW · AVT · SNX</b></div></article>
+      <article class="svc"><h4>Import &amp; Export</h4><p>Goods brought into and out of the U.S. for resale.</p><div class="tk"><span>On Robinhood · closest match</span><b>EXPD · CHRW</b></div></article>
+    </div>
+    <div class="grp-head"><h3>Auto &amp; Equipment Services</h3><span>4 types</span></div>
+    <p class="muted grp-desc">Local services tied to vehicles and equipment.</p>
+    <div class="svc-grid">
+      <article class="svc"><h4>Auto Repair</h4><p>Maintenance and repair shops.</p><div class="tk"><span>On Robinhood</span><b>MNRO · VVV</b></div></article>
+      <article class="svc"><h4>Car Wash &amp; Detailing</h4><p>Express washes and detailing.</p><div class="tk"><span>On Robinhood</span><b>MCW</b></div></article>
+      <article class="svc"><h4>Towing</h4><p>Roadside and contract towing.</p><div class="tk"><span>On Robinhood · closest match</span><b>MLR · CPRT</b></div></article>
+      <article class="svc"><h4>Equipment Rental</h4><p>Tools and machinery rented to contractors.</p><div class="tk"><span>On Robinhood</span><b>URI · HRI</b></div></article>
+    </div>
+  </div>
+</section><p class="wrap tk-note">Tickers are examples of publicly traded companies in each area that can be bought on Robinhood. They are not recommendations or ELK holdings.</p><div class="wrap pager"><a href="#platform" class="pn">← All investments</a><a href="#equities" class="pn">Next: Public Equities →</a></div>
+</div>
+
+<!-- PAGE: equities -->
+<div class="view page" id="v-equities" hidden>
+<section class="sec cat-sec" id="equities">
+  <div class="wrap">
+    <div class="cat-head">
+      <div><span class="eyebrow">VII · Stocks and public markets</span><h2>Public Equities</h2></div>
+      <p>Public equities are shares of companies traded on stock exchanges. They give partners liquidity alongside longer-term private investments. Every holding is shown in the partner's portal with cost, current price and gain or loss.</p>
+    </div>
+    <div class="grp-head"><h3>Ways to invest</h3><span>7 types</span></div>
+    <div class="types">
+      <article class="type">
+        <div class="type-top"><h3>Large-Cap Stocks</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Shares of the largest public companies.</dd></div><div><dt>What we look for</dt><dd>Market leaders with durable advantages and strong balance sheets.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>AAPL · MSFT · NVDA</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Small &amp; Mid-Cap Stocks</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Shares of smaller public companies.</dd></div><div><dt>What we look for</dt><dd>Under-followed companies trading below their value.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>IJR · IJH</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>International Equities</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Shares of companies outside the United States.</dd></div><div><dt>What we look for</dt><dd>Strong businesses in growing markets.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>VXUS · TSM</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Sector &amp; Thematic</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Concentrated positions in sectors such as technology, semiconductors and financials.</dd></div><div><dt>What we look for</dt><dd>Long-term trends with real demand behind them.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>SMH · XLF</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Dividend &amp; Income Stocks</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Established companies that pay regular dividends.</dd></div><div><dt>What we look for</dt><dd>Steady income and long records of paying shareholders.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>SCHD · JNJ · KO</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Index Funds &amp; ETFs</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Broad funds that track a market index.</dd></div><div><dt>What we look for</dt><dd>Low-cost, diversified exposure and a home for liquid capital.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>VOO · QQQ</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>REITs</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Publicly traded real estate companies.</dd></div><div><dt>What we look for</dt><dd>Real estate exposure at a discount to private market value.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>VNQ</b></div>
+      </article>
+    </div>
+    <div class="grp-head"><h3>Industries</h3><span>14 types</span></div>
+    <div class="types">
+      <article class="type">
+        <div class="type-top"><h3>Healthcare</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Home care, clinics, outpatient programs and other providers.</dd></div><div><dt>What we look for</dt><dd>Licensed providers with steady demand and room to expand.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>HCA · EHC</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Business Services</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Companies that serve other businesses, from staffing to cleaning.</dd></div><div><dt>What we look for</dt><dd>Recurring revenue and long customer relationships.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>ADP · CTAS</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Real Estate Services</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Property management, brokerage and leasing companies.</dd></div><div><dt>What we look for</dt><dd>Contracts that renew and fit alongside our own properties.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>CBRE · JLL</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Manufacturing</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Companies that make products, parts and materials.</dd></div><div><dt>What we look for</dt><dd>Essential products, skilled teams and room to modernize.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>ITW · PH</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Consumer Brands &amp; Retail</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Brands and stores that sell to consumers.</dd></div><div><dt>What we look for</dt><dd>Loyal customers and better operations and distribution.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>PG · WMT</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Restaurants &amp; Hospitality</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Restaurants, food concepts, hotels and venues.</dd></div><div><dt>What we look for</dt><dd>Proven concepts with room for new locations.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>MCD · MAR</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Transportation &amp; Logistics</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Trucking, delivery, warehousing and moving people and goods.</dd></div><div><dt>What we look for</dt><dd>Real assets and clear paths to better margins.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>UPS · ODFL</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Automotive</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Dealerships, repair shops, car washes and auto services.</dd></div><div><dt>What we look for</dt><dd>Steady local demand and strong locations.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>AN · PAG</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Technology &amp; Software</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Software and technology-enabled businesses.</dd></div><div><dt>What we look for</dt><dd>Recurring revenue and products customers depend on.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>MSFT · CRM</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Energy &amp; Utilities Services</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Fuel distribution, solar installers and energy services.</dd></div><div><dt>What we look for</dt><dd>Long-term contracts and steady cash flow.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>PWR · NEE</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Agriculture &amp; Food Production</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Farms, food processing and agricultural services.</dd></div><div><dt>What we look for</dt><dd>Land-backed businesses with steady demand.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>DE · ADM</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Education &amp; Childcare</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Schools, tutoring, training and childcare centers.</dd></div><div><dt>What we look for</dt><dd>Strong reputations and waiting lists.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>BFAM · LOPE</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Financial Services</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Insurance agencies, lenders and payment businesses.</dd></div><div><dt>What we look for</dt><dd>Recurring commissions and loyal clients.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>BRO · AJG</b></div>
+      </article>
+      <article class="type">
+        <div class="type-top"><h3>Media &amp; Marketing</h3><span class="pill">Open to opportunities</span></div>
+        <dl><div><dt>What it is</dt><dd>Agencies, publishers and marketing services.</dd></div><div><dt>What we look for</dt><dd>Long-term clients and repeatable services.</dd></div></dl>
+        <div class="tk"><span>On Robinhood</span><b>OMC</b></div>
+      </article>
+    </div>
+  </div>
+</section><p class="wrap tk-note">Tickers are examples of publicly traded companies in each area that can be bought on Robinhood. They are not recommendations or ELK holdings.</p><div class="wrap pager"><a href="#platform" class="pn">← All investments</a><a href="#realestate" class="pn">Next: Real Estate →</a></div>
+</div>
+
+<!-- PAGE: portfolio -->
+<div class="view page" id="v-portfolio" hidden>
+<section class="sec" id="portfolio">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><span class="eyebrow">Portfolio</span><h2>Our investments are private</h2></div>
+      <p>Out of respect for our partners, sellers and the businesses we invest in, we do not publish deal names, locations or figures. Every partner can see the full details of the investments they hold through the investor portal.</p>
+    </div>
+    <div class="vault">
+      <div class="vault-list" aria-hidden="true">
+        <div class="vrow"><span>Undisclosed investment</span><span>Real Estate</span><span>Active</span><span class="lock-i"></span></div>
+        <div class="vrow"><span>Undisclosed investment</span><span>Confidential</span><span>Partners only</span><span class="lock-i"></span></div>
+        <div class="vrow"><span>Undisclosed investment</span><span>Confidential</span><span>Partners only</span><span class="lock-i"></span></div>
+        <div class="vrow"><span>Undisclosed investment</span><span>Confidential</span><span>Partners only</span><span class="lock-i"></span></div>
+      </div>
+      <div class="vault-cta">
+        <img src="crest-icon.jpg" alt="" class="vault-crest">
+        <h3>Partner access required</h3>
+        <p class="muted">Sign in to see the investments you are part of: photos, milestones, documents, current value and projected returns.</p>
+        <button class="btn" data-go="login">Investor login</button>
+        <p class="muted" style="font-size:.8rem">Interested in investing with ELK? <a href="#contact" style="color:var(--gold-hi)">Contact us</a>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- PAGE: leadership -->
+<div class="view page" id="v-leadership" hidden>
+<section class="sec" id="leadership">
+  <div class="wrap">
+    <div class="sec-head"><div><span class="eyebrow">Leadership</span><h2>Meet the founder</h2></div><p></p></div>
+    <div class="leader">
+      <div class="portrait"><img src="crest-head.jpg" style="object-position:center 30%" alt=""><div class="cap"><span class="eyebrow">Founder &amp; Chief Executive Officer</span><b>Eddie Khezrie</b></div></div>
+      <div class="body">
+        <p class="statement">Motivated, hands-on, and focused on building relationships that last longer than any one deal.</p>
+        <p>At 22, Eddie Khezrie is a driven investor who wants to make deals, build real relationships, and outwork everyone in the room. Deal-making is in his blood. He grew up around the Khezrie family businesses and learned early how deals get made and how partners should be treated.</p>
+        <p>He sharpened that instinct across lending, underwriting and management at Safra National Bank, Kushner and 601W Companies, and today oversees real estate investments at Global Group Acquisitions.</p>
+        <p>His approach is simple. Be honest. Keep partners updated, always. Create real value, and make sure everyone at the table does well. Eddie is not looking to make money before anyone else does. He makes money when his partners make money, and he wants every partner to feel like part of the investment, not a name in a fund.</p>
+        <p>Having invested in other companies and deals ourselves, we know what we wanted as investors and often did not get: real transparency. So that is what ELK gives its partners. We are fully open about every deal, and our partner portal shows each investor exactly where their money is, what is happening on the property, and what it is worth today.</p>
+      </div>
+    </div>
+  </div>
+</section><section class="sec next-cta"><div class="wrap next-in"><p class="statement">Have a deal or a business to discuss?</p><a class="btn ghost" href="#contact">Contact us</a></div></section>
+</div>
+
+<!-- PAGE: contact -->
+<div class="view page" id="v-contact" hidden>
+<section class="sec" id="contact" style="border-bottom:0">
+  <div class="wrap contact">
+    <div><span class="eyebrow" style="display:block;margin-bottom:18px">Contact</span><h2>Bring us a deal.</h2><p class="muted" style="margin-top:18px;max-width:46ch">We review every opportunity that fits our focus and respond quickly. Brokers, bankers, lenders and business owners are welcome to reach out directly.</p></div>
+    <dl>
+      <div><dt>Eddie Khezrie, Founder &amp; CEO</dt><dd>718-668-4514</dd></div>
+      <div><dt>Based in</dt><dd>New Jersey · Investing Nationwide</dd></div>
+    </dl>
+  </div>
+</section>
+</div>
+
+<!-- LOGIN -->
+<div class="view" id="v-login" hidden>
+  <div class="wrap view-pad">
+    <form class="loginbox" id="loginForm" novalidate>
+      <img class="crest-sm" src="crest-icon.jpg" alt="">
+      <div style="text-align:center"><p class="eyebrow">Investor Portal</p><h2 style="font-size:2.2rem;margin-top:10px">Partner sign in</h2></div>
+      <label for="email">Login<input id="email" type="text" autocomplete="username" autocapitalize="off" placeholder="Your login name"></label>
+      <label for="code">Code<input id="code" type="password" autocomplete="current-password" placeholder="Your code"></label>
+      <p class="err" id="loginErr" role="alert"></p>
+      <button class="btn" type="submit">Sign in</button>
+      <p class="muted" style="font-size:.8rem;text-align:center">For partners of ELK Holdings investments only.</p>
+    </form>
+  </div>
+</div>
+
+<!-- INVESTOR ROOM -->
+<div class="view" id="v-room" hidden>
+  <div class="wrap view-pad">
+    <div class="room-head">
+      <div><p class="eyebrow" id="roomWho"></p><h2 id="roomTitle"></h2></div>
+      <button class="btn ghost" id="logout">Sign out</button>
+    </div>
+    <div id="overview"></div>
+    <div class="tabs" role="tablist" id="dealTabs" hidden></div>
+    <div class="detail-head"><div><p class="eyebrow" id="detCat"></p><h3 id="detName"></h3></div></div>
+    <div id="dealView"></div>
+  </div>
+</div>
+
+<footer class="site-foot"><div class="wrap">
+  <div class="foot-grid">
+    <div style="display:flex;flex-direction:column;gap:16px"><button class="mark" data-go="home" data-to="top" aria-label="ELK Holdings home"><img src="crest-icon.jpg" alt="" class="mark-icon"><span class="mark-words"><b>ELK</b><span>HOLDINGS</span></span></button><p style="max-width:34ch">A family office investing across real estate, fixed income, private equity, venture capital, operating businesses, service and trade businesses and public equities.</p></div>
+    <div><h4>Firm</h4><ul><li><a href="#firm">About</a></li><li><a href="#approach">Fundamentals</a></li><li><a href="#process">Process</a></li><li><a href="#leadership">Leadership</a></li></ul></div><div><h4>Investments</h4><ul><li><a href="#realestate">Real Estate</a></li><li><a href="#fixedincome">Fixed Income</a></li><li><a href="#privateequity">Private Equity</a></li><li><a href="#venture">Venture Capital</a></li><li><a href="#operating">Operating Businesses</a></li><li><a href="#services">Service &amp; Trade</a></li><li><a href="#equities">Public Equities</a></li></ul></div>
+    <div><h4>Partners</h4><ul><li><a href="#portfolio">Portfolio</a></li><li><button data-go="login">Investor Portal</button></li></ul></div>
+    <div><h4>Contact</h4><ul><li>Eddie Khezrie, Founder &amp; CEO</li><li>718-668-4514</li><li>New Jersey · Investing Nationwide</li></ul></div>
+  </div>
+  <div class="foot-legal"><span>© 2026 ELK Holdings. All rights reserved.</span><span>Projections are estimates, not a promise of returns. Nothing on this site is an offer to sell securities.</span></div>
+</div></footer>
+
+<script>
+
+const fmt$=n=>(n<0?"-":"")+"$"+Math.abs(Math.round(n)).toLocaleString("en-US");
+const fmtM=n=>"$"+(n/1e6).toFixed(2)+"M";
+
+const IMG={};
+
+
+const DEALS={};
+/* Latest market prices. ELK updates these; the portal shows the date of each price. */
+const EXAMPLES={};
+/* PRICES: closing prices. "buy" = purchase price (Oct 21, 2026 close), "last" = latest close, "prev" = close before that.
+   The weekday update replaces only the PRICES block. */
+const PRICES=/*PRICES_START*/{"asof":"","buyDate":"","t":{}}/*PRICES_END*/;
+const fmtDate=s=>{try{return new Date(s+"T12:00:00").toLocaleDateString("en-US",{month:"short",day:"numeric",year:"numeric"})}catch(e){return s}};
+const MARKET={SNDK:{get price(){const p=PRICES.t.SNDK;return p&&p.last?p.last:1378.22},get asof(){return fmtDate(PRICES.asof)+" close"}}};
+const tkOf=n=>{const m=/\(([A-Z.]+)\)/.exec(n);return m?m[1]:null};
+/* Shares are bought at the buy price; value moves with the latest close. Unconfirmed prices fall back to cost. */
+function holdingCalc(name,amt){const t=tkOf(name),p=t&&PRICES.t[t];
+  if(!p||!p.buy)return{t,shares:null,buy:null,last:null,value:amt,day:0,ok:false};
+  const shares=amt/p.buy,last=p.last||p.buy,prev=p.prev||last;
+  return{t,shares,buy:p.buy,last,value:shares*last,day:shares*(last-prev),ok:!!p.last};}
+function posCalc(o){let v=0,d=0,miss=0;o.alloc.forEach(([n,c])=>{const ex=EXAMPLES[n];if(!ex){v+=c;return}ex.forEach(([nm,amt])=>{const h=holdingCalc(nm,amt);v+=h.value;d+=h.day;if(!h.ok)miss++})});return{value:v,day:d,miss}}
+const INVESTORS={};
+
+/* Partner cash flows by month: land at month 0, soft costs and carry spread over the approval period,
+   then capital plus profit paid out evenly over the last 6 months as homes close. Build is funded by buyer deposits and draws. */
+function dealIrr(land,soft,totalBack,T){
+  const cf=new Array(T+1).fill(0);cf[0]-=land;
+  const sm=Math.max(1,Math.min(15,T-8));for(let m=1;m<=sm;m++)cf[m]-=soft/sm;
+  const k=Math.min(6,T);for(let m=T-k+1;m<=T;m++)cf[m]+=totalBack/k;
+  const npv=r=>cf.reduce((a,c,i)=>a+c/Math.pow(1+r,i),0);
+  let lo=-0.99,hi=1;if(npv(lo)*npv(hi)>0)return null;
+  for(let i=0;i<100;i++){const mid=(lo+hi)/2;(npv(mid)>0)?lo=mid:hi=mid}
+  return Math.pow(1+lo,12)-1;
+}
+function model(d,price,build){
+  const sales=d.homes*price+d.waterPremium;
+  const hard=d.homes*build,cont=hard*d.contPct,sell=sales*d.sellPct;
+  const costs=d.land+hard+d.soft+cont+sell+d.carry;
+  const pre=sales-costs,gc=Math.max(0,pre*d.gcPct),net=pre-gc;
+  return{sales,hard,cont,sell,costs,pre,gc,net};
+}
+
+/* Navigation: each page is its own view; links point at a section id and open the page that holds it */
+let session=null;
+const PAGE_OF={top:"home",firm:"home",approach:"home",process:"home",platform:"investments",realestate:"realestate",fixedincome:"fixedincome",privateequity:"privateequity",venture:"venture",operating:"operating",services:"services",equities:"equities",portfolio:"portfolio",leadership:"leadership",contact:"contact"};
+const FIRST={home:"top",investments:"platform"};
+function go(v,to){
+  if(v==="login"&&session)v="room";
+  document.querySelectorAll(".view").forEach(s=>s.hidden=s.id!=="v-"+v);
+  document.getElementById("navLogin").textContent=session?"My Investments":"Investor Login";
+  const navPage=["realestate","fixedincome","privateequity","venture","operating","services","equities"].includes(v)?"investments":v;
+  document.querySelectorAll("nav a[data-page]").forEach(a=>a.dataset.page===navPage?a.setAttribute("aria-current","page"):a.removeAttribute("aria-current"));
+  try{history.replaceState(null,"","#"+(to||v))}catch(e){}
+  if(to&&to!==FIRST[v]&&to!==v){const el=document.getElementById(to);if(el){el.scrollIntoView();return}}
+  window.scrollTo(0,0);
+}
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-go]");if(b){e.preventDefault();go(b.dataset.go,b.dataset.to);return}
+  const a=e.target.closest('a[href^="#"]');
+  if(a){const id=a.getAttribute("href").slice(1);if(PAGE_OF[id]){e.preventDefault();go(PAGE_OF[id],id)}}
+});
+/* Login: each partner's data is encrypted with their own code (PBKDF2 + AES-GCM). Nothing is readable without it. */
+const codeEl=document.getElementById("code");
+const b64=s=>Uint8Array.from(atob(s),c=>c.charCodeAt(0));
+async function unlock(name,code){
+  const h=Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256",new TextEncoder().encode("elk:"+name)))).map(x=>x.toString(16).padStart(2,"0")).join("");
+  const r=await fetch("portal/vault/"+h+".json",{cache:"no-store"});if(!r.ok)throw new Error("nouser");
+  const v=await r.json();
+  const km=await crypto.subtle.importKey("raw",new TextEncoder().encode(code),"PBKDF2",false,["deriveKey"]);
+  const key=await crypto.subtle.deriveKey({name:"PBKDF2",salt:b64(v.salt),iterations:v.iter,hash:"SHA-256"},km,{name:"AES-GCM",length:256},false,["decrypt"]);
+  const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(v.iv)},key,b64(v.ct));
+  return JSON.parse(new TextDecoder().decode(pt));
+}
+document.getElementById("loginForm").addEventListener("submit",async e=>{
+  e.preventDefault();
+  const em=document.getElementById("email").value.trim().toLowerCase(),pin=codeEl.value.trim().toLowerCase();
+  const err=document.getElementById("loginErr"),btn=e.target.querySelector("button[type=submit]");
+  if(!em||!pin){err.textContent="Enter your login and your code.";return}
+  err.textContent="Signing in…";btn.disabled=true;
+  try{
+    const p=await unlock(em,pin);
+    Object.assign(DEALS,p.deals||{});Object.assign(EXAMPLES,p.examples||{});Object.assign(IMG,p.images||{});
+    try{const pr=await (await fetch("prices.json",{cache:"no-store"})).json();Object.assign(PRICES,pr)}catch(x){}
+    try{HIST=await (await fetch("history.json",{cache:"no-store"})).json()}catch(x){}
+    err.textContent="";session=p.investor;openRoom();
+  }catch(x){err.textContent="That login and code don't match. Check both and try again.";codeEl.value="";codeEl.focus()}
+  finally{btn.disabled=false}
+});
+document.getElementById("logout").addEventListener("click",()=>{location.reload()});
+
+/* Investor room */
+function partnerItems(){
+  const items=[];
+  Object.keys(session.holdings).forEach(id=>{if(session.merge&&session.merge[id]!==undefined)return;const d=DEALS[id],h=session.holdings[id];
+    const cost=h.land+(d.soft+d.carry)*h.share;
+    items.push({key:"d:"+id,cat:"Operating Businesses",name:d.name,sub:d.city+" · "+d.type,cost,value:cost,status:d.status,proj:model(d,d.price,d.build).net*h.share});});
+  (session.positions||[]).forEach((p,i)=>{const m=MARKET[p.ticker];const cost=p.shares*p.cost,value=p.shares*m.price;
+    const pp=PRICES.t[p.ticker];items.push({key:"p:"+i,cat:"Public Markets",name:p.name+" ("+p.ticker+")",sub:p.shares.toLocaleString("en-US")+" shares · "+p.exchange,cost,value,day:pp&&pp.prev?p.shares*(pp.last-pp.prev):0,status:"Held"});});
+  (session.other||[]).map((o,i)=>eff(o,i)).forEach((o,i)=>{const nh=o.alloc.reduce((s,x)=>s+((EXAMPLES[x[0]]||[]).length),0);
+    items.push({key:"o:"+i,cat:o.cat,
+      name:o.pipeline?"Operating businesses":o.cat+" portfolio",
+      sub:o.pipeline?(o.merged&&o.merged.length?o.merged.map(id=>DEALS[id].name).join(" · ")+" · "+(o.pipelineShort||"deal under review"):(o.pipelineShort||"deal under review")+" · nothing invested"):o.type+" · "+nh+" holdings · bought "+fmtDate(PRICES.buyDate),
+      cost:o.cost,value:o.planned?posCalc(o).value:o.value,day:o.planned?posCalc(o).day:0,status:o.pipeline?(o.merged&&o.merged.length?"Active":"Under review"):"Held",proj:o.proj});});
+  const ORDER=["Operating Businesses","Real Estate","Fixed Income","Private Equity","Venture Capital","Service & Trade Businesses","Public Markets","Public Equities"];
+  items.sort((a,b)=>ORDER.indexOf(a.cat)-ORDER.indexOf(b.cat));
+  return items;
+}
+function openRoom(){
+  const items=partnerItems();
+  document.getElementById("roomWho").textContent="Signed in as "+session.name+" · "+session.role;
+  document.getElementById("roomTitle").textContent=session.promote?"My Share of ELK":"My Investments";
+  const cost=items.reduce((a,x)=>a+x.cost,0),value=items.reduce((a,x)=>a+x.value,0),gain=Math.abs(value-cost)<1?0:value-cost;
+  const cats=[...new Set(items.map(x=>x.cat))];const dayT=items.reduce((a,x)=>a+(x.day||0),0);
+  const sign=g=>(g>=0?"+":"")+fmt$(g);
+  let rows="";
+  cats.forEach(c=>{rows+=`<tr class="cat"><td colspan="6">${c}</td></tr>`;
+    items.filter(x=>x.cat===c).forEach(x=>{const g=x.value-x.cost;
+      rows+=`<tr class="h" data-key="${x.key}" tabindex="0"><td><span class="nm"><b>${x.name}</b><small>${x.sub}</small></span></td><td>${x.status}</td><td class="r">${fmt$(x.cost)}</td><td class="r">${fmt$(x.value)}${x.status!=="Planned"&&x.cost>0&&x.value===x.cost?'<br><small class="muted">at cost</small>':""}</td><td class="r ${g>0?"pos":g<0?"neg":""}">${g?sign(g):"—"}${g?'<br><small>'+(g/x.cost*100).toFixed(1)+'%</small>':""}</td><td class="r">${x.proj!==undefined?fmt$(x.proj):"—"}</td></tr>`;});});
+  document.getElementById("overview").innerHTML=`
+    <div class="ov-tiles">
+      ${session.promote?(()=>{const r=promoteRows(),p=session.promote.pct,m=r.reduce((t,x)=>t+p*Math.max(0,x.profit),0),pj=r.reduce((t,x)=>t+(x.proj?p*x.proj:0),0);return `<div style="background:linear-gradient(135deg,rgba(201,164,92,.16),transparent 70%),var(--surface)"><span>Your ${Math.round(p*100)}% of net profit</span><b style="color:var(--gold-hi)">${fmt$(m)}</b><em>today${pj?" · + "+fmt$(pj)+" projected":""}</em></div>`})():""}      <div><span>${session.promote?"ELK invested":"Total invested"}</span><b>${fmt$(cost)}</b><em>across ${items.filter(x=>x.cost>0).length} position${items.filter(x=>x.cost>0).length===1?"":"s"}</em></div>
+      <div><span>Current value</span><b>${fmt$(value)}</b><em>stocks at ${fmtDate(PRICES.asof)} close; deals at cost</em></div>
+      <div><span>Gain to date</span><b class="${gain>0?"pos":gain<0?"neg":""}">${gain?sign(gain):"$0"}</b><em>${gain?(gain/cost*100).toFixed(2)+"% on total invested":"bought "+fmtDate(PRICES.buyDate)+", no change yet"}</em></div>
+      <div><span>Last trading day</span><b class="${dayT>0?"pos":dayT<0?"neg":""}">${dayT?sign(dayT):"$0"}</b><em>${fmtDate(PRICES.asof)} · ${cats.length} categories</em></div>
+    </div>${promoteBlock()}${payoutBlock()}${stocksBlock(value)}
+    `;
+  wireStocks();
+  const op=items.find(x=>x.cat==="Operating Businesses");
+  if(op){openItem(op.key);document.getElementById("detCat").textContent="Where your money is held · Operating businesses";}
+  document.querySelector(".detail-head").hidden=!op;document.getElementById("dealView").hidden=!op;
+  go("room");
+}
+document.addEventListener("click",e=>{const x=e.target.closest("[data-open-deal]");if(!x)return;const id=x.dataset.openDeal;
+  document.getElementById("detCat").textContent="Operating Businesses · Real Estate Development";document.getElementById("detName").textContent=DEALS[id].name;showDeal(id);
+  document.querySelector(".detail-head").scrollIntoView();});
+
+
+/* A partner's percentage of net profit, sector by sector, from the owner's book */
+function promoteRows(){
+  const P=session.promote;if(!P)return null;const rows=[];
+  (session.other||[]).forEach((o0,i)=>{const o=eff(o0,i);
+    if(o.planned){const v=posCalc(o).value;rows.push({name:o.cat,sub:o.type,cost:o.cost,value:v,profit:Math.abs(v-o.cost)<0.5?0:v-o.cost});}
+    else if(o.pipeline){
+      (o.merged||[]).forEach(id=>{const d=DEALS[id],c=d.land+d.soft+d.carry,full=model(d,d.price,d.build).net;
+        rows.push({name:"Operating · "+d.name,sub:session.promote.split+" · at cost until sold",cost:c,value:c,profit:0,proj:full});});
+      (o.options||[]).forEach(x=>{const v=optVal(x);rows.push({name:"Operating · "+x.ticker+" $"+x.strike+" "+x.type.toLowerCase()+"s",sub:v==null?"at cost until a price is entered":"option last price",cost:x.cost,value:v==null?x.cost:v,profit:v==null?0:v-x.cost});});
+      rows.push({name:"Operating · Healthcare acquisition",sub:"under review · nothing invested",cost:0,value:0,profit:0});
+    }});
+  return rows;
+}
+function promoteBlock(){
+  const rows=promoteRows();if(!rows)return "";const p=session.promote.pct,P=Math.round(p*100);
+  const mine=r=>p*Math.max(0,r.profit);
+  const tot={cost:rows.reduce((a,r)=>a+r.cost,0),value:rows.reduce((a,r)=>a+r.value,0),profit:rows.reduce((a,r)=>a+r.profit,0),mine:rows.reduce((a,r)=>a+mine(r),0),proj:rows.reduce((a,r)=>a+(r.proj?p*r.proj:0),0)};
+  const s$=n=>(n>0?"+":n<0?"-":"")+fmt$(Math.abs(n)),cl=n=>n>0?"pos":n<0?"neg":"";
+  return `<section class="promo">
+    <div class="promo-top"><div><p class="eyebrow">Your ${P}% of ELK's net profit</p><h3>What your share looks like today</h3>
+      <p class="muted" style="max-width:62ch;font-size:.92rem;margin-top:8px">${session.promote.owner} owns 100% of ELK's investments (${session.promote.note}). You earn ${P}% of the net profit in every sector, including both partners' shares of jointly owned deals. Values as of the ${fmtDate(PRICES.asof)} close.</p></div>
+      <div class="promo-big"><b>${fmt$(tot.mine)}</b><span>your ${P}% today</span>${tot.proj?`<br><span>+ ${fmt$(tot.proj)} projected from development deals at completion</span>`:""}</div></div>
+    <table><thead><tr><th>Sector</th><th class="r">ELK invested</th><th class="r">Value today</th><th class="r">Net profit</th><th class="r">Your ${P}% today</th><th class="r">Your ${P}% projected</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr><td><b>${r.name}</b><small>${r.sub||""}</small></td><td class="r">${fmt$(r.cost)}</td><td class="r">${fmt$(r.value)}</td><td class="r ${cl(r.profit)}">${s$(r.profit)}</td><td class="r you">${fmt$(mine(r))}${r.profit<0?`<small>sector at a loss</small>`:""}</td><td class="r">${r.proj?fmt$(p*r.proj)+`<small>of ${fmt$(r.proj)} total deal profit</small>`:"—"}</td></tr>`).join("")}
+    <tr class="tot"><td>Total</td><td class="r">${fmt$(tot.cost)}</td><td class="r">${fmt$(tot.value)}</td><td class="r ${cl(tot.profit)}">${s$(tot.profit)}</td><td class="r you">${fmt$(tot.mine)}</td><td class="r">${tot.proj?fmt$(tot.proj):"—"}</td></tr>
+    </tbody></table>
+    <p class="muted" style="font-size:.8rem">Your ${P}% is figured sector by sector on profits only: a sector at a loss pays $0 and is not netted against the others. If all sectors were netted together, your ${P}% would be ${fmt$(p*Math.max(0,tot.profit))} today. Stocks use the latest daily closes; development deals are at cost until sold, so their share shows as projected.</p>
+  </section>`;
+}
+
+/* Owner view: profit kept after the partner's percentage of net profit */
+function payoutRows(){
+  const P=session.payout;if(!P)return null;const rows=[];
+  (session.other||[]).forEach((o0,i)=>{const o=eff(o0,i);
+    if(o.planned){const v=posCalc(o).value;rows.push({name:o.cat,sub:o.type,cost:o.cost,value:v,profit:Math.abs(v-o.cost)<0.5?0:v-o.cost});}
+    else if(o.pipeline){
+      (o.merged||[]).forEach(id=>{const d=DEALS[id],h=session.holdings[id],c=h.land+(d.soft+d.carry)*h.share,pj=model(d,d.price,d.build).net*h.share;
+        rows.push({name:"Operating · "+d.name,sub:"your "+Math.round(h.share*100)+"% · at cost until sold",cost:c,value:c,profit:0,proj:pj});});
+      (o.options||[]).forEach(x=>{const v=optVal(x);rows.push({name:"Operating · "+x.ticker+" $"+x.strike+" "+x.type.toLowerCase()+"s",sub:v==null?"at cost until a price is entered":"option last price",cost:x.cost,value:v==null?x.cost:v,profit:v==null?0:v-x.cost});});
+    }});
+  (session.positions||[]).forEach(p=>{const pd=PRICES.t[p.ticker]||{},last=pd.last||p.cost,c=p.shares*p.cost,v=p.shares*last;
+    rows.push({name:p.name+" ("+p.ticker+")",sub:"your own position · not part of ELK",cost:c,value:v,profit:v-c,own:true});});
+  return rows;
+}
+function payoutBlock(){
+  const rows=payoutRows();if(!rows)return "";const p=session.payout.pct,P=Math.round(p*100),who=session.payout.to;
+  const fee=r=>r.own?0:p*Math.max(0,r.profit),keep=r=>r.profit-fee(r);
+  const T=k=>rows.reduce((a,r)=>a+k(r),0);
+  const tot={cost:T(r=>r.cost),profit:T(r=>r.profit),fee:T(fee),keep:T(keep),pj:T(r=>r.proj||0),pjFee:T(r=>r.proj?p*r.proj:0)};
+  const s$=n=>(n>0?"+":n<0?"-":"")+fmt$(Math.abs(n)),cl=n=>n>0?"pos":n<0?"neg":"";
+  return `<section class="promo">
+    <div class="promo-top"><div><p class="eyebrow">Your profit after ${who}'s ${P}%</p><h3>What you keep today</h3>
+      <p class="muted" style="max-width:62ch;font-size:.92rem;margin-top:8px">You own 100% of ELK's investments. ${who} earns ${P}% of the net profit in each sector; you keep the rest. Values as of the ${fmtDate(PRICES.asof)} close.</p></div>
+      <div class="promo-big"><b class="${cl(tot.keep)}">${s$(tot.keep)}</b><span>your profit after ${P}% today</span>${tot.pj?`<br><span>+ ${fmt$(tot.pj-tot.pjFee)} projected from development deals at completion</span>`:""}</div></div>
+    <table><thead><tr><th>Sector</th><th class="r">Invested</th><th class="r">Net profit</th><th class="r">${who.split(" ")[0]}'s ${P}%</th><th class="r">You keep today</th><th class="r">You keep, projected</th></tr></thead><tbody>
+    ${rows.map(r=>`<tr><td><b>${r.name}</b><small>${r.sub||""}</small></td><td class="r">${fmt$(r.cost)}</td><td class="r ${cl(r.profit)}">${s$(r.profit)}</td><td class="r">${r.own?"—":fmt$(fee(r))}${!r.own&&r.profit<0?"<small>no fee on a loss</small>":""}</td><td class="r you ${cl(keep(r))}">${s$(keep(r))}</td><td class="r">${r.proj?fmt$(r.proj*(1-p))+`<small>of ${fmt$(r.proj)} projected · ${fmt$(r.proj*p)} to ${who.split(" ")[0]}</small>`:"—"}</td></tr>`).join("")}
+    <tr class="tot"><td>Total</td><td class="r">${fmt$(tot.cost)}</td><td class="r ${cl(tot.profit)}">${s$(tot.profit)}</td><td class="r">${fmt$(tot.fee)}</td><td class="r you ${cl(tot.keep)}">${s$(tot.keep)}</td><td class="r">${tot.pj?fmt$(tot.pj-tot.pjFee):"—"}</td></tr>
+    </tbody></table>
+    <p class="muted" style="font-size:.8rem">The ${P}% is figured sector by sector on profits only, so a sector at a loss pays nothing and you carry the full loss. Your own positions outside ELK are not shared. Development deals are at cost until sold, so their split shows as projected.</p>
+  </section>`;
+}
+/* Options detail */
+function optVal(x){const q=(PRICES.opt||{})[x.contract];return q&&q.last!=null?x.contracts*100*q.last:null}
+function showOption(i,k){
+  const o=eff(session.other[i],i),x=o.options[k],u=PRICES.t[x.ticker]||{},q=(PRICES.opt||{})[x.contract]||{};
+  const S=u.last,K=x.strike,be=K+x.premium,sh=x.contracts*100,today=new Date((u.lastDate||PRICES.asof)+"T12:00:00"),exp=new Date(x.expiry+"T12:00:00");
+  const days=Math.max(0,Math.round((exp-today)/864e5)),intr=S!=null?Math.max(0,S-K):null,val=optVal(x),g=val!=null?val-x.cost:null;
+  const pnl=p=>Math.max(0,p-K)*sh-x.cost;
+  const pts=[5,K,be,13,15,18,20,25,30].filter((v,i2,a)=>a.indexOf(v)===i2).sort((a,b)=>a-b);
+  document.getElementById("detCat").textContent="Where your money is held · Operating businesses · Options";
+  document.getElementById("detName").textContent=`${x.ticker} $${K} ${x.type}s · ${fmtDate(x.expiry)}`;
+  document.getElementById("dealView").innerHTML=`
+   <div class="kpis k6">
+    <div><span>Cost</span><b>${fmt$(x.cost)}</b><em>${x.contracts.toLocaleString("en-US")} contracts × $${x.premium.toFixed(2)} × 100</em></div>
+    <div><span>Current value</span><b>${val!=null?fmt$(val):"At cost"}</b><em>${val!=null?"option last $"+q.last.toFixed(2)+" · "+fmtDate(q.date):"live option price not entered yet"}</em></div>
+    <div><span>Gain / loss</span><b class="${g>0?"pos":g<0?"neg":""}">${g!=null?(g>=0?"+":"-")+fmt$(Math.abs(g)):"—"}</b><em>${g!=null?(g/x.cost*100).toFixed(1)+"% on cost":"shown once a price is entered"}</em></div>
+    <div><span>${x.ticker} price</span><b>${S!=null?"$"+S.toFixed(2):"—"}</b><em>${u.lastDate?"close "+fmtDate(u.lastDate):""}${S!=null?(S>=K?" · in the money":" · $"+(K-S).toFixed(2)+" below strike"):""}</em></div>
+    <div><span>Breakeven at expiry</span><b>$${be.toFixed(2)}</b><em>${S!=null?(S>=be?"above breakeven":"needs +"+((be/S-1)*100).toFixed(0)+"% from here"):""}</em></div>
+    <div><span>Time left</span><b>${days} days</b><em>expires ${fmtDate(x.expiry)}</em></div>
+   </div>
+   <div class="two">
+    <div class="panel"><p class="eyebrow">The position</p>
+      ${[["Underlying",x.under+" ("+x.ticker+")"],["Type",x.side+" "+x.type.toLowerCase()+"s"],["Strike","$"+K.toFixed(2)],["Expiration",fmtDate(x.expiry)],["Contracts",x.contracts.toLocaleString("en-US")+" ("+sh.toLocaleString("en-US")+" shares controlled)"],["Price paid","$"+x.premium.toFixed(2)+" per share · $"+(x.premium*100).toFixed(0)+" per contract"],["Opened",fmtDate(x.opened)],["Value if it expired today",intr!=null?fmt$(intr*sh)+" (intrinsic)":"—"],["Most you can lose",fmt$(x.cost)+" (the premium paid)"],["Contract",x.contract]].map(([a,b])=>`<div class="valrow"><span>${a}</span><b>${b}</b></div>`).join("")}
+      <p class="muted" style="font-size:.8rem">SNXX is a 2x daily leveraged ETF on Sandisk (SNDK). It resets every day, so over weeks it can drift away from 2x Sandisk's move, especially when prices swing.</p></div>
+    <div class="panel"><p class="eyebrow">What it's worth at expiration</p>
+      <div class="valrow"><span><b>${x.ticker} on ${fmtDate(x.expiry)}</b></span><b>Profit / loss</b></div>
+      ${pts.map(p=>{const v=pnl(p);return `<div class="valrow${p===be?" total":""}"><span>$${p.toFixed(2)}${p===K?" (strike)":p===be?" (breakeven)":""}</span><b class="${v>0?"pos":v<0?"neg":""}">${v>=0?"+":"-"}${fmt$(Math.abs(v))}</b></div>`}).join("")}
+      <p class="muted" style="font-size:.8rem">Every $1 SNXX finishes above $${K} is worth ${fmt$(sh)}. Below $${K} the calls expire worthless. Before expiration the calls also carry time value, so they usually trade above these numbers.</p></div>
+   </div>
+   <button class="btn ghost" data-back-op="${i}" style="align-self:flex-start">← Back to operating businesses</button>`;
+  document.querySelector(".detail-head").scrollIntoView({behavior:"smooth",block:"start"});
+}
+document.addEventListener("click",e=>{const r=e.target.closest("[data-open-opt]");if(r){const i=session.other.findIndex(o=>o.options&&o.options.length);showOption(i,+r.dataset.openOpt);return}
+  const b=e.target.closest("[data-back-op]");if(b){showOther(+b.dataset.backOp);document.getElementById("detCat").textContent="Where your money is held · Operating businesses";}});
+/* Plain-English description of every ticker (public information) */
+const DESC={"VMRK":"An apartment landlord. It owns and rents out tens of thousands of apartments in big US cities. It was formed in 2026 when Equity Residential and AvalonBay merged.","MAA":"An apartment landlord focused on the Sun Belt (Texas, Florida, the Carolinas, Georgia). It makes money from rent.","PLD":"The world's biggest warehouse landlord. Companies like Amazon and FedEx rent its buildings to store and ship goods.","REXR":"A warehouse landlord that owns only in Southern California, one of the hardest places in the country to find warehouse space.","SPG":"The biggest owner of shopping malls and outlet centers in the US. It earns rent from stores and restaurants.","O":"A landlord for single stores like Walgreens, Dollar General and 7-Eleven, on long leases. Known for paying a dividend every month.","BXP":"An owner of top-quality office towers in Boston, New York, San Francisco, LA, Seattle and DC.","VNO":"An owner of office buildings and street-level retail, mostly in Manhattan.","HST":"The largest hotel-owning REIT. It owns upscale hotels run under brands like Marriott, Hyatt and Four Seasons.","DHI":"America's largest homebuilder by number of homes. It builds and sells new houses, mostly at entry-level prices.","LEN":"The second-largest US homebuilder. It builds and sells new houses all over the country.","VNQ":"A Vanguard fund that holds almost every US real estate company (REIT) in one ticker: apartments, warehouses, offices, stores, hotels and more.","SGOV":"A fund that holds US Treasury bills maturing in under 3 months. It's about as close to cash as you can get, and it pays the T-bill interest rate.","IEF":"A fund that holds US government bonds maturing in 7–10 years. It pays interest and usually rises when interest rates fall.","LQD":"A fund holding bonds from big, financially strong companies (investment grade). Steady interest, a bit more than Treasuries.","HYG":"A fund holding \"junk\" bonds from riskier companies. They pay higher interest because there's more chance a company can't pay back.","MUB":"A fund holding bonds issued by US cities and states. The interest is usually free of federal income tax.","STWD":"A real estate lender. It makes and buys commercial property loans and earns the interest, paying out most of it as a dividend.","BXMT":"Blackstone's real estate lender. It makes large loans backed by office, apartment and hotel buildings.","REM":"A fund holding mortgage REITs: companies that make or buy property loans and pay out the interest as high dividends.","ARCC":"The biggest private-credit lender on the stock market (a BDC). It lends to mid-size private companies and pays out most of the interest.","MAIN":"A BDC (business lender) that lends to and invests in small and mid-size private companies, known for steady monthly dividends.","BIZD":"A fund that holds a basket of BDCs: companies that lend to private businesses and pay high dividends.","FXE":"A fund that holds euros. It goes up when the euro gets stronger against the dollar.","FXF":"A fund that holds Swiss francs, a \"safe-haven\" currency that tends to rise when markets get scared.","FXY":"A fund that holds Japanese yen. The yen often rises when stock markets fall.","GLD":"A fund that holds real gold bars in a vault. Its price moves with the price of gold.","CEW":"A fund that holds a basket of 15 emerging-market currencies, like the Mexican peso, Chinese yuan, Indian rupee and Turkish lira.","KKR":"One of the biggest private equity firms. It buys companies, improves them and sells them, and earns fees for managing investors' money.","BX":"Blackstone, the world's biggest alternative asset manager: private equity, real estate, private credit and more. It earns fees and a share of profits.","APO":"Apollo, a large private equity and private credit firm that also owns a big retirement-annuity insurance business (Athene).","CG":"Carlyle, a global private equity firm that buys companies and manages funds for pension funds and wealthy investors.","ARES":"Ares, an investment manager best known for private credit (lending to companies), plus private equity and real estate funds.","BN":"Brookfield, a giant Canadian investor that owns real estate, renewable power, infrastructure and private equity around the world.","HLNE":"Hamilton Lane, a firm that helps big investors pick private equity funds and buys stakes in them (\"fund of funds\" and secondaries).","STEP":"StepStone, a firm that builds private-market portfolios (private equity, credit, real estate) for pension funds and other big investors.","PSP":"A fund that holds a basket of publicly traded private equity firms and investment companies from around the world.","RVI":"Robinhood Ventures Fund I, a fund on the stock market that buys stakes in large private startups before they go public.","RVII":"Robinhood Ventures Fund II, a newer fund (launched Aug 2026) that buys stakes in private startups before they go public.","DXYZ":"Destiny Tech100, a fund that owns stakes in about 100 top private tech companies, like SpaceX and OpenAI, before they go public. It often trades well above or below what it holds.","XOVR":"An ETF that holds fast-growing public tech stocks plus a few private companies, like SpaceX, that it can buy before an IPO.","HTGC":"Hercules Capital, a lender to venture-backed startups in tech and life sciences. It earns interest and pays high dividends.","TRIN":"Trinity Capital, a lender to venture-backed growth companies, including equipment loans. It pays a monthly dividend.","ARKK":"Cathie Wood's ARK Innovation fund. It bets on disruptive tech like AI, robotics, genomics and crypto. Very volatile.","ROL":"Rollins, the parent of Orkin. It's the biggest pest-control company, and customers pay for regular service.","FTDR":"Frontdoor, the American Home Shield home-warranty company. Homeowners pay yearly to get appliances and systems repaired.","BV":"BrightView, the largest commercial landscaping company in the US. It mows, plants and plows snow for offices, campuses and HOAs.","POOL":"Pool Corp, the biggest wholesale supplier of swimming-pool parts and chemicals to pool builders and service companies.","FIX":"Comfort Systems USA, a big contractor that installs heating, cooling, plumbing and electrical systems in buildings like data centers and hospitals.","EME":"EMCOR, one of the largest electrical and mechanical contractors in the US. It builds and maintains building systems.","APG":"APi Group, a safety-services company that installs and inspects fire sprinklers, alarms and security systems.","WM":"Waste Management, the largest trash and recycling company in North America. It owns the trucks and the landfills.","CTAS":"Cintas, which rents and cleans work uniforms and supplies businesses with mats, first-aid kits and fire extinguishers.","ABM":"ABM Industries, a big facility-services company that cleans and maintains offices, airports, schools and stadiums.","FERG":"Ferguson, the biggest distributor of plumbing and HVAC supplies to contractors in the US.","WSO":"Watsco, the largest distributor of air-conditioning and heating equipment to HVAC contractors.","GWW":"W.W. Grainger, a distributor that sells millions of maintenance and repair supplies (tools, safety gear, parts) to businesses.","FAST":"Fastenal, a distributor of nuts, bolts, tools and safety supplies, often stocked in vending machines right inside customers' factories.","MCK":"McKesson, the largest drug distributor in the US. It ships medicines from drug makers to pharmacies and hospitals.","SYY":"Sysco, the biggest food distributor. It delivers food and kitchen supplies to restaurants, hospitals and schools.","GPC":"Genuine Parts, the owner of NAPA Auto Parts. It sells car and industrial replacement parts.","URI":"United Rentals, the biggest equipment rental company. Contractors rent its machines, like lifts, excavators and generators.","AAPL":"Apple, maker of the iPhone, Mac, iPad and Apple Watch, plus services like the App Store, iCloud and Apple Music.","MSFT":"Microsoft, maker of Windows, Office and Teams, and owner of Azure, one of the biggest cloud and AI computing businesses.","JPM":"JPMorgan Chase, the largest US bank: checking accounts, credit cards, loans, investment banking and wealth management.","NVDA":"NVIDIA, the company that makes the chips (GPUs) most AI is built and run on. It's the leader in AI computing.","AVGO":"Broadcom, a maker of chips for networking, phones and custom AI chips, plus big business software (it owns VMware).","MU":"Micron, one of three big makers of memory chips (DRAM and flash storage), which are used heavily in AI data centers, phones and PCs.","VOO":"A Vanguard fund that buys all 500 companies in the S&P 500. One ticker gives you the whole US large-company market.","QQQ":"A fund that holds the 100 biggest companies on the Nasdaq. It's heavy in tech like Apple, Microsoft, NVIDIA and Amazon.","SCHD":"A Schwab fund holding about 100 strong US companies that pay steady, growing dividends.","JNJ":"Johnson & Johnson, a giant healthcare company that makes prescription drugs and medical devices.","KO":"Coca-Cola, the world's biggest soft-drink company: Coke, Sprite, Dasani, Minute Maid and many more.","VXUS":"A Vanguard fund that holds thousands of companies outside the US, in Europe, Japan, China and emerging markets.","TSM":"TSMC, the Taiwanese company that manufactures most of the world's advanced chips for Apple, NVIDIA and others.","ASML":"ASML, a Dutch company that makes the only machines able to print the most advanced computer chips. Every top chipmaker needs them.","HOOD":"Robinhood Markets, the app millions of people use to trade stocks, options and crypto. It earns from trading, interest on customer cash and its Gold subscription.","SNDK":"Sandisk, a maker of flash memory and storage (SSDs, memory cards, chips used in data centers). It was spun off from Western Digital in 2025.","SNXX":"A leveraged fund that tries to move 2x Sandisk's daily price move. It resets every day, so it's very risky to hold for long periods."};
+/* ---- Stocks: whole-portfolio performance (1W to All), then one category at a time ---- */
+const CAT_COLORS={"Operating Businesses":"#F0DCA8","Real Estate":"#E8CB8A","Fixed Income":"#C9A45C","Private Equity":"#A9894E","Venture Capital":"#8C7142","Service & Trade Businesses":"#D8B571","Public Equities":"#6E5935","Public Markets":"#6E5935"};
+const STOCK_ORDER=["Real Estate","Fixed Income","Private Equity","Venture Capital","Service & Trade Businesses","Public Equities","Public Markets"];
+let HIST=null;
+function allStocks(){
+  const out=[];
+  (session.other||[]).forEach(o=>{if(!o.planned)return;o.alloc.forEach(([n])=>{(EXAMPLES[n]||[]).forEach(([nm,amt])=>{const h=holdingCalc(nm,amt);if(!h.t)return;
+    const pd=PRICES.t[h.t]||{};out.push({t:h.t,name:nm.replace(/\s*\([A-Z.]+\)/,"").replace(/\s·.*$/,""),cat:o.cat,group:n,shares:h.shares,buy:h.buy,last:h.last,prev:pd.prev,cost:amt,value:h.value,day:h.day,date:pd.lastDate,buyDate:pd.buyDate||PRICES.buyDate})})})});
+  (session.positions||[]).forEach(p=>{const pd=PRICES.t[p.ticker]||{},last=pd.last||MARKET[p.ticker].price;out.push({t:p.ticker,name:p.name,cat:"Public Equities",group:"Individual stock",shares:p.shares,buy:p.cost,last,prev:pd.prev,cost:p.shares*p.cost,value:p.shares*last,day:pd.prev?p.shares*(last-pd.prev):0,date:pd.lastDate,buyDate:""})});
+  return out;
+}
+/* Daily closes: history.json on the live site; if it is not available, the buy and latest close from PRICES. */
+function hist(){
+  if(HIST&&HIST.dates&&HIST.dates.length)return HIST;
+  const ds=[...new Set(Object.values(PRICES.t).flatMap(p=>[p.buyDate,p.lastDate]).filter(Boolean))].sort(),t={};
+  for(const k in PRICES.t){const p=PRICES.t[k];t[k]=ds.map(d=>d===p.lastDate?p.last:d===p.buyDate?p.buy:null)}
+  return{dates:ds,t};
+}
+function series(rows,fixed){
+  const H=hist(),out=[];
+  H.dates.forEach((d,i)=>{let v=fixed||0;rows.forEach(s=>{if(s.buyDate&&d<s.buyDate){v+=s.cost;return}const a=H.t[s.t]||[];let px=null;for(let j=i;j>=0;j--){if(a[j]!=null){px=a[j];break}}v+=s.shares*(px==null?s.buy:px)});out.push({d,v})});
+  return out;
+}
+const RANGES=["1W","1M","3M","YTD","5Y","All"];
+function rangeStart(r,last){const d=new Date(last+"T12:00:00");
+  if(r==="1W")d.setDate(d.getDate()-7);else if(r==="1M")d.setMonth(d.getMonth()-1);else if(r==="3M")d.setMonth(d.getMonth()-3);
+  else if(r==="YTD"){d.setMonth(0);d.setDate(1)}else if(r==="5Y")d.setFullYear(d.getFullYear()-5);else return"0000-00-00";
+  return d.toISOString().slice(0,10);}
+function valueAt(all,date){let v=null;for(const p of all){if(p.d<=date)v=p.v;else break}return v}
+function rangeRet(all,r){if(all.length<2)return null;const last=all[all.length-1],start=rangeStart(r,last.d);
+  let base=valueAt(all,start),since=false;if(base==null){base=all[0].v;since=r!=="All"}
+  const ch=Math.abs(last.v-base)<0.5?0:last.v-base;return{ch,p:base?ch/base:0,since}}
+const sgn$=n=>(n>0?"+":n<0?"-":"")+fmt$(Math.abs(n));
+const pctS=p=>(p>0?"+":"")+(p*100).toFixed(2)+"%";
+const pn=n=>n>0?"pos":n<0?"neg":"";
+let perfRange="1M",stockSort={k:"value",d:-1},stockCat=null,stockQ="";
+function perfChart(pts){
+  const W=1000,H=240,p=10;
+  if(pts.length<2)return`<div class="pchart"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><line x1="0" x2="${W}" y1="${H-1}" y2="${H-1}" stroke="var(--line-2)" stroke-dasharray="4 6"/></svg><div class="pc-empty">Tracking started ${fmtDate(PRICES.buyDate)}. This chart adds a point with every day's close.</div></div>`;
+  const vs=pts.map(x=>x.v),mn=Math.min(...vs),mx=Math.max(...vs),rg=(mx-mn)||1,up=vs[vs.length-1]>=vs[0];
+  const X=i=>p+i*(W-2*p)/(pts.length-1),Y=v=>H-p-((v-mn)/rg)*(H-2*p-20);
+  const d=pts.map((q,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(q.v).toFixed(1)).join(" "),c=up?"#7FBF95":"#E39B7B";
+  return`<div class="pchart"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="pcg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".22"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>
+    <path d="${d} L${X(pts.length-1)} ${H} L${X(0)} ${H} Z" fill="url(#pcg)"/><path d="${d}" fill="none" stroke="${c}" stroke-width="2.2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>
+    <div class="pc-axis"><span>${fmtDate(pts[0].d)}</span><span>${fmtDate(pts[pts.length-1].d)}</span></div></div>`;
+}
+function retStrip(all){const first=all.length?all[0].d:"";
+  return`<div class="rets">${RANGES.map(r=>{const x=rangeRet(all,r);return`<button class="ret${perfRange===r?" on":""}" data-range="${r}"><span>${r==="All"?"All time":r}</span><b class="${x?pn(x.ch):""}">${x?pctS(x.p):"—"}</b><em>${x?sgn$(x.ch):"no data yet"}${x&&x.since?" · since "+fmtDate(first):""}</em></button>`}).join("")}</div>`}
+function stocksBlock(total){
+  const all=allStocks();if(!all.length)return "";
+  const cats=[...new Set(all.map(x=>x.cat))].sort((a,b)=>STOCK_ORDER.indexOf(a)-STOCK_ORDER.indexOf(b));
+  if(!stockCat||!cats.includes(stockCat))stockCat=cats[0];
+  return `<section class="stocks" id="stocks" data-total="${total}">
+    <div class="stocks-head"><div><p class="eyebrow">Performance</p><h3>Whole portfolio</h3></div><div class="stocks-sum" id="perfSum"></div></div>
+    <div class="perf" id="perf"></div>
+    <div class="stocks-head" style="margin-top:18px"><div><p class="eyebrow">Stocks by category</p><h3>Where your money is held</h3></div>
+      <div class="stocks-tools"><input id="stockQ" type="search" placeholder="Search all tickers or companies" value="${stockQ}"></div></div>
+    <div class="ctabs" role="tablist">${cats.map(c=>{const r=all.filter(x=>x.cat===c),v=r.reduce((a,x)=>a+x.value,0),g=r.reduce((a,x)=>a+x.value-x.cost,0),co=r.reduce((a,x)=>a+x.cost,0);
+      return`<button class="ctab${c===stockCat?" on":""}" role="tab" data-cat="${c}" aria-selected="${c===stockCat}"><span class="sw" style="background:${CAT_COLORS[c]}"></span><span class="ct-n">${c==="Service & Trade Businesses"?"Service &amp; Trade":c}</span><b>${fmt$(v)}</b><em class="${pn(Math.abs(g)<0.5?0:g)}">${co?pctS(Math.abs(g)<0.5?0:g/co):"—"}</em></button>`}).join("")}${(()=>{const ops=partnerItems().filter(x=>x.cat==="Operating Businesses");if(!ops.length)return"";const v=ops.reduce((t,x)=>t+x.value,0);return`<button class="ctab ctab-op" data-op="1" title="Jump to operating businesses"><span class="sw" style="background:${CAT_COLORS["Operating Businesses"]}"></span><span class="ct-n">Operating Businesses</span><b>${fmt$(v)}</b><em>see below ↓</em></button>`})()}</div>
+    <div id="catSum"></div>
+    <div class="holdings stocks-table"><table><thead><tr>
+      <th data-k="t">Ticker</th><th data-k="name">Company</th><th class="r" data-k="shares">Shares</th><th class="r" data-k="buy">Buy</th><th class="r" data-k="last">Last close</th><th class="r" data-k="dayp">Day</th><th class="r" data-k="value">Value</th><th class="r" data-k="gain">Gain</th><th class="r" data-k="ret">Return</th><th class="r" data-k="pct">% of category</th>
+    </tr></thead><tbody id="stockRows"></tbody></table></div>
+    <p class="muted" style="font-size:.78rem"><span id="stockN"></span> Closing prices update every morning. Returns use each trading day's close; ranges longer than the tracking history show results since tracking began. Click a column to sort.</p>
+  </section>`;
+}
+function renderPerf(){
+  const s=document.getElementById("stocks");if(!s)return;
+  const all=allStocks(),sv=all.reduce((a,x)=>a+x.value,0),fixed=(+s.dataset.total||sv)-sv;
+  const ser=series(all,fixed),last=ser.length?ser[ser.length-1]:{d:PRICES.asof,v:+s.dataset.total};
+  const start=rangeStart(perfRange,last.d);let pts=ser.filter(p=>p.d>=start);const bv=valueAt(ser,start);if(bv!=null&&pts.length&&pts[0].d>start)pts=[{d:start,v:bv},...pts];
+  const day=all.reduce((a,x)=>a+x.day,0),x=rangeRet(ser,perfRange);
+  document.getElementById("perfSum").innerHTML=`<div><span>Value</span><b>${fmt$(+s.dataset.total)}</b></div><div><span>Last day</span><b class="${pn(Math.abs(day)<0.5?0:day)}">${sgn$(Math.abs(day)<0.5?0:day)}</b></div><div><span>${perfRange==="All"?"All time":perfRange}</span><b class="${x?pn(x.ch):""}">${x?sgn$(x.ch)+" ("+pctS(x.p)+")":"—"}</b></div>`;
+  document.getElementById("perf").innerHTML=`<div class="rtabs">${RANGES.map(r=>`<button data-range="${r}" class="${perfRange===r?"on":""}">${r}</button>`).join("")}</div>${perfChart(pts)}${retStrip(ser)}`;
+  const rows=all.filter(r=>r.cat===stockCat),cs=series(rows,0),cv=rows.reduce((a,r)=>a+r.value,0),cd=rows.reduce((a,r)=>a+r.day,0);
+  document.getElementById("catSum").innerHTML=`<div class="cat-perf"><div class="cp-name"><span class="sw" style="background:${CAT_COLORS[stockCat]}"></span><b>${stockCat}</b><em>${rows.length} holdings · ${fmt$(cv)} · last day <span class="${pn(Math.abs(cd)<0.5?0:cd)}">${sgn$(Math.abs(cd)<0.5?0:cd)}</span></em></div>
+    <div class="cp-rets">${RANGES.map(r=>{const y=rangeRet(cs,r);return`<div><span>${r==="All"?"All":r}</span><b class="${y?pn(y.ch):""}">${y?pctS(y.p):"—"}</b></div>`}).join("")}</div></div>`;
+}
+function renderStocks(){
+  const tb=document.getElementById("stockRows");if(!tb)return;
+  const all=allStocks(),q=stockQ.trim().toLowerCase();
+  const z=n=>Math.abs(n)<0.5?0:n;
+  let rows=q?all.filter(x=>x.t.toLowerCase().includes(q)||x.name.toLowerCase().includes(q)):all.filter(x=>x.cat===stockCat);
+  const base=rows.reduce((a,x)=>a+x.value,0);
+  rows=rows.map(x=>({...x,gain:z(x.value-x.cost),ret:z(x.value-x.cost)/x.cost*100,pct:x.value/base*100,dayp:x.prev?(x.last-x.prev)/x.prev*100:0}));
+  const k=stockSort.k,d=stockSort.d;rows.sort((a,b)=>(typeof a[k]==="string"?a[k].localeCompare(b[k]):(a[k]||0)-(b[k]||0))*d);
+  const px=n=>n==null?"—":"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const rowHTML=x=>`<tr class="srow" data-t="${x.t}" title="Click for what this company does"><td><span class="tkr">${x.t}</span></td><td><span class="nm"><b>${x.name} <span class="info">ⓘ</span></b>${q?`<small>${x.cat} · ${x.group}</small>`:""}</span></td><td class="r">${x.shares==null?"—":x.shares.toLocaleString("en-US",{maximumFractionDigits:2})}</td><td class="r">${px(x.buy)}</td><td class="r">${px(x.last)}<br><small class="muted">${x.date?fmtDate(x.date):""}</small></td><td class="r ${pn(x.dayp)}">${x.prev?(x.dayp>0?"+":"")+x.dayp.toFixed(2)+"%":"—"}</td><td class="r">${fmt$(x.value)}</td><td class="r ${pn(x.gain)}">${sgn$(x.gain)}</td><td class="r ${pn(x.gain)}">${(x.ret>0?"+":"")+x.ret.toFixed(2)}%</td><td class="r">${x.pct.toFixed(1)}%</td></tr>`;
+  if(q){tb.innerHTML=rows.map(rowHTML).join("")}
+  else{const order=[...new Set(all.filter(x=>x.cat===stockCat).map(x=>x.group))];
+    tb.innerHTML=order.map(g=>{const gr=rows.filter(x=>x.group===g);if(!gr.length)return"";const gv=gr.reduce((a,x)=>a+x.value,0),gc=gr.reduce((a,x)=>a+x.cost,0),gg=z(gv-gc),gd=gr.reduce((a,x)=>a+x.day,0);
+      return`<tr class="sub"><td colspan="5"><b>${g}</b><small>${gr.length} holding${gr.length===1?"":"s"}</small></td><td class="r ${pn(z(gd))}">${gd?sgn$(z(gd)):""}</td><td class="r"><b>${fmt$(gv)}</b></td><td class="r ${pn(gg)}">${sgn$(gg)}</td><td class="r ${pn(gg)}">${(gg>0?"+":"")+(gc?gg/gc*100:0).toFixed(2)}%</td><td class="r">${(gv/base*100).toFixed(1)}%</td></tr>`+gr.map(rowHTML).join("")}).join("")}
+  document.getElementById("stockN").textContent=q?rows.length+(rows.length===1?" match":" matches")+" across all categories.":rows.length+(rows.length===1?" holding":" holdings")+" in "+stockCat+".";
+  document.querySelectorAll(".stocks-table th").forEach(th=>{th.classList.toggle("sorted",th.dataset.k===k);th.dataset.dir=th.dataset.k===k?(d>0?"↑":"↓"):""});
+}
+function wireStocks(){
+  const s=document.getElementById("stocks");if(!s)return;
+  s.addEventListener("click",e=>{
+    const ct=e.target.closest(".ctab");if(ct&&ct.dataset.op){const h=document.querySelector(".detail-head");if(h)h.scrollIntoView({behavior:"smooth",block:"start"});return}if(ct){stockCat=ct.dataset.cat;stockQ="";document.getElementById("stockQ").value="";s.querySelectorAll(".ctab").forEach(x=>{x.classList.toggle("on",x===ct);x.setAttribute("aria-selected",x===ct)});renderPerf();renderStocks();return}
+    const rb=e.target.closest("[data-range]");if(rb){perfRange=rb.dataset.range;renderPerf();return}
+    const sr=e.target.closest("tr.srow");if(sr){const nx=sr.nextElementSibling;if(nx&&nx.classList.contains("sdesc")){nx.remove();sr.classList.remove("open");return}
+      const t=sr.dataset.t,dsc=DESC[t]||"No description yet.";sr.classList.add("open");sr.insertAdjacentHTML("afterend",`<tr class="sdesc"><td></td><td colspan="9"><b>What it is:</b> ${dsc}</td></tr>`);return}
+    const th=e.target.closest("th[data-k]");if(th){stockSort=stockSort.k===th.dataset.k?{k:th.dataset.k,d:-stockSort.d}:{k:th.dataset.k,d:["t","name"].includes(th.dataset.k)?1:-1};renderStocks();}});
+  document.getElementById("stockQ").addEventListener("input",e=>{stockQ=e.target.value;renderStocks()});
+  renderPerf();renderStocks();
+}
+function openItem(key){
+  document.querySelectorAll("#overview tr.h").forEach(tr=>tr.setAttribute("aria-selected",tr.dataset.key===key));
+  const [t,id]=key.split(":");
+  if(t==="d"){document.getElementById("detCat").textContent="Operating Businesses · Real Estate Development";document.getElementById("detName").textContent=DEALS[id].name;showDeal(id);}
+  else if(t==="o") showOther(+id);
+  else showPosition(+id);
+}
+/* Folds a partner's named deal into one of their positions */
+function eff(o,i){const r0=eff0(o,i);if(!o.options||!o.options.length)return r0;const r={...r0};const oc=o.options.reduce((t,x)=>t+x.cost,0);r.cost+=oc;r.value+=oc;return r}
+function eff0(o,i){
+  if(!session.merge)return o;
+  const ids=Object.keys(session.merge).filter(id=>session.merge[id]===i);
+  if(!ids.length)return o;
+  const r={...o,alloc:o.alloc.slice(),merged:[]};
+  ids.forEach(id=>{const d=DEALS[id],h=session.holdings[id],c=h.land+(d.soft+d.carry)*h.share;
+    r.cost+=c;r.value+=c;r.proj=(r.proj||0)+model(d,d.price,d.build).net*h.share;
+    r.alloc.push(["Real Estate Development",c,0]);
+    EXAMPLES["Real Estate Development"]=[[d.name+" · "+d.type+", "+d.city.split(",")[0]+" (hands-on, at cost)",c]];
+    r.merged.push(id);});
+  return r;
+}
+function showOther(i){
+  const o=eff(session.other[i],i);
+  document.getElementById("detCat").textContent=o.cat+(o.pipeline?" · Hands-on":" · Robinhood");
+  if(o.pipeline){
+    document.getElementById("detName").textContent="Operating businesses";
+    const rows=(o.merged||[]).map(id=>{const d=DEALS[id],h=session.holdings[id],c=h.land+(d.soft+d.carry)*h.share;
+      return `<tr><td><span class="nm"><b>${d.name}</b><small>Real estate development · ${d.city} · hands-on</small></span></td><td>${d.status}</td><td class="r">${fmt$(c)}</td><td class="r">${fmt$(model(d,d.price,d.build).net*h.share)}</td></tr>`}).join("")+
+      `<tr><td><span class="nm"><b>${o.pipelineName||"Deal under review"}</b><small>${o.pipelineDetail||""}</small></span></td><td>Under review</td><td class="r">$0</td><td class="r">—</td></tr>`+(o.options||[]).map((x,k)=>{const u=PRICES.t[x.ticker]||{};return `<tr class="h" data-open-opt="${k}" tabindex="0" style="cursor:pointer"><td><span class="nm"><b>Options · ${x.ticker} $${x.strike} ${x.type}s →</b><small>${x.side} ${x.contracts.toLocaleString("en-US")} contracts at $${x.premium.toFixed(2)} ($${(x.premium*100).toFixed(0)} each) · ${x.under}${x.expiry?" · expires "+fmtDate(x.expiry):""} · opened ${fmtDate(x.opened)}${u.last?" · "+x.ticker+" last close $"+u.last.toFixed(2)+" ("+fmtDate(u.lastDate)+")":""}</small></span></td><td>Open</td><td class="r">${fmt$(x.cost)}</td><td class="r">${optVal(x)==null?"<small class=muted>open for details</small>":fmt$(optVal(x))+" now"}</td></tr>`}).join("");
+    document.getElementById("dealView").innerHTML=`
+      <div class="kpis">
+        <div><span>Invested</span><b>${fmt$(o.cost)}</b><em>${o.merged&&o.merged.length?o.merged.map(id=>DEALS[id].name).join(", ")+", at cost":"no capital committed yet"}${o.options&&o.options.length?" + options at cost":""}</em></div>
+        <div><span>Active businesses</span><b>${(o.merged||[]).length+(o.options&&o.options.length?1:0)}</b><em>run hands-on by Eddie${o.options&&o.options.length?" · incl. options trading":""}</em></div>
+        <div><span>Under review</span><b>${o.pipelineSize||"—"}</b><em>${(o.pipelineName||"").toLowerCase()}</em></div>
+      </div>
+      <div class="panel"><p class="eyebrow">About this category</p><p class="muted">Operating businesses are the companies, projects and trading Eddie runs hands-on, in any industry, rather than holds to diversify. Options are shown at cost until they are closed or repriced.</p></div>
+      <div class="holdings" style="margin-bottom:0"><table>
+        <thead><tr><th>Business</th><th>Status</th><th class="r">Invested</th><th class="r">Projected profit</th></tr></thead>
+        <tbody>${rows}</tbody></table></div>
+      ${(o.merged||[]).map(id=>`<button class="btn ghost" data-open-deal="${id}" style="align-self:flex-start">Open ${DEALS[id].name} details</button>`).join("")}`;
+    return;
+  }
+  document.getElementById("detName").textContent=o.cat+" portfolio";
+  const pc=posCalc(o),g=Math.abs(pc.value-o.cost)<1?0:pc.value-o.cost,pct=g/o.cost*100;
+  const px=n=>n==null?"—":"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const sh=n=>n==null?"—":n.toLocaleString("en-US",{maximumFractionDigits:2});
+  let rows="",nh=0,best=null,worst=null;
+  o.alloc.forEach(([n,c])=>{const ex=EXAMPLES[n]||[];let av=0;ex.forEach(([nm,amt])=>{av+=holdingCalc(nm,amt).value});
+    const ag=Math.abs(av-c)<0.5?0:av-c;rows+=`<tr class="grp"><td colspan="3"><b>${n}</b></td><td class="r"><b>${fmt$(c)}</b></td><td class="r"><b>${fmt$(av)}</b></td><td class="r ${ag>0?"pos":ag<0?"neg":""}"><b>${ag>=0?"+":"-"}${fmt$(Math.abs(ag))}</b></td><td class="r ${ag>0?"pos":ag<0?"neg":""}">${(ag/c*100).toFixed(2)}%</td></tr>`;
+    ex.forEach(([nm,amt])=>{nh++;const h=holdingCalc(nm,amt),hg=Math.abs(h.value-amt)<0.5?0:h.value-amt,r=hg/amt*100;
+      if(h.ok&&r!==0){if(!best||r>best[1])best=[nm,r];if(!worst||r<worst[1])worst=[nm,r];}
+      const pd=PRICES.t[h.t]||{};rows+=`<tr><td><span class="nm"><b>${nm}</b>${h.ok?`<small>bought ${fmtDate(pd.buyDate||PRICES.buyDate)} · last close ${fmtDate(pd.lastDate||PRICES.asof)}</small>`:'<small class="neg">no price found yet · shown at cost</small>'}</span></td><td class="r">${sh(h.shares)}</td><td class="r">${px(h.buy)} → ${px(h.last)}</td><td class="r">${fmt$(amt)}</td><td class="r">${fmt$(h.value)}</td><td class="r ${hg>0?"pos":hg<0?"neg":""}">${hg>=0?"+":"-"}${fmt$(Math.abs(hg))}</td><td class="r ${hg>0?"pos":hg<0?"neg":""}">${r.toFixed(2)}%</td></tr>`;});});
+  document.getElementById("dealView").innerHTML=`
+    <div class="kpis">
+      <div><span>Invested</span><b>${fmt$(o.cost)}</b><em>bought at the ${fmtDate(PRICES.buyDate)} close</em></div>
+      <div><span>Current value</span><b>${fmt$(pc.value)}</b><em>at the ${fmtDate(PRICES.asof)} close</em></div>
+      <div><span>Gain / loss</span><b class="${g>0?"pos":g<0?"neg":""}">${g>=0?"+":"-"}${fmt$(Math.abs(g))}</b><em>${pct.toFixed(2)}% since purchase</em></div>
+      <div><span>Last trading day</span><b class="${pc.day>0?"pos":pc.day<0?"neg":""}">${pc.day>=0?"+":"-"}${fmt$(Math.abs(pc.day))}</b><em>change on ${fmtDate(PRICES.asof)}</em></div>
+      <div><span>Best holding</span><b style="font-size:1.2rem">${best?tkOf(best[0]):"—"}</b><em>${best?best[1].toFixed(2)+"% since purchase":"updates after the next close"}</em></div>
+      <div><span>Holdings</span><b>${nh}</b><em>${pc.miss?pc.miss+" price"+(pc.miss>1?"s":"")+" not confirmed":"all prices confirmed"}</em></div>
+    </div>
+    <div class="panel"><p class="eyebrow">How this category works on Robinhood</p><p class="muted">${o.why}</p></div>
+    <div class="holdings" style="margin-bottom:0"><table>
+      <thead><tr><th>Holding</th><th class="r">Shares</th><th class="r">Buy → last close</th><th class="r">Invested</th><th class="r">Value</th><th class="r">Gain</th><th class="r">Return</th></tr></thead>
+      <tbody>${rows}</tbody>
+      <tfoot><tr><td><b>Total</b></td><td></td><td></td><td class="r"><b>${fmt$(o.cost)}</b></td><td class="r"><b>${fmt$(pc.value)}</b></td><td class="r ${g>0?"pos":g<0?"neg":""}"><b>${g>=0?"+":"-"}${fmt$(Math.abs(g))}</b></td><td class="r ${g>0?"pos":g<0?"neg":""}"><b>${pct.toFixed(2)}%</b></td></tr></tfoot>
+    </table></div>
+    <p class="muted" style="font-size:.8rem">Assumes each holding was bought at its ${fmtDate(PRICES.buyDate)} close, or at the earliest price found for it if that close wasn't available. Prices are the latest closes found online and update each weekday; each holding shows the date of its price. Not investment advice.</p>`;
+}
+function showPosition(i){
+  const p=session.positions[i],m=MARKET[p.ticker];
+  const cost=p.shares*p.cost,value=p.shares*m.price,g=value-cost,pct=g/cost*100;
+  document.getElementById("detCat").textContent="Public Markets · Public Equities";
+  document.getElementById("detName").textContent=p.name+" ("+p.ticker+")";
+  const max=Math.max(cost,value);
+  const px=n=>"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  document.getElementById("dealView").innerHTML=`
+    <div class="kpis">
+      <div><span>Shares</span><b>${p.shares.toLocaleString("en-US")}</b><em>${p.exchange}: ${p.ticker}</em></div>
+      <div><span>Purchase price</span><b>${px(p.cost)}</b><em>per share</em></div>
+      <div><span>Latest price</span><b>${px(m.price)}</b><em>${m.asof}</em></div>
+      <div><span>Cost basis</span><b>${fmt$(cost)}</b><em>${p.shares.toLocaleString("en-US")} × ${px(p.cost)}</em></div>
+      <div><span>Market value</span><b>${fmt$(value)}</b><em>${p.shares.toLocaleString("en-US")} × ${px(m.price)}</em></div>
+      <div><span>Gain / loss</span><b class="${g>=0?"pos":"neg"}">${(g>=0?"+":"")+fmt$(g)}</b><em>${(pct>=0?"+":"")+pct.toFixed(1)}% · ${(value/cost).toFixed(2)}x</em></div>
+    </div>
+    <div class="two">
+      <div class="panel cmp">
+        <p class="eyebrow">Cost vs. market value</p>
+        <div class="lbl"><span>What you paid</span><span>${fmt$(cost)}</span></div><div class="bar"><i style="width:${cost/max*100}%"></i></div>
+        <div class="lbl"><span>What it is worth now</span><span>${fmt$(value)}</span></div><div class="bar v"><i style="width:${value/max*100}%"></i></div>
+        <p class="muted" style="font-size:.8rem">Price per share went from ${px(p.cost)} to ${px(m.price)}, a change of ${(pct>=0?"+":"")+pct.toFixed(1)}%.</p>
+      </div>
+      <div class="panel">
+        <p class="eyebrow">About this holding</p>
+        <p class="muted">${p.name} is held in the Public Markets category of the ELK platform. Market value updates with each price refresh, and the date of the latest price is always shown. Gains are unrealized until shares are sold.</p>
+      </div>
+    </div>`;
+}
+function showDeal(id){
+  const d=DEALS[id],h=session.holdings[id];
+  document.querySelectorAll("#dealTabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.deal===id));
+  const u=d.updates[0];
+  document.getElementById("dealView").innerHTML=`
+    <div class="kpis">
+      <div><span>Land contribution</span><b>${fmt$(h.land)}</b></div>
+      <div><span>Total capital</span><b id="kIn"></b><em>land plus share of soft costs and carry</em></div>
+      <div><span>Projected profit</span><b id="kProfit"></b><em>${session.promote?session.promote.ownerShare:"your share after all costs"}</em></div>
+      <div><span>Equity multiple</span><b id="kMult"></b><em id="kMultNote"></em></div>
+      <div><span>Projected IRR</span><b id="kIrr"></b><em id="kIrrNote"></em></div>
+      <div><span>Ownership</span><b>${(h.share*100).toFixed(0)}%</b><em>${session.promote?session.promote.dealOwners:session.name} · ${d.size}</em></div>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <div class="photo real" style="border-radius:8px;overflow:hidden"><img id="mainImg" src="${IMG[d.photos[0][0]]}" alt=""><small id="mainCap">${d.photos[0][1]}</small></div>
+        <div class="gallery" id="gal">${d.photos.map((p,i)=>`<button aria-pressed="${i===0}" data-i="${i}" aria-label="${p[1]}"><img src="${IMG[p[0]]}" alt=""></button>`).join("")}</div>
+        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
+          <div><h3>${d.name}</h3><p class="muted">${d.city} · ${d.type} · ${d.size}</p></div>
+          <span class="chip good"><i></i>${d.status}</span>
+        </div>
+        <ol class="stages">${d.stages.map((s,i)=>`<li class="${i<d.stage?"done":i===d.stage?"now":""}">${s}</li>`).join("")}</ol>
+        <div class="update"><p class="eyebrow">Latest update · ${u.m}</p><h4>${u.head}</h4><ul>${u.pts.map(p=>`<li>${p}</li>`).join("")}</ul></div>
+      </div>
+      <div class="panel">
+        <p class="eyebrow">Projected return</p>
+        <div class="sens">
+          <label for="sp">Sale price per residence <span class="num" id="spOut"></span></label>
+          <input id="sp" type="range" min="2000000" max="3000000" step="50000" value="${d.price}">
+          <label for="bc">Construction cost per residence <span class="num" id="bcOut"></span></label>
+          <input id="bc" type="range" min="700000" max="1200000" step="25000" value="${d.build}">
+          <label for="tm">Months to final closing <span class="num" id="tmOut"></span></label>
+          <input id="tm" type="range" min="20" max="48" step="1" value="30">
+          <p class="muted" style="font-size:.78rem">Base case: $2.5M per residence, $3.0M for the waterfront residence, $900K construction cost. Adjust to see how pricing and cost affect your return.</p>
+        </div>
+        <div id="pf"></div>
+      </div>
+    </div>
+    <div class="panel">
+      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end">
+        <div><p class="eyebrow">Rezoning option · R4A to R6A</p><h3 style="margin-top:8px">What the site could hold if rezoned</h3></div>
+        <div class="toggles"><label><input type="checkbox" id="rzUap"> Use affordable housing bonus (3.9 FAR)</label><label><input type="checkbox" id="rzCorner"> Include corner parcel (Lot 50)</label></div>
+      </div>
+      <div class="rz-grid">
+        <div><span>Lot area</span><b id="rzLot"></b></div>
+        <div><span>Today, R4A (1.0 FAR)</span><b id="rzR4"></b></div>
+        <div><span>Rezoned, R6A</span><b class="g" id="rzR6"></b></div>
+        <div><span>Of which affordable</span><b id="rzAff"></b></div>
+        <div><span>Est. apartments</span><b id="rzUnits"></b></div>
+        <div><span>Vs. today's zoning</span><b id="rzX"></b></div>
+      </div>
+      <div class="two" style="gap:28px">
+        <div class="sens">
+          <label for="rzP">Sale price per sellable SF <span class="num" id="rzPOut"></span></label>
+          <input id="rzP" type="range" min="450" max="1100" step="25" value="700">
+          <label for="rzC">All-in build cost per SF <span class="num" id="rzCOut"></span></label>
+          <input id="rzC" type="range" min="300" max="600" step="10" value="400">
+          <label for="rzZ">Rezoning cost (legal, studies, design) <span class="num" id="rzZOut"></span></label>
+          <input id="rzZ" type="range" min="250000" max="2000000" step="50000" value="750000">
+          <p class="muted">Assumes 82% of floor area is sellable, about 850 SF per apartment, 5% selling costs and financing and carry at 10% of build cost. Affordable floor area is counted at cost with no sale value. Rough numbers for comparison only.</p>
+        </div>
+        <div id="rzPf"></div>
+      </div>
+      <p class="muted" style="font-size:.8rem">Rezoning goes through the city's land use review (ULURP), usually 12 to 24 months, and is not guaranteed. Waterfront and flood-zone rules can reduce what is buildable. Confirm with a zoning attorney before relying on these figures.</p>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <p class="eyebrow">Milestones</p>
+        <ul class="done-list">${d.done.map(x=>`<li>${x}</li>`).join("")}${d.next.map(x=>`<li class="next">Next: ${x}</li>`).join("")}</ul>
+      </div>
+      <div class="panel">
+        <p class="eyebrow">Update history</p>
+        <div class="history">${d.updates.map(x=>`<button><span>${x.head}</span><span class="muted num">${x.m}</span></button>`).join("")}</div>
+        <p class="eyebrow" style="margin-top:8px">Documents</p>
+        <div class="docs">${d.docs.map(x=>`<div><span>${x}</span><span class="muted">PDF</span></div>`).join("")}</div>
+      </div>
+    </div>`;
+  document.getElementById("gal").addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!b)return;const p=d.photos[+b.dataset.i];
+    document.getElementById("mainImg").src=IMG[p[0]];document.getElementById("mainCap").textContent=p[1];
+    document.querySelectorAll("#gal button").forEach(x=>x.setAttribute("aria-pressed",x===b))});
+  const sp=document.getElementById("sp"),bc=document.getElementById("bc");
+  const draw=()=>{
+    const m=model(d,+sp.value,+bc.value),mine=m.net*h.share;
+    const cashIn=h.land+(d.soft+d.carry)*h.share;
+    document.getElementById("spOut").textContent=fmtM(+sp.value);
+    document.getElementById("bcOut").textContent=fmt$(+bc.value);
+    document.getElementById("kIn").textContent=fmt$(cashIn);
+    document.getElementById("kProfit").textContent=fmt$(mine);
+    const mult=(cashIn+mine)/cashIn;
+    document.getElementById("kMult").textContent=mult.toFixed(2)+"x";
+    document.getElementById("kMultNote").textContent=fmt$(cashIn+mine)+" back on "+fmt$(cashIn);
+    const T=+document.getElementById("tm").value;document.getElementById("tmOut").textContent=T+" months";
+    const irr=dealIrr(h.land,cashIn-h.land,cashIn+mine,T);
+    document.getElementById("kIrr").textContent=irr===null?"n/a":(irr*100).toFixed(1)+"%";
+    document.getElementById("kIrrNote").textContent="over ~"+(T/12).toFixed(1)+" years from Sept 2026";
+    const row=(a,b,c="")=>`<div class="valrow ${c}"><span>${a}</span><b>${b}</b></div>`;
+    document.getElementById("pf").innerHTML=
+      row("Gross sales, 9 residences",fmt$(m.sales))+
+      row("Land",fmt$(-d.land))+
+      row("Construction",fmt$(-m.hard))+
+      row("Soft costs",fmt$(-d.soft))+
+      row("Contingency (5%)",fmt$(-m.cont))+
+      row("Selling costs (5%)",fmt$(-m.sell))+
+      row("Carry",fmt$(-d.carry))+
+      row("Contractor profit participation (10%)",fmt$(-m.gc))+
+      row("Net profit to partnership",fmt$(m.net),"total")+
+      row(`Your ${(h.share*100).toFixed(0)}%`,fmt$(mine),"total");
+  };
+  sp.addEventListener("input",draw);bc.addEventListener("input",draw);document.getElementById("tm").addEventListener("input",draw);draw();
+  const homesNet=()=>model(d,+sp.value,+bc.value).net;
+  const rz=()=>{
+    const lot=31112+(document.getElementById("rzCorner").checked?7312:0);
+    const uap=document.getElementById("rzUap").checked;
+    const mkt=lot*3.0,aff=uap?lot*0.9:0,tot=mkt+aff;
+    const units=Math.round(tot*.82/850);
+    const P=+document.getElementById("rzP").value,C=+document.getElementById("rzC").value,Z=+document.getElementById("rzZ").value;
+    const rev=mkt*.82*P,build=tot*C,sell=rev*.05,carry=build*.10,corner=document.getElementById("rzCorner").checked;
+    const net=rev-d.land-Z-build-sell-carry;
+    const n=x=>Math.round(x).toLocaleString("en-US");
+    document.getElementById("rzLot").textContent=n(lot)+" SF";
+    document.getElementById("rzR4").textContent=n(lot)+" SF";
+    document.getElementById("rzR6").textContent=n(tot)+" SF";
+    document.getElementById("rzAff").textContent=aff?n(aff)+" SF":"None";
+    document.getElementById("rzUnits").textContent="~"+units;
+    document.getElementById("rzX").textContent=(tot/lot).toFixed(1)+"x the floor area";
+    document.getElementById("rzPOut").textContent="$"+P;
+    document.getElementById("rzCOut").textContent="$"+C;
+    document.getElementById("rzZOut").textContent=fmt$(Z);
+    const row=(a,b,c="")=>`<div class="valrow ${c}"><span>${a}</span><b>${b}</b></div>`;
+    document.getElementById("rzPf").innerHTML=
+      row("Sales, market-rate apartments",fmt$(rev))+
+      row("Land",fmt$(-d.land))+
+      (corner?row("Corner parcel price","Not included"):"")+
+      row("Rezoning",fmt$(-Z))+
+      row("Construction, all floor area",fmt$(-build))+
+      row("Selling costs (5%)",fmt$(-sell))+
+      row("Financing and carry",fmt$(-carry))+
+      row("Est. profit, R6A building",fmt$(net),"total")+
+      row(`Your ${(h.share*100).toFixed(0)}%`,fmt$(net*h.share),"total")+
+      row("Compare: nine homes, your share",fmt$(homesNet()*h.share));
+  };
+  ["rzUap","rzCorner","rzP","rzC","rzZ"].forEach(id=>document.getElementById(id).addEventListener("input",rz));
+  sp.addEventListener("input",rz);bc.addEventListener("input",rz);rz();
+}
+
+(()=>{const h=(location.hash||"").slice(1);go(h==="login"?"login":(PAGE_OF[h]||"home"),h&&h!=="login"?h:undefined)})();
+
+</script>
+<script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js",{scope:"./"}).catch(()=>{});</script>
+</body></html>

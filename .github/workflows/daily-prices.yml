@@ -1,0 +1,34 @@
+name: Daily prices
+
+on:
+  schedule:
+    - cron: "15 1 * * 2-6"    # Mon-Fri evenings ~8:15 PM ET, once the day's official closes are posted
+    - cron: "40 11 * * 2-6"   # next-morning retry, in case the evening run was skipped or delayed
+  workflow_dispatch: {}
+  push:
+    branches: [main]
+    paths: ["tools/update_prices.py", ".github/workflows/daily-prices.yml"]
+
+permissions:
+  contents: write
+
+concurrency:
+  group: daily-prices
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v4
+      - name: Fetch closes and update prices.json / history.json
+        run: python3 tools/update_prices.py
+      - name: Commit and push if changed
+        run: |
+          git config user.name "elk-prices-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add prices.json history.json tools/last_price_run.txt
+          if git diff --cached --quiet; then echo "No change (weekend/holiday)"; exit 0; fi
+          git commit -m "Daily prices $(python3 -c "import json;print(json.load(open('prices.json'))['asof'])")"
+          git push

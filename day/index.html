@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>My Day</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="icon" href="icon-192.png">
+<meta name="theme-color" content="#10161C">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="My Day">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Instrument+Serif&family=Inter+Tight:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* My Day: a locked shell. The page and every saved item live in Eddie's private repo and load only after his code. */
+:root{--bg:#E3E6E9;--card:#fff;--ink:#10161C;--muted:#58646F;--line:#C8D0D7;--brass:#8A6A17;--miss:#95372A;color-scheme:light}
+@media (prefers-color-scheme:dark){:root{--bg:#0A1016;--card:#111A22;--ink:#E8EDF2;--muted:#8794A1;--line:#223039;--brass:#CFA43C;--miss:#D86B53;color-scheme:dark}}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:"Inter Tight",system-ui,-apple-system,sans-serif}
+[hidden]{display:none!important}
+#appf{position:fixed;inset:0;width:100%;height:100%;border:0;background:var(--bg)}
+.gate{max-width:380px;margin:0 auto;padding:calc(env(safe-area-inset-top,0px) + 64px) 22px 40px;text-align:center}
+.mark{width:64px;height:64px;border-radius:14px;background:#10161C;color:#CFA43C;display:grid;place-items:center;margin:0 auto 14px;font:italic 30px "Instrument Serif",Georgia,serif}
+.stamp{font:500 10px "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;color:var(--brass)}
+h1{font:400 36px/1.1 "Instrument Serif",Georgia,serif;margin:8px 0 6px}
+p{color:var(--muted);font-size:14.5px;line-height:1.45;margin:0 0 6px}
+.pin{width:100%;text-align:center;font-size:24px;letter-spacing:.45em;padding:12px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:4px;outline:none;margin-top:14px}
+.pin:focus{border-color:var(--ink)}
+.small{font-size:16px;letter-spacing:.1em}
+label{display:block;text-align:left;font:600 11px "Inter Tight",sans-serif;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:14px 0 5px}
+.key{width:100%;padding:11px 12px;background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:4px;font-size:15px;outline:none}
+.go{width:100%;margin-top:18px;border:0;border-radius:4px;background:var(--ink);color:var(--bg);font:600 12px "Inter Tight",sans-serif;letter-spacing:.14em;text-transform:uppercase;padding:15px;cursor:pointer}
+.err{color:var(--miss);font-size:14px;min-height:20px;margin-top:10px}
+.link{background:none;border:0;color:var(--muted);font-size:13px;margin-top:20px;cursor:pointer;text-decoration:underline}
+.loading{padding-top:40vh;text-align:center;color:var(--muted);font-size:14px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 80px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:4px;font-size:13.5px;display:none;z-index:10}
+</style>
+</head>
+<body>
+<div id="gate"></div>
+<iframe id="appf" title="My Day" hidden></iframe>
+<div class="toast" id="toast" role="status"></div>
+<script>
+"use strict";
+const $ = s => document.querySelector(s);
+const esc = s => String(s ?? "").replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+function toast(t, ms){ const e = $("#toast"); e.textContent = t; e.style.display = "block"; clearTimeout(e._t); e._t = setTimeout(() => e.style.display = "none", ms || 3000); }
+
+/* Same lock as the ELK app (same site, same code): the GitHub key sits on this device encrypted with Eddie's code. */
+const VKEY = "elkhq-vault";
+const enc = new TextEncoder(), dec = new TextDecoder();
+const u8 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const b64s = a => btoa(String.fromCharCode(...new Uint8Array(a)));
+async function kdf(code, salt){
+  const km = await crypto.subtle.importKey("raw", enc.encode(code), "PBKDF2", false, ["deriveKey"]);
+  return crypto.subtle.deriveKey({ name: "PBKDF2", salt, iterations: 250000, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+}
+async function sealKey(code, token){
+  const salt = crypto.getRandomValues(new Uint8Array(16)), iv = crypto.getRandomValues(new Uint8Array(12));
+  const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, await kdf(code, salt), enc.encode(JSON.stringify({ token })));
+  localStorage.setItem(VKEY, JSON.stringify({ salt: b64s(salt), iv: b64s(iv), ct: b64s(ct) }));
+}
+async function openKey(code){
+  const v = JSON.parse(localStorage.getItem(VKEY));
+  const pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: u8(v.iv) }, await kdf(code, u8(v.salt)), u8(v.ct));
+  return JSON.parse(dec.decode(pt)).token;
+}
+const hasVault = () => { try{ return !!localStorage.getItem(VKEY); }catch(e){ return false; } };
+let TOKEN = "";
+const REPO = (() => { try{ return (JSON.parse(localStorage.getItem("elkhq-cfg")) || {}).room || "EdwardSKhezrie/elk-deal-room"; }catch(e){ return "EdwardSKhezrie/elk-deal-room"; } })();
+
+async function gh(path, opts = {}){
+  const r = await fetch("https://api.github.com/repos/" + REPO + path, Object.assign({}, opts, { cache: "no-store", headers: Object.assign({ Authorization: "Bearer " + TOKEN, Accept: "application/vnd.github+json" }, opts.headers || {}) }));
+  if (!r.ok){ const e = new Error(r.status === 401 ? "Your GitHub key isn't working. Use \"Reset\" and paste a new one." : r.status === 404 ? "Can't find your My Day files. Check the key includes elk-deal-room." : "Error " + r.status); e.status = r.status; throw e; }
+  return opts.raw ? r : (r.status === 204 ? null : r.json());
+}
+const P = p => "/contents/" + p.split("/").map(encodeURIComponent).join("/");
+const decode = b64 => dec.decode(Uint8Array.from(atob(b64.replace(/\n/g, "")), c => c.charCodeAt(0)));
+const b64u = str => btoa(unescape(encodeURIComponent(str)));
+const DATA = "eddie-private/myday-data.json", PAGE = "eddie-private/myday.html";
+
+/* ---------- a small store that acts like the app's database, saved to the private repo ---------- */
+let STORE = { docs: {} }, SHA = null, dirty = false, saving = Promise.resolve(), saveT = null;
+const SUBS = [];
+const clone = x => x == null ? x : JSON.parse(JSON.stringify(x));
+const lastSeg = p => p.split("/").pop();
+function docSnap(path){ const has = Object.prototype.hasOwnProperty.call(STORE.docs, path); return { exists: has, id: lastSeg(path), data: () => clone(STORE.docs[path]) }; }
+function querySnap(name, ops){
+  let ids = Object.keys(STORE.docs).filter(k => k.startsWith(name + "/") && !k.slice(name.length + 1).includes("/"));
+  for (const op of ops) if (op[0] === "w"){ const [, f, o, v] = op; ids = ids.filter(k => { const x = (STORE.docs[k] || {})[f]; return o === "==" ? x === v : o === ">=" ? x >= v : o === "<=" ? x <= v : o === ">" ? x > v : o === "<" ? x < v : true; }); }
+  const ord = ops.filter(o => o[0] === "o");
+  if (ord.length){ const [, f, dir] = ord[0]; ids.sort((a, b) => { const x = (STORE.docs[a] || {})[f], y = (STORE.docs[b] || {})[f]; const c = x < y ? -1 : x > y ? 1 : 0; return dir === "desc" ? -c : c; }); }
+  const lim = ops.find(o => o[0] === "l"); if (lim) ids = ids.slice(0, lim[1]);
+  return { metadata: { fromCache: false }, empty: !ids.length, size: ids.length, docs: ids.map(k => ({ id: lastSeg(k), exists: true, data: () => clone(STORE.docs[k]) })) };
+}
+function emit(){ SUBS.forEach(s => { try{ s.cb(s.kind === "d" ? docSnap(s.path) : querySnap(s.name, s.ops)); }catch(e){} }); }
+function changed(){ dirty = true; emit(); clearTimeout(saveT); saveT = setTimeout(save, 800); }
+function save(){
+  saving = saving.then(async () => {
+    if (!dirty) return; dirty = false;
+    const body = b64u(JSON.stringify(STORE, null, 1));
+    const put = sha => gh(P(DATA), { method: "PUT", body: JSON.stringify({ message: "My Day update", content: body, sha }) });
+    try{ SHA = (await put(SHA)).content.sha; }
+    catch(e){
+      try{ const cur = await gh(P(DATA)); const remote = JSON.parse(decode(cur.content)); STORE.docs = Object.assign({}, remote.docs || {}, STORE.docs); SHA = (await put(cur.sha)).content.sha; }
+      catch(x){ dirty = true; toast("Didn't save yet. It will try again.", 4000); setTimeout(save, 5000); }
+    }
+  });
+  return saving;
+}
+function Doc(path){
+  return {
+    id: lastSeg(path), path,
+    get: async () => docSnap(path),
+    set: async (o, opt) => { STORE.docs[path] = opt && opt.merge ? Object.assign({}, STORE.docs[path] || {}, clone(o)) : clone(o); changed(); },
+    update: async o => { STORE.docs[path] = Object.assign({}, STORE.docs[path] || {}, clone(o)); changed(); },
+    delete: async () => { delete STORE.docs[path]; changed(); },
+    onSnapshot(cb){ const s = { kind: "d", path, cb }; SUBS.push(s); setTimeout(() => cb(docSnap(path)), 0); return () => SUBS.splice(SUBS.indexOf(s), 1); }
+  };
+}
+function Query(name, ops){
+  return {
+    orderBy: (f, dir) => Query(name, ops.concat([["o", f, dir || "asc"]])),
+    limit: n => Query(name, ops.concat([["l", n]])),
+    where: (f, o, v) => Query(name, ops.concat([["w", f, o, v]])),
+    get: async () => querySnap(name, ops),
+    onSnapshot(cb){ const s = { kind: "q", name, ops, cb }; SUBS.push(s); setTimeout(() => cb(querySnap(name, ops)), 0); return () => SUBS.splice(SUBS.indexOf(s), 1); },
+    add: async o => { const id = Date.now().toString(36) + Math.random().toString(36).slice(2, 7); STORE.docs[name + "/" + id] = clone(o); changed(); return { id }; },
+    doc: id => Doc(name + "/" + id)
+  };
+}
+window.__dayDB = { collection: name => Query(name, []), doc: path => Doc(path) };
+
+/* pick up changes Claude or another device made */
+async function pull(){
+  if (!TOKEN || dirty) return;
+  try{
+    const cur = await gh(P(DATA));
+    if (cur.sha !== SHA && !dirty){ SHA = cur.sha; STORE = JSON.parse(decode(cur.content)); STORE.docs = STORE.docs || {}; emit(); }
+  }catch(e){}
+}
+setInterval(() => { if (document.visibilityState === "visible") pull(); }, 60000);
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") pull(); else if (dirty) save(); });
+
+/* ---------- open ---------- */
+async function openApp(){
+  $("#gate").innerHTML = '<div class="loading">Opening My Day…</div>';
+  try{
+    const [page, file] = await Promise.all([gh(P(PAGE), { raw: true, headers: { Accept: "application/vnd.github.raw" } }).then(r => r.text()), gh(P(DATA))]);
+    SHA = file.sha; STORE = JSON.parse(decode(file.content)); STORE.docs = STORE.docs || {};
+    $("#gate").innerHTML = ""; $("#gate").hidden = true;
+    const f = $("#appf"); f.hidden = false; f.srcdoc = page;
+  }catch(e){
+    TOKEN = ""; gate(e.message);
+  }
+}
+function gate(msg){
+  const setup = !hasVault();
+  $("#appf").hidden = true; $("#gate").hidden = false;
+  $("#gate").innerHTML = `<div class="gate"><div class="mark">MD</div><div class="stamp">Eddie only</div><h1>${setup ? "Set your code" : "My Day"}</h1>
+    <p>${setup ? "Same code as your ELK app. Your GitHub key is locked with it on this device." : "Enter your code."}</p>
+    <form id="gf"><input class="pin" id="g1" type="password" inputmode="numeric" autocomplete="off" placeholder="••••" aria-label="Code">
+    ${setup ? `<input class="pin small" id="g2" type="password" inputmode="numeric" autocomplete="off" placeholder="again" aria-label="Code again">
+      <label for="g3">GitHub key</label><input class="key" id="g3" type="password" autocomplete="off" placeholder="github_pat_…">` : ""}
+    <button class="go" type="submit">${setup ? "Save and open" : "Open"}</button><div class="err" id="gerr">${esc(msg || "")}</div></form>
+    ${setup ? "" : '<button class="link" id="gforget">Forgot the code? Reset it</button>'}</div>`;
+  $("#g1").focus();
+  $("#gf").onsubmit = async e => {
+    e.preventDefault();
+    const c = $("#g1").value.trim(), er = $("#gerr");
+    if (c.length < 4) return er.textContent = "Use at least 4 digits.";
+    try{
+      if (setup){
+        if (c !== $("#g2").value.trim()) return er.textContent = "The two codes don't match.";
+        const t = $("#g3").value.trim(); if (!t) return er.textContent = "Paste your GitHub key.";
+        er.textContent = "Saving…"; await sealKey(c, t); TOKEN = t;
+      } else {
+        er.textContent = "Opening…";
+        try{ TOKEN = await openKey(c); }catch(x){ return er.textContent = "Wrong code."; }
+      }
+      openApp();
+    }catch(x){ er.textContent = "Something went wrong. Try again."; }
+  };
+  const fg = $("#gforget"); if (fg) fg.onclick = () => { localStorage.removeItem(VKEY); gate(); };
+}
+/* lock again after 15 minutes in the background */
+let idle = null;
+document.addEventListener("visibilitychange", () => { clearTimeout(idle); if (document.hidden && TOKEN) idle = setTimeout(async () => { await save(); TOKEN = ""; STORE = { docs: {} }; $("#appf").srcdoc = ""; gate(); }, 15 * 60 * 1000); });
+gate();
+if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+</body></html>

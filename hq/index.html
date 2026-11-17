@@ -462,7 +462,7 @@ $("#sitef").addEventListener("load", () => {
   const f = $("#sitef");
   try{
     const w = f.contentWindow, d = f.contentDocument;
-    const st = d.createElement("style"); st.textContent = "header.top{display:none!important}"; d.head.appendChild(st);
+    const st = d.createElement("style"); st.textContent = "header.top{display:none!important}"; d.head.appendChild(st); d.addEventListener("pointerdown", () => window.postMessage("elk-fullscreen", "*"), true);
     const orig = w.go;
     if (typeof orig === "function" && !orig._elk){
       const wrapped = function(v, to){ const r = orig.apply(this, arguments); const t = SITE_TAB(v === "login" && w.session ? "room" : v); if (!EDDIE_VIEWS.includes(cur) && t !== cur){ cur = t; try{ history.replaceState(null, "", "#" + t); }catch(e){} mark(t); } return r; };
@@ -1015,5 +1015,18 @@ function settings(){
 buildNav(); counts(); route();
 setInterval(() => { if (document.visibilityState === "visible" && unlocked()) refresh(); }, 10 * 60 * 1000);
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+<script>
+/* Installed on a computer: go full screen on the first click, so no window buttons or browser icons show. Esc leaves full screen. */
+(function(){
+  var desk = !/iPhone|iPad|Android/i.test(navigator.userAgent);
+  var inst = matchMedia("(display-mode: window-controls-overlay)").matches || matchMedia("(display-mode: standalone)").matches;
+  if (!desk || !inst || !document.documentElement.requestFullscreen) return;
+  var asked = false;
+  function go(){ if (asked || document.fullscreenElement) return; asked = true; document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(function(){ asked = false; }); }
+  document.addEventListener("pointerdown", go, true);
+  document.addEventListener("keydown", function(e){ if (e.key !== "Escape") go(); }, true);
+  window.addEventListener("message", function(e){ if (e.data === "elk-fullscreen") go(); });
+})();
 </script>
 </body></html>

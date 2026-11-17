@@ -163,7 +163,7 @@ async function openApp(){
     const [page, file] = await Promise.all([gh(P(PAGE), { raw: true, headers: { Accept: "application/vnd.github.raw" } }).then(r => r.text()), gh(P(DATA))]);
     SHA = file.sha; STORE = JSON.parse(decode(file.content)); STORE.docs = STORE.docs || {};
     $("#gate").innerHTML = ""; $("#gate").hidden = true;
-    const f = $("#appf"); f.hidden = false; f.srcdoc = page;
+    const f = $("#appf"); f.hidden = false; f.onload = () => { try{ f.contentDocument.addEventListener("pointerdown", () => window.postMessage("elk-fullscreen", "*"), true); }catch(e){} }; f.srcdoc = page;
   }catch(e){
     TOKEN = ""; gate(e.message);
   }
@@ -202,5 +202,18 @@ let idle = null;
 document.addEventListener("visibilitychange", () => { clearTimeout(idle); if (document.hidden && TOKEN) idle = setTimeout(async () => { await save(); TOKEN = ""; STORE = { docs: {} }; $("#appf").srcdoc = ""; gate(); }, 15 * 60 * 1000); });
 gate();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
+</script>
+<script>
+/* Installed on a computer: go full screen on the first click, so no window buttons or browser icons show. Esc leaves full screen. */
+(function(){
+  var desk = !/iPhone|iPad|Android/i.test(navigator.userAgent);
+  var inst = matchMedia("(display-mode: window-controls-overlay)").matches || matchMedia("(display-mode: standalone)").matches;
+  if (!desk || !inst || !document.documentElement.requestFullscreen) return;
+  var asked = false;
+  function go(){ if (asked || document.fullscreenElement) return; asked = true; document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(function(){ asked = false; }); }
+  document.addEventListener("pointerdown", go, true);
+  document.addEventListener("keydown", function(e){ if (e.key !== "Escape") go(); }, true);
+  window.addEventListener("message", function(e){ if (e.data === "elk-fullscreen") go(); });
+})();
 </script>
 </body></html>

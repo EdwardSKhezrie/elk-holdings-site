@@ -132,6 +132,9 @@ function Query(name, ops){
   };
 }
 window.__dayDB = { collection: name => Query(name, []), doc: path => Doc(path) };
+/* start and stop words for each day's learning: one private file per year */
+const LEARN = {};
+window.__dayLearn = year => LEARN[year] || (LEARN[year] = gh(P("eddie-private/learning/" + year + ".json"), { raw: true, headers: { Accept: "application/vnd.github.raw" } }).then(r => r.json()).catch(e => { delete LEARN[year]; throw e; }));
 
 /* pick up changes Claude or another device made */
 async function pull(){

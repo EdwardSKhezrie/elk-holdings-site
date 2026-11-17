@@ -1,10 +1,10 @@
 {
  "name": "ELK",
  "short_name": "ELK",
- "description": "ELK Holdings: Deal Finds, Deal Room and the website in one app",
+ "description": "ELK Holdings",
  "start_url": "./",
  "scope": "./",
- "id": "./",
+ "id": "/elk-holdings-site/hq/",
  "display": "standalone",
  "background_color": "#000000",
  "theme_color": "#000000",

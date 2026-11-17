@@ -537,7 +537,7 @@ const unlocked = () => !!cfg.token;
 let CODE = "";
 function plainToken(){ try{ return (JSON.parse(localStorage.getItem("elkhq-cfg")) || {}).token || ""; }catch(e){ return ""; } }
 function scrubPlain(){ try{ const c = JSON.parse(localStorage.getItem("elkhq-cfg")) || {}; delete c.token; localStorage.setItem("elkhq-cfg", JSON.stringify(c)); }catch(e){} }
-function lock(){ try{ delete window.__budget; }catch(e){} cfg.token = ""; CODE = ""; S.finds = []; S.index = { deals: [], waiting: [] }; S.inbox = []; UP = []; FC = {}; UPC = {}; counts(); toast("Locked"); route(); }
+function lock(){ try{ delete window.__budget; }catch(e){} cfg.token = ""; CODE = ""; S.finds = []; S.index = { deals: [], waiting: [] }; S.inbox = []; S.tpl = null; UP = []; FC = {}; UPC = {}; counts(); toast("Locked"); route(); }
 let idleT = null;
 document.addEventListener("visibilitychange", () => { clearTimeout(idleT); if (document.hidden && unlocked()) idleT = setTimeout(lock, 15 * 60 * 1000); });
 function gate(){
@@ -618,6 +618,7 @@ async function loadRoom(){
   const repo = await gh(cfg.room, "");
   S.branch = repo.default_branch || "main";
   try{ S.index = JSON.parse(decode((await gh(cfg.room, P("deals/index.json"))).content)); }catch(e){ S.index = { deals: [], waiting: [] }; }
+  try{ S.tpl = JSON.parse(decode((await gh(cfg.room, P("eddie-private/outreach.json"))).content)); }catch(e){ S.tpl = null; }
   try{ S.inbox = (await gh(cfg.room, P("inbox"))).filter(x => x.type === "dir"); }catch(e){ S.inbox = []; }
 }
 async function refresh(){
@@ -669,8 +670,10 @@ function bestContact(d){
 function draftFor(d, c){
   const nm = c && c.person ? c.person.split(/[,(]/)[0].trim() : "";
   const first = /^[A-Z][a-z]+ [A-Z][A-Za-z.'-]+$/.test(nm) && !/group|team|management|servic|desk|office|asset|line|department|capital|partners/i.test(nm) ? nm.split(" ")[0] : "";
-  return { to: c && c.email ? c.email : "", subject: d.name + " – Global Group Acquisitions",
-    body: `Hi ${first || "there"},\n\nHope you're doing well. I'm Eddie Khezrie, and I work with my father's family office, Global Group Acquisitions. We're all-cash buyers, and I came across ${d.name}. It seems like it could be a great fit for us.\n\nWould you be able to share some financials? If it makes sense, we can move quickly.\n\nLooking forward to hearing from you.\n\nBest,\nEddie Khezrie\nGlobal Group Acquisitions\n718-668-4514` };
+  const T = S.tpl || { subject: "{name}", body: "Hi {first},\n\nI came across {name}. Would you be able to share some financials?\n\nBest,\nEddie" }; /* real wording lives in the private repo (eddie-private/outreach.json) */
+  const f = t => t.replace(/\{first\}/g, first || "there").replace(/\{name\}/g, d.name);
+  return { to: c && c.email ? c.email : "", subject: f(T.subject), body: f(T.body) };
+
 }
 const tel = p => "tel:" + String(p).replace(/[^0-9+]/g, "");
 
@@ -687,7 +690,6 @@ function home(){
   const F = S.finds.slice().sort((a, b) => b.score - a.score);
   const HUB = [["finds","Deal Finds", S.finds.length + " finds · " + F.filter(d => d.score >= 72).length + " strong"],["room","Underwrite", (S.index.deals || []).length + " memos · send an OM"],["budget","Budget","2027 money plan"],["updates","Claude","Send changes for this app"]];
   h += `<div class="hub">${HUB.map(([k, l, sub]) => `<button class="hubc" onclick="go('${k}')"><span class="hi">${IC[k]}</span><b>${l}</b><small>${esc(sub)}</small><i>→</i></button>`).join("")}</div><div class="hubfoot"><button class="btn line sm" onclick="go('settings')">Settings</button></div>`;
-  if (!LS.get("pricesLocked")) h += `<div class="card" style="margin-top:16px;border-color:var(--gold);cursor:pointer" onclick="go('prices')"><h3 style="margin:0 0 4px">One step left: keep stock prices private</h3><p class="muted" style="margin:0 0 10px">Right now anyone can see the stock list on the website. Type each investor's login and code once to lock it.</p><button class="btn sm">Do it now</button></div>`;
   const strong = F.filter(d => d.score >= 72).length;
   const D = S.index.deals || [];
   const ready = D.filter(d => /ready/i.test(d.status || "")).length;

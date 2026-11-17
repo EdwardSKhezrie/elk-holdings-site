@@ -783,11 +783,11 @@ function findPage(id){
   $("#oCopy").onclick = async () => { try{ await navigator.clipboard.writeText($("#oBody").value); toast("Email copied"); }catch(e){ toast("Couldn't copy. Select the text and copy it."); } };
   const OP = "outreach/" + d.id + ".json"; let oSha = null;
   const showThread = o => {
-    const st = { requested: "Waiting for Claude to make the draft (within the hour).", draft: "Draft is ready. Open your ELK website chat in Claude and say \"send\" to approve it.", sent: "Sent. Waiting for a reply.", replied: "They replied.", cancelled: "Cancelled." }[o.status] || o.status;
+    const st = { requested: "Waiting for Claude to make the draft (within the hour).", draft: "Draft is ready. Open your ELK website chat in Claude and say \"send\" to approve it.", scheduled: "Going out " + (o.send_at ? new Date(o.send_at).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" }) : "soon") + ". Replies go to you and Claude tracks them.", sent: "Sent. Waiting for a reply.", replied: "They replied.", cancelled: "Cancelled." }[o.status] || o.status;
     $("#oThread").innerHTML = `<div class="thread" style="margin-top:12px;border-top:1px solid var(--line,#2a2620);padding-top:12px"><div style="font-size:13.5px"><b style="color:var(--gold,#C9A45C)">${esc(st)}</b>${o.sent_at ? `<span class="muted"> · sent ${esc(new Date(o.sent_at).toLocaleDateString())} to ${esc(o.to)}</span>` : ""}</div>` +
       (o.messages || []).map(m => `<div style="margin-top:10px;font-size:13.5px"><div class="muted">${esc(m.from || "")} · ${esc(m.at ? new Date(m.at).toLocaleString() : "")}</div><div style="white-space:pre-wrap;margin-top:4px">${esc(m.text || "")}</div>${(m.attachments || []).length ? `<div class="muted" style="margin-top:4px">📎 ${m.attachments.map(esc).join(", ")}</div>` : ""}</div>`).join("") + `</div>`;
     $("#oElk").textContent = o.status === "cancelled" ? "Send through ELK" : "Update request";
-    $("#oElk").style.display = ["sent", "replied"].includes(o.status) ? "none" : "";
+    $("#oElk").style.display = ["sent", "replied", "scheduled"].includes(o.status) ? "none" : "";
   };
   gh(cfg.room, P(OP)).then(f => { oSha = f.sha; showThread(JSON.parse(decode(f.content))); }).catch(() => {});
   $("#oElk").onclick = async () => {

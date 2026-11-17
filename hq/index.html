@@ -450,7 +450,7 @@ const LOCKED = ["finds","room","budget","updates"];
 const ENAV = [["eddie","Eddie"],["finds","Finds"],["room","Underwrite"],["budget","Budget"],["updates","Claude"],["settings","Settings"]];
 const SITE_GO = { firm:["home","top"], investments:["investments","platform"], portfolio:["portfolio"], about:["leadership"], contact:["contact"], investors:["login"] };
 const SITE_TAB = v => v === "home" ? "firm" : ["investments","realestate","fixedincome","privateequity","venture","operating","services","equities"].includes(v) ? "investments" : v === "portfolio" ? "portfolio" : v === "leadership" ? "about" : v === "contact" ? "contact" : (v === "login" || v === "room") ? "investors" : "firm";
-const EDDIE_VIEWS = ["eddie","finds","room","budget","updates","settings"];
+const EDDIE_VIEWS = ["eddie","finds","room","budget","updates","settings","prices"];
 function buildNav(){
   $("#tabbar").innerHTML = TABS.map(([k, l]) => `<button data-go="${k}">${IC[k]}${l}</button>`).join("");
   $("#ahlocked").innerHTML = `<button class="ahlock" data-go="eddie">${IC.eddie}Eddie</button>`;
@@ -508,6 +508,7 @@ function route(){
   if (v === "updates") return updates();
   if (v === "budget") return budget();
   if (v === "settings") return settings();
+  if (v === "prices") return pricesPage();
   return home();
 }
 addEventListener("hashchange", route);
@@ -686,6 +687,7 @@ function home(){
   const F = S.finds.slice().sort((a, b) => b.score - a.score);
   const HUB = [["finds","Deal Finds", S.finds.length + " finds · " + F.filter(d => d.score >= 72).length + " strong"],["room","Underwrite", (S.index.deals || []).length + " memos · send an OM"],["budget","Budget","2027 money plan"],["updates","Claude","Send changes for this app"]];
   h += `<div class="hub">${HUB.map(([k, l, sub]) => `<button class="hubc" onclick="go('${k}')"><span class="hi">${IC[k]}</span><b>${l}</b><small>${esc(sub)}</small><i>→</i></button>`).join("")}</div><div class="hubfoot"><button class="btn line sm" onclick="go('settings')">Settings</button></div>`;
+  if (!LS.get("pricesLocked")) h += `<div class="card" style="margin-top:16px;border-color:var(--gold);cursor:pointer" onclick="go('prices')"><h3 style="margin:0 0 4px">One step left: keep stock prices private</h3><p class="muted" style="margin:0 0 10px">Right now anyone can see the stock list on the website. Type each investor's login and code once to lock it.</p><button class="btn sm">Do it now</button></div>`;
   const strong = F.filter(d => d.score >= 72).length;
   const D = S.index.deals || [];
   const ready = D.filter(d => /ready/i.test(d.status || "")).length;
@@ -1070,11 +1072,26 @@ async function lockPrices(){
     const body = JSON.stringify({ from: "eddie", app: "elk", text: "Finish locking prices: every investor file is ready in site-tools/vault-update. Run site-tools/lock_prices.py.", at }, null, 1);
     await gh(cfg.room, P(UPDIR + "/" + name), { method: "PUT", body: JSON.stringify({ message: "App update request: lock prices", content: b64u(body) }) });
     rows.length = 0; document.querySelectorAll(".lp-c").forEach(i => i.value = "");
+    LS.set("pricesLocked", 1);
     st.textContent = "All investors done. Claude finishes it on the next hourly run and replies in the Claude tab.";
   }catch(e){ st.textContent = e.message; }
   finally{ $("#s-lp").disabled = false; }
 }
 
+function lpCard(){ return `  <div class="card" style="margin-top:16px"><h3>Keep prices private</h3>
+   <p class="muted" style="margin:0 0 8px">Locks the stock prices so only people who log in can see them. Type each investor login and its code. The codes stay on this device and are never saved or sent.</p>
+   <div id="lp-rows"></div>
+   <div class="btns"><button class="btn line sm" id="lp-add">Add another login</button><button class="btn sm" id="s-lp">Lock prices</button></div>
+   <p class="muted" id="lp-st" style="margin:8px 0 0;font-size:13px"></p></div>`; }
+function lpWire(){
+  const lpRow = () => { const d = document.createElement("div"); d.className = "two lp-row"; d.innerHTML = `<div class="field"><label>Login</label><input class="lp-u" autocomplete="off"></div><div class="field"><label>Code</label><input class="lp-c" type="password" autocomplete="off"></div>`; $("#lp-rows").appendChild(d); };
+  lpRow(); $("#lp-add").onclick = lpRow; $("#s-lp").onclick = lockPrices;
+}
+function pricesPage(){
+  mark("settings");
+  $("#main").innerHTML = `<div class="setup" style="max-width:620px"><div class="head"><div><div class="eyebrow">Eddie only</div><h1>Keep prices private</h1></div></div>${lpCard()}</div>`;
+  lpWire();
+}
 /* ---------- settings ---------- */
 function settings(){
   mark("settings");
@@ -1089,19 +1106,14 @@ function settings(){
   <div class="card" style="margin-top:16px"><h3>Repos</h3>
    <div class="two"><div class="field"><label for="s-f">Deal Finds</label><input id="s-f" value="${esc(cfg.finds)}"></div><div class="field"><label for="s-r">Underwriting</label><input id="s-r" value="${esc(cfg.room)}"></div></div>
    <div class="btns"><button class="btn line sm" id="s-repo">Save</button><button class="btn line sm" id="s-wipe">Remove key and code from this device</button></div></div>
-  <div class="card" style="margin-top:16px"><h3>Keep prices private</h3>
-   <p class="muted" style="margin:0 0 8px">Locks the stock prices so only people who log in can see them. Type each investor login and its code. The codes stay on this device and are never saved or sent.</p>
-   <div id="lp-rows"></div>
-   <div class="btns"><button class="btn line sm" id="lp-add">Add another login</button><button class="btn sm" id="s-lp">Lock prices</button></div>
-   <p class="muted" id="lp-st" style="margin:8px 0 0;font-size:13px"></p></div>
+${lpCard()}
   <div class="card" style="margin-top:16px"><h3>Put it on your phone and computer</h3>
    <p style="margin:0 0 6px"><b>iPhone:</b> open this page in Safari, tap Share, then <b>Add to Home Screen</b>.</p>
    <p style="margin:0"><b>Computer:</b> in Chrome or Edge, click the install icon at the right of the address bar.</p></div></div>`;
   $("#s-key").onclick = async () => { const t = $("#s-tok").value.replace(/\s+/g, ""); if (!t) return toast("Paste the key first"); await sealKey(CODE, t); cfg.token = t; toast("Key saved"); refresh(); };
   $("#s-code").onclick = async () => { const a = $("#s-c1").value.trim(); if (a.length < 4) return toast("Use at least 4 digits"); if (a !== $("#s-c2").value.trim()) return toast("The codes don't match"); await sealKey(a, cfg.token); CODE = a; toast("Code changed"); settings(); };
   $("#s-repo").onclick = () => { cfg.finds = $("#s-f").value.trim(); cfg.room = $("#s-r").value.trim(); LS.set("cfg", { finds: cfg.finds, room: cfg.room }); toast("Saved"); refresh(); };
-  const lpRow = () => { const d = document.createElement("div"); d.className = "two lp-row"; d.innerHTML = `<div class="field"><label>Login</label><input class="lp-u" autocomplete="off"></div><div class="field"><label>Code</label><input class="lp-c" type="password" autocomplete="off"></div>`; $("#lp-rows").appendChild(d); };
-  lpRow(); $("#lp-add").onclick = lpRow; $("#s-lp").onclick = lockPrices;
+  lpWire();
   $("#s-wipe").onclick = () => { localStorage.removeItem(VKEY); scrubPlain(); lock(); };
 }
 

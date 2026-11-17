@@ -381,12 +381,13 @@ VIEWS.portfolio=()=>{
 };
 function stockRow(s){const r=(s.last-s.buy)/s.buy,dp=s.prev?(s.last-s.prev)/s.prev:0;
   return`<button class="row" data-go="stock" data-p='${JSON.stringify({t:s.t,group:s.group})}'><span class="tx"><b><span class="tkr">${esc(s.t)}</span> <span style="font-weight:500;color:var(--muted)">${esc(s.name)}</span></b><small>${s.shares.toLocaleString("en-US",{maximumFractionDigits:2})} sh · ${money(s.last,2)}</small></span><span class="rt"><b>${money(s.value)}</b><small class="${cls(dp)}">${pct(dp)} today</small></span>${chev}</button>`}
+async function pxGet(p,n){if(p&&p.pk){const r=await fetch(n+".enc.json",{cache:"no-store"});if(r.ok){const v=await r.json();const k=await crypto.subtle.importKey("raw",b64(p.pk),"AES-GCM",false,["decrypt"]);return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(v.iv)},k,b64(v.ct))))}}return (await fetch(n+".json",{cache:"no-store"})).json()}
 async function login(e){e.preventDefault();const u=$("#lu").value.trim().toLowerCase(),c=$("#lc").value.trim().toLowerCase(),er=$("#le");
   if(!u||!c){er.textContent="Enter your login and your code.";return}
   er.style.color="var(--muted)";er.textContent="Signing in…";$("#lb").disabled=true;
   try{S.P=await unlock(u,c);
-    try{S.prices=await (await fetch("../prices.json",{cache:"no-store"})).json()}catch(x){S.prices={t:{}}}
-    try{S.H=await (await fetch("../history.json",{cache:"no-store"})).json()}catch(x){S.H=null}
+    try{S.prices=await pxGet(S.P,"../prices")}catch(x){S.prices={t:{}}}
+    try{S.H=await pxGet(S.P,"../history")}catch(x){S.H=null}
     S.user=u;render(true);}
   catch(x){er.style.color="";er.textContent="That login and code don't match.";$("#lc").value="";$("#lb").disabled=false}}
 

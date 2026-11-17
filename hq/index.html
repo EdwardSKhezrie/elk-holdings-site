@@ -1025,6 +1025,56 @@ async function budget(){
   }
 }
 
+/* ---------- keep stock prices private ----------
+   Adds one shared prices key to each investor's locked file (re-locked with that investor's own code, on this device),
+   saves the files to the private repo, then asks Claude to finish: lock prices/history and remove the public copies. */
+const ub64 = s => Uint8Array.from(atob(s), c => c.charCodeAt(0));
+const sha256hex = async t => Array.from(new Uint8Array(await crypto.subtle.digest("SHA-256", new TextEncoder().encode(t)))).map(x => x.toString(16).padStart(2, "0")).join("");
+async function lockPrices(){
+  const rows = [...document.querySelectorAll(".lp-row")].map(r => [r.querySelector(".lp-u").value.trim().toLowerCase(), r.querySelector(".lp-c").value.trim().toLowerCase()]).filter(x => x[0] && x[1]);
+  const st = $("#lp-st");
+  if (!rows.length) return st.textContent = "Type at least one login and its code.";
+  $("#s-lp").disabled = true;
+  try{
+    let total = null;
+    try{ const l = await (await fetch("https://api.github.com/repos/EdwardSKhezrie/elk-holdings-site/contents/portal/vault")).json(); if (Array.isArray(l)) total = l.filter(x => /\.json$/.test(x.name)).length; }catch(e){}
+    st.textContent = "Checking the codes…";
+    const KP = "eddie-private/prices-key.json"; let pk = "";
+    try{ pk = JSON.parse(decode((await gh(cfg.room, P(KP))).content)).key || ""; }catch(e){ if (e.status !== 404) throw e; }
+    const ready = [];
+    for (const [u, c] of rows){
+      const h = await sha256hex("elk:" + u);
+      const r = await fetch("../portal/vault/" + h + ".json", { cache: "no-store" });
+      if (!r.ok) throw new Error(`There's no investor called "${u}". Check the login.`);
+      const v = await r.json();
+      const km = await crypto.subtle.importKey("raw", new TextEncoder().encode(c), "PBKDF2", false, ["deriveKey"]);
+      const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: ub64(v.salt), iterations: v.iter, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+      let pt; try{ pt = await crypto.subtle.decrypt({ name: "AES-GCM", iv: ub64(v.iv) }, key, ub64(v.ct)); }catch(e){ throw new Error(`Wrong code for "${u}". Nothing was changed.`); }
+      ready.push({ u, h, v, key, p: JSON.parse(new TextDecoder().decode(pt)) });
+    }
+    if (!pk){ pk = b64s(crypto.getRandomValues(new Uint8Array(32))); await gh(cfg.room, P(KP), { method: "PUT", body: JSON.stringify({ message: "Prices key", content: b64u(JSON.stringify({ key: pk })) }) }); }
+    for (const x of ready){
+      st.textContent = "Locking " + x.u + "…";
+      x.p.pk = pk;
+      const iv = crypto.getRandomValues(new Uint8Array(12));
+      const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, x.key, new TextEncoder().encode(JSON.stringify(x.p)));
+      const out = JSON.stringify({ v: x.v.v || 1, iter: x.v.iter, salt: x.v.salt, iv: b64s(iv), ct: b64s(ct) });
+      const path = "site-tools/vault-update/" + x.h + ".json"; let sha;
+      try{ sha = (await gh(cfg.room, P(path))).sha; }catch(e){}
+      await gh(cfg.room, P(path), { method: "PUT", body: JSON.stringify({ message: "Vault update", content: btoa(out), sha }) });
+    }
+    let have = ready.length;
+    try{ have = (await gh(cfg.room, P("site-tools/vault-update"))).filter(x => /\.json$/.test(x.name)).length; }catch(e){}
+    if (total && have < total){ st.textContent = `Saved ${have} of ${total} investors. Add the rest, then tap Lock prices again. Prices stay as they are until all ${total} are done.`; return; }
+    const at = new Date().toISOString(), name = at.replace(/[:.]/g, "-") + "-eddie.json";
+    const body = JSON.stringify({ from: "eddie", app: "elk", text: "Finish locking prices: every investor file is ready in site-tools/vault-update. Run site-tools/lock_prices.py.", at }, null, 1);
+    await gh(cfg.room, P(UPDIR + "/" + name), { method: "PUT", body: JSON.stringify({ message: "App update request: lock prices", content: b64u(body) }) });
+    rows.length = 0; document.querySelectorAll(".lp-c").forEach(i => i.value = "");
+    st.textContent = "All investors done. Claude finishes it on the next hourly run and replies in the Claude tab.";
+  }catch(e){ st.textContent = e.message; }
+  finally{ $("#s-lp").disabled = false; }
+}
+
 /* ---------- settings ---------- */
 function settings(){
   mark("settings");
@@ -1039,12 +1089,19 @@ function settings(){
   <div class="card" style="margin-top:16px"><h3>Repos</h3>
    <div class="two"><div class="field"><label for="s-f">Deal Finds</label><input id="s-f" value="${esc(cfg.finds)}"></div><div class="field"><label for="s-r">Underwriting</label><input id="s-r" value="${esc(cfg.room)}"></div></div>
    <div class="btns"><button class="btn line sm" id="s-repo">Save</button><button class="btn line sm" id="s-wipe">Remove key and code from this device</button></div></div>
+  <div class="card" style="margin-top:16px"><h3>Keep prices private</h3>
+   <p class="muted" style="margin:0 0 8px">Locks the stock prices so only people who log in can see them. Type each investor login and its code. The codes stay on this device and are never saved or sent.</p>
+   <div id="lp-rows"></div>
+   <div class="btns"><button class="btn line sm" id="lp-add">Add another login</button><button class="btn sm" id="s-lp">Lock prices</button></div>
+   <p class="muted" id="lp-st" style="margin:8px 0 0;font-size:13px"></p></div>
   <div class="card" style="margin-top:16px"><h3>Put it on your phone and computer</h3>
    <p style="margin:0 0 6px"><b>iPhone:</b> open this page in Safari, tap Share, then <b>Add to Home Screen</b>.</p>
    <p style="margin:0"><b>Computer:</b> in Chrome or Edge, click the install icon at the right of the address bar.</p></div></div>`;
   $("#s-key").onclick = async () => { const t = $("#s-tok").value.replace(/\s+/g, ""); if (!t) return toast("Paste the key first"); await sealKey(CODE, t); cfg.token = t; toast("Key saved"); refresh(); };
   $("#s-code").onclick = async () => { const a = $("#s-c1").value.trim(); if (a.length < 4) return toast("Use at least 4 digits"); if (a !== $("#s-c2").value.trim()) return toast("The codes don't match"); await sealKey(a, cfg.token); CODE = a; toast("Code changed"); settings(); };
   $("#s-repo").onclick = () => { cfg.finds = $("#s-f").value.trim(); cfg.room = $("#s-r").value.trim(); LS.set("cfg", { finds: cfg.finds, room: cfg.room }); toast("Saved"); refresh(); };
+  const lpRow = () => { const d = document.createElement("div"); d.className = "two lp-row"; d.innerHTML = `<div class="field"><label>Login</label><input class="lp-u" autocomplete="off"></div><div class="field"><label>Code</label><input class="lp-c" type="password" autocomplete="off"></div>`; $("#lp-rows").appendChild(d); };
+  lpRow(); $("#lp-add").onclick = lpRow; $("#s-lp").onclick = lockPrices;
   $("#s-wipe").onclick = () => { localStorage.removeItem(VKEY); scrubPlain(); lock(); };
 }
 

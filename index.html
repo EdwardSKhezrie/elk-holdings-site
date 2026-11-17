@@ -1210,6 +1210,7 @@ async function unlock(name,code){
   const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(v.iv)},key,b64(v.ct));
   return JSON.parse(new TextDecoder().decode(pt));
 }
+async function pxGet(p,n){if(p&&p.pk){const r=await fetch(n+".enc.json",{cache:"no-store"});if(r.ok){const v=await r.json();const k=await crypto.subtle.importKey("raw",b64(p.pk),"AES-GCM",false,["decrypt"]);return JSON.parse(new TextDecoder().decode(await crypto.subtle.decrypt({name:"AES-GCM",iv:b64(v.iv)},k,b64(v.ct))))}}return (await fetch(n+".json",{cache:"no-store"})).json()}
 document.getElementById("loginForm").addEventListener("submit",async e=>{
   e.preventDefault();
   const em=document.getElementById("email").value.trim().toLowerCase(),pin=codeEl.value.trim().toLowerCase();
@@ -1219,8 +1220,8 @@ document.getElementById("loginForm").addEventListener("submit",async e=>{
   try{
     const p=await unlock(em,pin);
     Object.assign(DEALS,p.deals||{});Object.assign(EXAMPLES,p.examples||{});Object.assign(IMG,p.images||{});
-    try{const pr=await (await fetch("prices.json",{cache:"no-store"})).json();Object.assign(PRICES,pr)}catch(x){}
-    try{HIST=await (await fetch("history.json",{cache:"no-store"})).json()}catch(x){}
+    try{const pr=await pxGet(p,"prices");Object.assign(PRICES,pr)}catch(x){}
+    try{HIST=await pxGet(p,"history")}catch(x){}
     err.textContent="";session=p.investor;openRoom();
   }catch(x){err.textContent="That login and code don't match. Check both and try again.";codeEl.value="";codeEl.focus()}
   finally{btn.disabled=false}

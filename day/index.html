@@ -186,7 +186,7 @@ function gate(msg){
     try{
       if (setup){
         if (c !== $("#g2").value.trim()) return er.textContent = "The two codes don't match.";
-        const t = $("#g3").value.trim(); if (!t) return er.textContent = "Paste your GitHub key.";
+        const t = $("#g3").value.replace(/\s+/g, ""); if (!t) return er.textContent = "Paste your GitHub key."; er.textContent = "Checking the key…"; const ok = await fetch("https://api.github.com/repos/EdwardSKhezrie/elk-deal-room", { headers: { Authorization: "Bearer " + t } }).then(r => r.status).catch(() => 0); if (ok === 401) return er.textContent = "GitHub says this key is wrong or expired. Make a new one and paste it."; if (ok === 404) return er.textContent = "This key can't see elk-deal-room. Edit the key on GitHub to include it.";
         er.textContent = "Saving…"; await sealKey(c, t); TOKEN = t;
       } else {
         er.textContent = "Opening…";

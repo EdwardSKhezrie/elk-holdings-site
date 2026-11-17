@@ -222,6 +222,12 @@ table.kv td:first-child{color:var(--muted);width:38%;padding-right:12px}
 .picked li span{margin-left:auto;color:var(--muted)}
 .picked li button{color:var(--muted);padding:0 4px}
 .two{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.need{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.need span{font-size:12.5px;border:1px solid var(--line);border-radius:999px;padding:4px 10px;color:var(--muted)}
+.need span.have{border-color:var(--gold);color:var(--ink)}
+.need span.have:before{content:"✓ ";color:var(--gold)}
+.fprev{font-size:12.5px;color:var(--muted);margin-top:8px}
+.fprev b{color:var(--gold);font-weight:600}
 .two .field textarea{min-height:0}
 
 .toast{position:fixed;left:50%;bottom:calc(var(--bot) + 90px);transform:translateX(-50%);background:var(--card2);border:1px solid var(--line2);color:var(--ink);padding:11px 18px;border-radius:999px;display:none;z-index:80;font-size:14px;box-shadow:0 10px 30px rgba(0,0,0,.5)}
@@ -376,19 +382,30 @@ body{overflow-x:hidden}
   <aside class="sheet" aria-label="Send a deal">
     <header><h2>Send a deal</h2><button id="close" aria-label="Close">×</button></header>
     <div class="body">
-      <p class="muted" style="margin:0 0 14px">Add the OM and anything that came with it. The next build turns it into an ELK investor memo in its own folder.</p>
-      <div class="drop" id="drop" tabindex="0"><b>Drop files here</b>or tap to choose: OM, rent roll, P&amp;L, photos, broker email</div>
+      <div class="field" style="margin-top:0"><label for="f-deal">This is for</label><select id="f-deal"></select></div>
+      <div class="drop" id="drop" tabindex="0" style="margin-top:14px"><b>Drop files here</b>or tap to choose them. PDF, Excel, Word, photos or a saved email all work.</div>
       <input type="file" id="pick" multiple hidden>
       <ul class="picked" id="picked"></ul>
-      <div class="two">
-        <div class="field"><label for="f-name">Property name</label><input id="f-name" placeholder="Property name"></div>
-        <div class="field"><label for="f-addr">Address</label><input id="f-addr" placeholder="Street, City, State"></div>
-      </div>
-      <div class="two">
+      <div class="need" id="need"></div>
+      <div id="newonly">
+        <div class="field"><label for="f-name">Property name</label><input id="f-name" placeholder="e.g. Main Street Office"></div>
+        <div class="two">
+          <div class="field"><label for="f-addr">Street address</label><input id="f-addr" placeholder="e.g. 100 Main St"></div>
+          <div class="field"><label for="f-area">City, State</label><input id="f-area" placeholder="e.g. City, ST"></div>
+        </div>
+        <div class="fprev" id="fprev"></div>
         <div class="field"><label for="f-from">Sent by</label><input id="f-from" placeholder="Broker and firm"></div>
-        <div class="field"><label for="f-price">Price or terms</label><input id="f-price" placeholder="Buy at a 14 cap"></div>
       </div>
-      <div class="field"><label for="f-note">Notes for the memo</label><textarea id="f-note" style="min-height:96px" placeholder="Call notes, guidance, what I want to offer, exit cap…"></textarea></div>
+      <div class="two">
+        <div class="field"><label for="f-ask">Asking price</label><input id="f-ask" inputmode="decimal" placeholder="Blank if none"></div>
+        <div class="field"><label for="f-price">My price or terms</label><input id="f-price" placeholder="e.g. 16 cap, or $8.5M"></div>
+      </div>
+      <div class="two">
+        <div class="field"><label for="f-exit">Sell at (exit cap)</label><input id="f-exit" inputmode="decimal" placeholder="10%"></div>
+        <div class="field"><label for="f-hold">Hold (years)</label><input id="f-hold" inputmode="numeric" placeholder="5"></div>
+      </div>
+      <div class="field"><label for="f-note">Notes for the memo</label><textarea id="f-note" style="min-height:90px" placeholder="Call notes, what the broker said, anything to change from the last memo…"></textarea></div>
+      <p class="muted" style="font-size:12.5px;margin:12px 0 0">Blank boxes use the ELK rules: asking price (or a 12% cap on today's NOI), sell at a 10% cap, hold 5 years, conservative leasing.</p>
     </div>
     <footer><button class="btn" id="send">Send to underwriting</button><span class="muted" id="sendst"></span></footer>
   </aside>
@@ -542,7 +559,7 @@ function gate(){
     try{
       if (setup){
         if (c !== $("#g2").value.trim()) return er.textContent = "The two codes don't match.";
-        const t = $("#g3").value.trim(); if (!t) return er.textContent = "Paste your GitHub key.";
+        const t = $("#g3").value.replace(/\s+/g, ""); if (!t) return er.textContent = "Paste your GitHub key."; er.textContent = "Checking the key…"; const ok = await fetch("https://api.github.com/repos/EdwardSKhezrie/elk-deal-room", { headers: { Authorization: "Bearer " + t } }).then(r => r.status).catch(() => 0); if (ok === 401) return er.textContent = "GitHub says this key is wrong or expired. Make a new one and paste it."; if (ok === 404) return er.textContent = "This key can't see elk-deal-room. Edit the key on GitHub to include it.";
         er.textContent = "Saving…"; await sealKey(c, t); scrubPlain(); cfg.token = t;
       } else {
         er.textContent = "Opening…";
@@ -809,7 +826,7 @@ async function folder(f){
   let h = `<button class="back" onclick="go('room')">← All underwriting</button>
   <div class="hero"><div style="padding:24px 26px 20px"><div class="eyebrow">${esc(d.area || "")}</div><h1>${esc(d.name)}</h1><div class="muted">${esc(d.address || "")}${d.source ? " · from " + esc(d.source) : ""}</div></div>
    <div class="figs">${fig(fmtM(d.price), "Price")}${fig(pct(d.cap_now), "Cap today")}${fig(pct(d.occupancy), "Occupied")}${fig(d.walt != null ? d.walt.toFixed(1) + " yrs" : "—", "WALT")}${fig(d.moic ? d.moic.toFixed(1) + "x" : "—", "MOIC", 1)}${fig(pct(d.irr), "IRR", 1)}</div></div>
-  <div class="btns" style="margin:18px 0">${inv ? `<button class="btn" data-p="${esc(inv.path)}" data-n="${esc(inv.name)}">Open investor memo</button>` : `<span class="muted">The memo isn't built yet. It shows up here after the next build.</span>`}${full ? `<button class="btn line" data-p="${esc(full.path)}" data-n="${esc(full.name)}">Full underwriting</button>` : ""}</div>
+  <div class="btns" style="margin:18px 0">${inv ? `<button class="btn" data-p="${esc(inv.path)}" data-n="${esc(inv.name)}">Open investor memo</button>` : `<span class="muted">The memo isn't built yet. It shows up here after the next build.</span>`}${full ? `<button class="btn line" data-p="${esc(full.path)}" data-n="${esc(full.name)}">Full underwriting</button>` : ""}${d.id ? `<button class="btn line" onclick="openSend('${esc(d.id)}')">Add files or changes</button>` : ""}</div>
   <div class="cols"><div class="stack"><div class="card"><h3>Documents</h3>${src.filter(x => x.type === "file").map(row).join("") || '<p class="muted" style="margin:0">No source files yet.</p>'}</div>
    ${html.length ? `<div class="card"><h3>Editable memo files</h3>${html.map(row).join("")}</div>` : ""}</div>
    <div class="card"><h3>What to confirm with the broker</h3><div class="checks muted" id="checks">Nothing yet.</div></div></div>`;
@@ -835,9 +852,23 @@ async function openFile(p, n){
 
 /* ---------- send a deal ---------- */
 let FILES = [];
-function openSend(){ if (!cfg.token) return go("eddie"); document.body.classList.add("open"); showPicked(); }
+const NEEDS = [["OM", /\b(om|offering|memorandum|flyer|brochure|package|cim)\b/i, 1],["Rent roll", /rent.?roll|\brr\b|tenancy|stacking/i, 1],["P&L", /p\s*&\s*l|pnl|operating|income|statement|budget|t-?12|financial/i, 1],["Leases", /lease|amend|estoppel/i],["Condition report", /pca|pcr|condition/i],["Phase I", /phase|esa|environment/i],["Photos", /\.(jpe?g|png|heic|webp)$/i]];
+function openSend(id){ if (!cfg.token) return go("eddie");
+  const sel = $("#f-deal"), ds = (S.index.deals || []).slice().sort((a, b) => a.folder.localeCompare(b.folder));
+  sel.innerHTML = `<option value="">A new deal</option>` + ds.map(d => `<option value="${esc(d.id)}">Add to: ${esc(d.folder)}</option>`).join("");
+  sel.value = id || ""; sel.onchange = syncSend;
+  ["#f-name", "#f-addr", "#f-area"].forEach(k => $(k).oninput = syncSend);
+  document.body.classList.add("open"); showPicked(); syncSend(); }
+function syncSend(){
+  const isNew = !$("#f-deal").value;
+  $("#newonly").hidden = !isNew;
+  const a = $("#f-area").value.trim(), st = $("#f-addr").value.trim();
+  $("#fprev").innerHTML = a && st ? `Goes into the folder <b>${esc(a + " - " + st)}</b>` : "The folder is named City, State - Street.";
+  $("#send").textContent = isNew ? "Send to underwriting" : "Add files and rebuild";
+}
 function closeSend(){ document.body.classList.remove("open"); }
 function showPicked(){
+  $("#need").innerHTML = NEEDS.map(([n, re, key]) => `<span class="${FILES.some(f => re.test(f.name)) ? "have" : ""}">${n}${key ? "" : " (if you have it)"}</span>`).join("");
   $("#picked").innerHTML = FILES.map((f, i) => `<li>${esc(f.name)}<span>${size(f.size)}</span><button data-i="${i}" aria-label="Remove ${esc(f.name)}">×</button></li>`).join("");
   document.querySelectorAll("#picked button").forEach(b => b.onclick = () => { FILES.splice(+b.dataset.i, 1); showPicked(); });
 }
@@ -854,7 +885,8 @@ function showPicked(){
 })();
 const b64 = f => new Promise((res, rej) => { const r = new FileReader(); r.onload = () => res(r.result.split(",")[1]); r.onerror = rej; r.readAsDataURL(f); });
 $("#send").onclick = async () => {
-  const name = $("#f-name").value.trim(), addr = $("#f-addr").value.trim();
+  const D = (S.index.deals || []).find(d => d.id === $("#f-deal").value);
+  const name = D ? D.name : $("#f-name").value.trim(), addr = D ? D.address : $("#f-addr").value.trim(), area = D ? D.area : $("#f-area").value.trim();
   if (!FILES.length && !$("#f-note").value.trim()) return toast("Add a file or a note first");
   const big = FILES.find(f => f.size > 95e6); if (big) return toast(big.name + " is over 95 MB, GitHub's limit. Split or compress it.", 5000);
   const btn = $("#send"), st = $("#sendst"); btn.disabled = true;
@@ -867,7 +899,12 @@ $("#send").onclick = async () => {
       const blob = await gh(R, "/git/blobs", { method: "POST", body: JSON.stringify({ content: await b64(FILES[i]), encoding: "base64" }) });
       tree.push({ path: `${dir}/${FILES[i].name.replace(/[\\/]/g, "-")}`, mode: "100644", type: "blob", sha: blob.sha });
     }
-    const note = { name, address: addr, from: $("#f-from").value.trim(), price: $("#f-price").value.trim(), note: $("#f-note").value.trim(), files: FILES.map(f => f.name), sent: new Date().toISOString(), via: "ELK app" };
+    const num = v => { const x = parseFloat(String(v).replace(/[$,\s%]/g, "")); return isNaN(x) ? null : x; };
+    const ex = num($("#f-exit").value);
+    const note = { name, address: addr, area, folder: D ? D.folder : (area && addr ? area + " - " + addr : ""), deal_id: D ? D.id : null,
+      from: D ? "" : $("#f-from").value.trim(), asking_price: num($("#f-ask").value), terms: $("#f-price").value.trim(),
+      exit_cap: ex == null ? null : (ex > 1 ? ex / 100 : ex), hold_years: num($("#f-hold").value),
+      note: $("#f-note").value.trim(), files: FILES.map(f => f.name), sent: new Date().toISOString(), via: "ELK app" };
     const nb = await gh(R, "/git/blobs", { method: "POST", body: JSON.stringify({ content: JSON.stringify(note, null, 1), encoding: "utf-8" }) });
     tree.push({ path: `${dir}/note.json`, mode: "100644", type: "blob", sha: nb.sha });
     st.textContent = "Saving";
@@ -876,7 +913,7 @@ $("#send").onclick = async () => {
     const t = await gh(R, "/git/trees", { method: "POST", body: JSON.stringify({ base_tree: head.tree.sha, tree }) });
     const c = await gh(R, "/git/commits", { method: "POST", body: JSON.stringify({ message: `Inbox: ${name || addr || FILES.map(f => f.name).join(", ")}`, tree: t.sha, parents: [ref.object.sha] }) });
     await gh(R, `/git/refs/heads/${S.branch}`, { method: "PATCH", body: JSON.stringify({ sha: c.sha }) });
-    FILES = []; ["#f-name", "#f-addr", "#f-from", "#f-price", "#f-note"].forEach(s => $(s).value = "");
+    FILES = []; ["#f-name", "#f-addr", "#f-area", "#f-from", "#f-ask", "#f-price", "#f-exit", "#f-hold", "#f-note"].forEach(s => $(s).value = "");
     st.textContent = ""; closeSend(); toast("Sent. The memo gets built on the next run.", 3800);
     refresh();
   }catch(e){ st.textContent = ""; toast("Didn't send. " + e.message, 5500); }
@@ -1005,7 +1042,7 @@ function settings(){
   <div class="card" style="margin-top:16px"><h3>Put it on your phone and computer</h3>
    <p style="margin:0 0 6px"><b>iPhone:</b> open this page in Safari, tap Share, then <b>Add to Home Screen</b>.</p>
    <p style="margin:0"><b>Computer:</b> in Chrome or Edge, click the install icon at the right of the address bar.</p></div></div>`;
-  $("#s-key").onclick = async () => { const t = $("#s-tok").value.trim(); if (!t) return toast("Paste the key first"); await sealKey(CODE, t); cfg.token = t; toast("Key saved"); refresh(); };
+  $("#s-key").onclick = async () => { const t = $("#s-tok").value.replace(/\s+/g, ""); if (!t) return toast("Paste the key first"); await sealKey(CODE, t); cfg.token = t; toast("Key saved"); refresh(); };
   $("#s-code").onclick = async () => { const a = $("#s-c1").value.trim(); if (a.length < 4) return toast("Use at least 4 digits"); if (a !== $("#s-c2").value.trim()) return toast("The codes don't match"); await sealKey(a, cfg.token); CODE = a; toast("Code changed"); settings(); };
   $("#s-repo").onclick = () => { cfg.finds = $("#s-f").value.trim(); cfg.room = $("#s-r").value.trim(); LS.set("cfg", { finds: cfg.finds, room: cfg.room }); toast("Saved"); refresh(); };
   $("#s-wipe").onclick = () => { localStorage.removeItem(VKEY); scrubPlain(); lock(); };

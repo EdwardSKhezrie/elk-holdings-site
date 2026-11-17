@@ -272,6 +272,14 @@ body{overflow-x:hidden}
 .enav .sp{flex:1}
 .enav .lk{border:0;color:var(--dim)}
 .bud iframe{width:100%;height:calc(100vh - 190px);border:1px solid var(--line);border-radius:14px;background:#000;display:block}
+
+.enav{display:flex;align-items:center;gap:10px;border-bottom:1px solid var(--line);padding:0 0 12px;flex-wrap:nowrap!important;overflow:visible!important;margin:0!important}
+.enav .eback{display:inline-flex;align-items:center;gap:4px;color:var(--gold-hi);border:0!important;padding:6px 4px!important;font-size:15px!important;background:none!important}
+.enav .eback svg{width:18px;height:18px;stroke:currentColor;fill:none;stroke-width:2}
+.enav .etitle{flex:1;text-align:center;font-family:var(--mark);font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--ink)}
+.enav .lk{display:inline-flex;align-items:center;gap:6px;border:0!important;color:var(--dim);font-size:13px!important;padding:6px 4px!important}
+.enav .lk svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8}
+.hubfoot{display:flex;gap:10px;justify-content:center;margin:6px 0 22px}
 .hub{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 0 18px}
 .hubc{position:relative;text-align:left;background:linear-gradient(160deg,#16140F,#0D0C0B);border:1px solid var(--line2);border-radius:16px;padding:20px 20px 18px;display:flex;flex-direction:column;gap:4px;min-height:132px;transition:border-color .15s,transform .15s}
 .hubc:hover{border-color:var(--gold);transform:translateY(-1px)}
@@ -421,14 +429,16 @@ const EDDIE_VIEWS = ["eddie","finds","room","budget","updates","settings"];
 function buildNav(){
   $("#tabbar").innerHTML = TABS.map(([k, l]) => `<button data-go="${k}">${IC[k]}${l}</button>`).join("");
   $("#ahlocked").innerHTML = `<button class="ahlock" data-go="eddie">${IC.eddie}Eddie</button>`;
-  $("#enav").innerHTML = ENAV.map(([k, l]) => `<button data-go="${k}">${l}<span class="ct" id="ct-${k}" style="margin-left:6px;color:var(--dim);font-size:12px"></span></button>`).join("") + `<span class="sp"></span><button data-go="send" class="btn sm" style="color:#120E05">Send a deal</button><button class="lk" id="lockBtn">Lock</button>`;
+  $("#enav").innerHTML = `<button class="eback" data-go="eddie"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg><span>Eddie</span></button><span class="etitle" id="etitle"></span><button class="lk" id="lockBtn">${IC.eddie}<span>Lock</span></button>`;
   document.querySelectorAll("[data-go]").forEach(b => b.onclick = () => b.dataset.go === "send" ? openSend() : go(b.dataset.go));
   $("#lockBtn").onclick = lock;
 }
 function mark(k){
   const top = EDDIE_VIEWS.includes(k) ? "eddie" : k;
   document.querySelectorAll(".ahnav [data-go], #tabbar [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === top));
-  document.querySelectorAll("#enav [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === k));
+  const T = { finds: "Deal Finds", room: "Underwrite", budget: "Budget", updates: "Claude", settings: "Settings" };
+  const et = $("#etitle"); if (et) et.textContent = T[k] || "";
+  const back = document.querySelector("#enav .eback"); if (back) back.style.visibility = k === "eddie" ? "hidden" : "visible";
 }
 function go(view){ if (location.hash !== "#" + view) location.hash = view; else route(); }
 
@@ -643,14 +653,14 @@ function needKey(){
   return `<div class="empty"><div class="eyebrow">Welcome</div><h2 style="margin-top:8px">Connect your GitHub key once</h2><p>Deal Finds and Underwriting read straight from your private repos. Nothing private lives on this page.</p><button class="btn" onclick="go('settings')">Open settings</button></div>`;
 }
 function home(){
-  mark("home");
+  mark("eddie");
   const hr = new Date().getHours(), greet = hr < 12 ? "Good morning" : hr < 18 ? "Good afternoon" : "Good evening";
   const today = new Date().toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
   let h = `<div class="head"><div><div class="eyebrow">${esc(today)}</div><h1>${greet}, Eddie</h1></div><div class="grow"></div><button class="btn" onclick="openSend()">Send a deal</button></div>`;
   if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
   const F = S.finds.slice().sort((a, b) => b.score - a.score);
   const HUB = [["finds","Deal Finds", S.finds.length + " finds · " + F.filter(d => d.score >= 72).length + " strong"],["room","Underwrite", (S.index.deals || []).length + " memos · send an OM"],["budget","Budget","2027 money plan"],["updates","Claude","Send changes for this app"]];
-  h += `<div class="hub">${HUB.map(([k, l, sub]) => `<button class="hubc" onclick="go('${k}')"><span class="hi">${IC[k]}</span><b>${l}</b><small>${esc(sub)}</small><i>→</i></button>`).join("")}</div>`;
+  h += `<div class="hub">${HUB.map(([k, l, sub]) => `<button class="hubc" onclick="go('${k}')"><span class="hi">${IC[k]}</span><b>${l}</b><small>${esc(sub)}</small><i>→</i></button>`).join("")}</div><div class="hubfoot"><button class="btn line sm" onclick="go('settings')">Settings</button></div>`;
   const strong = F.filter(d => d.score >= 72).length;
   const D = S.index.deals || [];
   const ready = D.filter(d => /ready/i.test(d.status || "")).length;

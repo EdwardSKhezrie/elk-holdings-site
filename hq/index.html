@@ -1017,15 +1017,19 @@ setInterval(() => { if (document.visibilityState === "visible" && unlocked()) re
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
 </script>
 <script>
-/* Installed on a computer: go full screen on the first click, so no window buttons or browser icons show. Esc leaves full screen. */
+/* Installed on a computer: go full screen on any click (also clicks inside the page frames), so no title bar, window buttons or browser icons show. */
 (function(){
   var desk = !/iPhone|iPad|Android/i.test(navigator.userAgent);
-  var inst = matchMedia("(display-mode: window-controls-overlay)").matches || matchMedia("(display-mode: standalone)").matches;
+  var inst = ["window-controls-overlay","standalone","minimal-ui","fullscreen"].some(function(m){ return matchMedia("(display-mode: "+m+")").matches; });
   if (!desk || !inst || !document.documentElement.requestFullscreen) return;
-  var asked = false;
-  function go(){ if (asked || document.fullscreenElement) return; asked = true; document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(function(){ asked = false; }); }
-  document.addEventListener("pointerdown", go, true);
-  document.addEventListener("keydown", function(e){ if (e.key !== "Escape") go(); }, true);
+  var busy = false;
+  function go(){ if (busy || document.fullscreenElement) return; busy = true; document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(function(){}).then(function(){ busy = false; }); }
+  function hook(doc){ try { if (!doc || doc.__fsHooked) return; doc.__fsHooked = true;
+    doc.addEventListener("pointerdown", go, true);
+    doc.addEventListener("keydown", function(e){ if (e.key !== "Escape" && e.key !== "F11") go(); }, true); } catch(e){} }
+  function hookFrames(){ hook(document); document.querySelectorAll("iframe").forEach(function(f){
+    try { hook(f.contentDocument); if (!f.__fsLoad){ f.__fsLoad = true; f.addEventListener("load", function(){ hook(f.contentDocument); }); } } catch(e){} }); }
+  hookFrames(); setInterval(hookFrames, 1500);
   window.addEventListener("message", function(e){ if (e.data === "elk-fullscreen") go(); });
 })();
 </script>

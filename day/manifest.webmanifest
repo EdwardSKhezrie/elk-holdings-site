@@ -29,6 +29,7 @@
   }
  ],
  "display_override": [
+  "fullscreen",
   "window-controls-overlay",
   "standalone"
  ]

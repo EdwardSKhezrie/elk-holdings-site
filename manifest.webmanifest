@@ -2,8 +2,8 @@
  "name": "ELK Holdings",
  "short_name": "ELK",
  "description": "ELK Holdings family office and partner portal",
- "start_url": "./",
- "scope": "./",
+ "start_url": "./index.html",
+ "scope": "./index.html",
  "display": "standalone",
  "background_color": "#000000",
  "theme_color": "#000000",
@@ -34,5 +34,6 @@
  "display_override": [
   "window-controls-overlay",
   "standalone"
- ]
+ ],
+ "id": "/elk-holdings-site/"
 }

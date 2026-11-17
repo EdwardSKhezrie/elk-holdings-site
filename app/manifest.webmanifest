@@ -25,5 +25,9 @@
    "purpose": "maskable"
   }
  ],
- "id": "./"
+ "id": "./",
+ "display_override": [
+  "window-controls-overlay",
+  "standalone"
+ ]
 }

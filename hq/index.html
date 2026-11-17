@@ -313,6 +313,14 @@ body{overflow-x:hidden}
   .bud iframe{height:calc(100vh - 210px - var(--top) - var(--bot))!important}
 }
 
+
+/* installed on a computer: no title bar; our header sits where it was and drags the window */
+@media (display-mode: window-controls-overlay){
+  .ah{-webkit-app-region:drag;app-region:drag}
+  .ah button,.ah a,.ah input{-webkit-app-region:no-drag;app-region:no-drag}
+  .ah-in{max-width:none;padding-left:max(28px,env(titlebar-area-x,0px));padding-right:calc(100vw - env(titlebar-area-x,0px) - env(titlebar-area-width,100vw) + 16px)}
+}
+
 /* phone */
 @media (max-width:900px){
   body{font-size:15px}

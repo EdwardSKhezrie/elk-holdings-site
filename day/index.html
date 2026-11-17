@@ -36,9 +36,18 @@ label{display:block;text-align:left;font:600 11px "Inter Tight",sans-serif;lette
 .link{background:none;border:0;color:var(--muted);font-size:13px;margin-top:20px;cursor:pointer;text-decoration:underline}
 .loading{padding-top:40vh;text-align:center;color:var(--muted);font-size:14px}
 .toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 80px);transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:4px;font-size:13.5px;display:none;z-index:10}
+
+/* installed on a computer: no title bar; a thin bar in the app's colors drags the window */
+.tbar{display:none}
+@media (display-mode: window-controls-overlay){
+  .tbar{display:flex;align-items:center;position:fixed;left:env(titlebar-area-x,0);top:env(titlebar-area-y,0);width:env(titlebar-area-width,100%);height:env(titlebar-area-height,33px);padding-left:12px;background:var(--bg);color:var(--muted);font:500 10px "JetBrains Mono",monospace;letter-spacing:.16em;text-transform:uppercase;-webkit-app-region:drag;app-region:drag;z-index:5}
+  #appf{top:env(titlebar-area-height,33px);height:calc(100% - env(titlebar-area-height,33px))}
+  .gate{padding-top:64px}
+}
 </style>
 </head>
 <body>
+<div class="tbar">My Day</div>
 <div id="gate"></div>
 <iframe id="appf" title="My Day" hidden></iframe>
 <div class="toast" id="toast" role="status"></div>

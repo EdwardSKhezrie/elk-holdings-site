@@ -363,6 +363,7 @@ body{overflow-x:hidden}
 @media (prefers-reduced-motion:reduce){.sheet,.fcard{transition:none}}
 .folder{display:flex;align-items:center;gap:10px;width:100%;margin:26px 0 12px;padding:14px 16px;background:transparent;border:1px solid rgba(201,164,92,.45);border-radius:10px;color:inherit;font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-align:left}
 .folder:hover{border-color:#C9A45C}.folder .fi{color:#C9A45C;width:14px}.folder .dim{margin-left:auto}
+.pick{display:flex;flex-wrap:wrap;gap:8px}.pick .chip{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:transparent;border:1px solid #3a342a;color:inherit;border-radius:10px;padding:8px 11px;font:inherit;font-size:13.5px;cursor:pointer;max-width:100%}.pick .chip small{color:#9a907f;font-size:11.5px;margin-top:2px}.pick .chip.on{border-color:#C9A45C;background:rgba(201,164,92,.12)}.pick .chip.on b,.pick .chip.on{color:#E8CB8A}
 </style>
 </head>
 <body>
@@ -666,7 +667,7 @@ function fit(d){
 const fitWord = n => n >= 72 ? "Strong fit" : n >= 55 ? "Good fit" : n >= 40 ? "Worth a call" : "Long shot";
 const occTxt = d => d.occ != null ? (d.occEst ? "~" : "") + d.occ + "%" : d.occBelow ? "<50%" : "n/a";
 function bestContact(d){
-  const rank = o => { const r = (o.role || "").toLowerCase(); return /broker|receiver/.test(r) ? 0 : /servicer|lender|reo/.test(r) ? 1 : /owner|sponsor/.test(r) ? 2 : 3; };
+  const rank = o => { const r = (o.role || "").toLowerCase(); return /special servicer|receiver/.test(r) ? 0 : /leasing/.test(r) ? 5 : /broker/.test(r) ? 1 : /servicer|lender|reo/.test(r) ? 2 : /owner|sponsor/.test(r) ? 3 : 4; };
   return d.contacts.slice().sort((a, b) => ((b.email ? 1 : 0) - (a.email ? 1 : 0)) || (rank(a) - rank(b)))[0] || null;
 }
 function draftFor(d, c){
@@ -674,6 +675,7 @@ function draftFor(d, c){
   const first = /^[A-Z][a-z]+ [A-Z][A-Za-z.'-]+$/.test(nm) && !/group|team|management|servic|desk|office|asset|line|department|capital|partners/i.test(nm) ? nm.split(" ")[0] : "";
   const T = S.tpl || { subject: "{name}", body: "Hi {first},\n\nI came across {name}. Would you be able to share some financials?\n\nBest,\nEddie" }; /* real wording lives in the private repo (eddie-private/outreach.json) */
   const f = t => t.replace(/\{first\}/g, first || "there").replace(/\{name\}/g, d.name);
+  if (c && c.draft) return { to: c.email || "", subject: c.draft.subject || f(T.subject), body: c.draft.body || f(T.body) };
   return { to: c && c.email ? c.email : "", subject: f(T.subject), body: f(T.body) };
 
 }
@@ -775,11 +777,12 @@ function findPage(id){
       <div class="best"><div><div class="muted" style="font-size:12.5px">Best contact</div><b style="font-size:17px">${c ? esc(c.person || c.org) : "No contact on file yet"}</b>${c && c.person ? `<div class="muted" style="font-size:13.5px">${esc(c.org)} · ${esc(c.role || "")}</div>` : ""}</div>
       ${c && c.phone ? `<a class="btn sm" href="${tel(c.phone)}">Call ${esc(c.phone)}</a>` : ""}</div>
       ${c && !c.email ? '<p class="muted" style="font-size:13.5px;margin:12px 0 0">No public email yet. Call the number, or type the email once you have it.</p>' : ""}
+      ${d.contacts.filter(x => x.email).length > 1 ? `<div class="field"><label>Who to email</label><div class="pick" id="oPick">${d.contacts.map((x, i) => x.email ? `<button type="button" class="chip${x === c ? " on" : ""}" data-i="${i}">${esc((x.person || x.org).split(/[,(]/)[0].trim())}<small>${esc((x.role || "").split(/[—(]/)[0].trim())}</small></button>` : "").join("")}</div></div>` : ""}
       <div class="field"><label for="oTo">To</label><input id="oTo" value="${esc(dr.to)}" placeholder="name@company.com"></div>
       <div class="field"><label for="oSub">Subject</label><input id="oSub" value="${esc(dr.subject)}"></div>
       <div class="field"><label for="oBody">Email</label><textarea id="oBody">${esc(dr.body)}</textarea></div>
       <div class="btns"><a class="btn sm" id="oWeb" href="#" target="_blank" rel="noopener">Send from Outlook</a><a class="btn line sm" id="oApp" href="#">Outlook app</a><button class="btn line sm" id="oCopy">Copy</button></div>
-      <p class="muted" style="font-size:12.5px;margin:8px 0 0">Opens the email in your Outlook, from your own address. You hit Send. A hidden copy goes to the tracker so Claude can follow the thread here; replies reach Claude only through your Outlook rule.</p>
+      <p class="muted" style="font-size:12.5px;margin:8px 0 0">Opens the email in your Outlook, from your own address. You hit Send. A hidden copy goes to the tracker so Claude can follow the thread here; replies with the same subject are forwarded to Claude automatically.</p>
       <div id="oThread"></div>
     </div>
     <div class="card"><h3>Everyone involved</h3>${d.contacts.map(x => `<div class="who"><b>${esc(x.person || x.org)}</b><div class="wr">${x.person ? esc(x.org) + " · " : ""}${esc(x.role || "")}</div><div class="ln">${x.phone ? `<a href="${tel(x.phone)}">${esc(x.phone)}</a>` : ""}${x.email ? `<a href="mailto:${esc(x.email)}">${esc(x.email)}</a>` : ""}${x.web ? `<a href="${esc(x.web)}" target="_blank" rel="noopener">${esc(x.src || "Source")} ↗</a>` : ""}</div></div>`).join("") || '<p class="muted" style="margin:0">None yet.</p>'}</div>
@@ -792,6 +795,7 @@ function findPage(id){
     $("#oWeb").href = "https://outlook.office.com/mail/deeplink/compose?to=" + to + (bc ? "&bcc=" + bc : "") + "&subject=" + s + "&body=" + b;
     $("#oApp").href = (/iPhone|iPad/i.test(navigator.userAgent) ? "ms-outlook://compose?to=" + to + (bc ? "&bcc=" + bc : "") + "&subject=" + s + "&body=" + b : "mailto:" + to + "?" + (bc ? "bcc=" + bc + "&" : "") + "subject=" + s + "&body=" + b); };
   ["#oTo", "#oSub", "#oBody"].forEach(s => $(s).oninput = links); links();
+  document.querySelectorAll("#oPick .chip").forEach(b => b.onclick = () => { const x = d.contacts[+b.dataset.i], r = draftFor(d, x); $("#oTo").value = r.to; $("#oSub").value = r.subject; $("#oBody").value = r.body; document.querySelectorAll("#oPick .chip").forEach(z => z.classList.toggle("on", z === b)); links(); });
   $("#oCopy").onclick = async () => { try{ await navigator.clipboard.writeText($("#oBody").value); toast("Email copied"); }catch(e){ toast("Couldn't copy. Select the text and copy it."); } };
   const OP = "outreach/" + d.id + ".json"; let oSha = null;
   const showThread = o => {

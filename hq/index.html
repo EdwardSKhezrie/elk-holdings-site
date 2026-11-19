@@ -361,6 +361,8 @@ body{overflow-x:hidden}
   .stat b{font-size:32px}
 }
 @media (prefers-reduced-motion:reduce){.sheet,.fcard{transition:none}}
+.folder{display:flex;align-items:center;gap:10px;width:100%;margin:26px 0 12px;padding:14px 16px;background:transparent;border:1px solid rgba(201,164,92,.45);border-radius:10px;color:inherit;font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-align:left}
+.folder:hover{border-color:#C9A45C}.folder .fi{color:#C9A45C;width:14px}.folder .dim{margin-left:auto}
 </style>
 </head>
 <body>
@@ -723,10 +725,21 @@ function findsList(){
   const list = S.finds.filter(d => (F_ST.mkt === "all" || d.mkt === F_ST.mkt) && (!q || [d.name, d.addr, d.sub, d.owner, d.summary, d.tenants, d.contacts.map(c => c.org + " " + c.person).join(" "), d.debt.map(r => r.join(" ")).join(" ")].join(" ").toLowerCase().includes(q))).sort((a, b) => b.score - a.score);
   if (!S.finds.length && S.loading) h += '<p class="muted">Loading finds…</p>';
   else if (!list.length) h += `<div class="empty"><h2>Nothing matches</h2><p>Try another market or search.</p></div>`;
-  h += `<div class="finds">${list.map(card).join("")}</div>`;
+  // This week's finds (Sunday to Sunday) stay open; everything older goes in a folder you tap to open.
+  const wk = new Date(); wk.setHours(0, 0, 0, 0); wk.setDate(wk.getDate() - wk.getDay());
+  const isNew = d => d.added && Date.parse(d.added) >= wk.getTime();
+  const cur = list.filter(isNew), old = list.filter(d => !isNew(d));
+  const openOld = F_ST.old || !!q;
+  h += `<div class="eyebrow" style="margin:18px 0 10px">This week · since Sunday ${wk.toLocaleDateString(undefined, { month: "short", day: "numeric" })} · ${cur.length}</div>`;
+  h += cur.length ? `<div class="finds">${cur.map(card).join("")}</div>` : `<p class="muted">No new finds yet this week.</p>`;
+  if (old.length) {
+    h += `<button class="folder" id="fold" aria-expanded="${openOld}"><span class="fi">${openOld ? "▾" : "▸"}</span> Older deals <span class="dim">${old.length}</span></button>`;
+    if (openOld) h += `<div class="finds">${old.map(card).join("")}</div>`;
+  }
   h += `<p class="dim" style="font-size:13px;margin-top:22px">New finds are added at 7 AM and 1 PM. Outreach tracking and Outlook sending stay in the <a href="${FULL_FINDS}" target="_blank" rel="noopener">full Deal Finds app ↗</a>.</p>`;
   $("#main").innerHTML = h;
   document.querySelectorAll(".chip").forEach(b => b.onclick = () => { F_ST.mkt = b.dataset.m; LS.set("fst", F_ST); findsList(); });
+  const fb = $("#fold"); if (fb) fb.onclick = () => { F_ST.old = !F_ST.old; LS.set("fst", F_ST); findsList(); };
   const fq = $("#fq"); fq.oninput = () => { F_ST.q = fq.value; LS.set("fst", F_ST); clearTimeout(window._fq); window._fq = setTimeout(() => { findsList(); const i = $("#fq"); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 220); };
 }
 function photo(d, cls){

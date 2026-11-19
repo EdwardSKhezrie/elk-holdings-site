@@ -163,7 +163,7 @@ async function openApp(){
     const [page, file] = await Promise.all([gh(P(PAGE), { raw: true, headers: { Accept: "application/vnd.github.raw" } }).then(r => r.text()), gh(P(DATA))]);
     SHA = file.sha; STORE = JSON.parse(decode(file.content)); STORE.docs = STORE.docs || {};
     $("#gate").innerHTML = ""; $("#gate").hidden = true;
-    const f = $("#appf"); f.hidden = false; f.onload = () => { try{ f.contentDocument.addEventListener("pointerdown", () => window.postMessage("elk-fullscreen", "*"), true); }catch(e){} }; f.srcdoc = page;
+    const f = $("#appf"); f.hidden = false; f.srcdoc = page;
   }catch(e){
     TOKEN = ""; gate(e.message);
   }
@@ -202,22 +202,5 @@ let idle = null;
 document.addEventListener("visibilitychange", () => { clearTimeout(idle); if (document.hidden && TOKEN) idle = setTimeout(async () => { await save(); TOKEN = ""; STORE = { docs: {} }; $("#appf").srcdoc = ""; gate(); }, 15 * 60 * 1000); });
 gate();
 if ("serviceWorker" in navigator) navigator.serviceWorker.register("../sw.js").catch(() => {});
-</script>
-<script>
-/* Installed on a computer: go full screen on any click (also clicks inside the page frames), so no title bar, window buttons or browser icons show. */
-(function(){
-  var desk = !/iPhone|iPad|Android/i.test(navigator.userAgent);
-  var inst = ["window-controls-overlay","standalone","minimal-ui","fullscreen"].some(function(m){ return matchMedia("(display-mode: "+m+")").matches; });
-  if (!desk || !inst || !document.documentElement.requestFullscreen) return;
-  var busy = false;
-  function go(){ if (busy || document.fullscreenElement) return; busy = true; document.documentElement.requestFullscreen({ navigationUI: "hide" }).catch(function(){}).then(function(){ busy = false; }); }
-  function hook(doc){ try { if (!doc || doc.__fsHooked) return; doc.__fsHooked = true;
-    doc.addEventListener("pointerdown", go, true);
-    doc.addEventListener("keydown", function(e){ if (e.key !== "Escape" && e.key !== "F11") go(); }, true); } catch(e){} }
-  function hookFrames(){ hook(document); document.querySelectorAll("iframe").forEach(function(f){
-    try { hook(f.contentDocument); if (!f.__fsLoad){ f.__fsLoad = true; f.addEventListener("load", function(){ hook(f.contentDocument); }); } } catch(e){} }); }
-  hookFrames(); setInterval(hookFrames, 1500);
-  window.addEventListener("message", function(e){ if (e.data === "elk-fullscreen") go(); });
-})();
 </script>
 </body></html>

@@ -736,7 +736,7 @@ function findsList(){
     h += `<button class="folder" id="fold" aria-expanded="${openOld}"><span class="fi">${openOld ? "▾" : "▸"}</span> Older deals <span class="dim">${old.length}</span></button>`;
     if (openOld) h += `<div class="finds">${old.map(card).join("")}</div>`;
   }
-  h += `<p class="dim" style="font-size:13px;margin-top:22px">New finds are added at 7 AM and 1 PM. Outreach tracking and Outlook sending stay in the <a href="${FULL_FINDS}" target="_blank" rel="noopener">full Deal Finds app ↗</a>.</p>`;
+  h += `<p class="dim" style="font-size:13px;margin-top:22px">New finds are added at 7 AM and 1 PM. Open a find and tap Send from Outlook; replies are tracked on the find.</p>`;
   $("#main").innerHTML = h;
   document.querySelectorAll(".chip").forEach(b => b.onclick = () => { F_ST.mkt = b.dataset.m; LS.set("fst", F_ST); findsList(); });
   const fb = $("#fold"); if (fb) fb.onclick = () => { F_ST.old = !F_ST.old; LS.set("fst", F_ST); findsList(); };
@@ -778,43 +778,41 @@ function findPage(id){
       <div class="field"><label for="oTo">To</label><input id="oTo" value="${esc(dr.to)}" placeholder="name@company.com"></div>
       <div class="field"><label for="oSub">Subject</label><input id="oSub" value="${esc(dr.subject)}"></div>
       <div class="field"><label for="oBody">Email</label><textarea id="oBody">${esc(dr.body)}</textarea></div>
-      <div class="btns"><button class="btn sm" id="oElk">Send through ELK</button></div>
-      <p class="muted" style="font-size:12.5px;margin:8px 0 0">Goes out from eddie.khezrie@agentmail.to only after you say OK. Claude tracks the replies here.</p>
+      <div class="btns"><a class="btn sm" id="oWeb" href="#" target="_blank" rel="noopener">Send from Outlook</a><a class="btn line sm" id="oApp" href="#">Outlook app</a><button class="btn line sm" id="oCopy">Copy</button></div>
+      <p class="muted" style="font-size:12.5px;margin:8px 0 0">Opens the email in your Outlook, from your own address. You hit Send. A hidden copy goes to the tracker so Claude can follow the thread here; replies reach Claude only through your Outlook rule.</p>
       <div id="oThread"></div>
-      <div class="btns"><a class="btn line sm" id="oApp" href="#">Open in Outlook</a><a class="btn line sm" id="oWeb" href="#" target="_blank" rel="noopener">Outlook web</a><a class="btn line sm" id="oMail" href="#">Mail</a><button class="btn line sm" id="oCopy">Copy</button></div>
     </div>
     <div class="card"><h3>Everyone involved</h3>${d.contacts.map(x => `<div class="who"><b>${esc(x.person || x.org)}</b><div class="wr">${x.person ? esc(x.org) + " · " : ""}${esc(x.role || "")}</div><div class="ln">${x.phone ? `<a href="${tel(x.phone)}">${esc(x.phone)}</a>` : ""}${x.email ? `<a href="mailto:${esc(x.email)}">${esc(x.email)}</a>` : ""}${x.web ? `<a href="${esc(x.web)}" target="_blank" rel="noopener">${esc(x.src || "Source")} ↗</a>` : ""}</div></div>`).join("") || '<p class="muted" style="margin:0">None yet.</p>'}</div>
     <div class="card"><h3>Got the OM?</h3><p class="muted" style="margin:0">Send it to Underwriting and it comes back as a full ELK investor memo.</p><div class="btns"><button class="btn sm" id="toRoom">Send to Underwriting</button></div></div>
     ${d.src.length ? `<div class="card srcs"><h3>Sources</h3>${d.src.map(s => `<a href="${esc(s[1])}" target="_blank" rel="noopener">${esc(s[0])} ↗</a>`).join("")}</div>` : ""}
   </div></div>`;
   $("#main").innerHTML = h;
-  const links = () => { const to = encodeURIComponent($("#oTo").value.trim()).replace(/%40/g, "@"), s = encodeURIComponent($("#oSub").value), b = encodeURIComponent($("#oBody").value);
-    $("#oApp").href = "ms-outlook://compose?to=" + to + "&subject=" + s + "&body=" + b;
-    $("#oWeb").href = "https://outlook.office.com/mail/deeplink/compose?to=" + to + "&subject=" + s + "&body=" + b;
-    $("#oMail").href = "mailto:" + to + "?subject=" + s + "&body=" + b; };
+  const TRK = (S.tpl && S.tpl.track) || ""; /* tracking address lives in the private repo */
+  const links = () => { const to = encodeURIComponent($("#oTo").value.trim()).replace(/%40/g, "@"), s = encodeURIComponent($("#oSub").value), b = encodeURIComponent($("#oBody").value), bc = TRK ? encodeURIComponent(TRK).replace(/%40/g, "@") : "";
+    $("#oWeb").href = "https://outlook.office.com/mail/deeplink/compose?to=" + to + (bc ? "&bcc=" + bc : "") + "&subject=" + s + "&body=" + b;
+    $("#oApp").href = (/iPhone|iPad/i.test(navigator.userAgent) ? "ms-outlook://compose?to=" + to + (bc ? "&bcc=" + bc : "") + "&subject=" + s + "&body=" + b : "mailto:" + to + "?" + (bc ? "bcc=" + bc + "&" : "") + "subject=" + s + "&body=" + b); };
   ["#oTo", "#oSub", "#oBody"].forEach(s => $(s).oninput = links); links();
   $("#oCopy").onclick = async () => { try{ await navigator.clipboard.writeText($("#oBody").value); toast("Email copied"); }catch(e){ toast("Couldn't copy. Select the text and copy it."); } };
   const OP = "outreach/" + d.id + ".json"; let oSha = null;
   const showThread = o => {
-    const st = { requested: "Waiting for Claude to make the draft (within the hour).", draft: "Draft is ready. Open your ELK website chat in Claude and say \"send\" to approve it.", scheduled: "Going out " + (o.send_at ? new Date(o.send_at).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" }) : "soon") + ". Replies go to you and Claude tracks them.", sent: "Sent. Waiting for a reply.", replied: "They replied.", cancelled: "Cancelled." }[o.status] || o.status;
+    const st = { outlook: "Opened in Outlook. Once you hit Send there, Claude picks it up within the hour and tracks replies here.", requested: "Waiting for Claude to make the draft (within the hour).", draft: "Draft is ready. Open your ELK website chat in Claude and say \"send\" to approve it.", scheduled: "Going out " + (o.send_at ? new Date(o.send_at).toLocaleString([], { weekday: "short", hour: "numeric", minute: "2-digit" }) : "soon") + ". Replies go to you and Claude tracks them.", sent: "Sent. Waiting for a reply.", replied: "They replied.", cancelled: "Cancelled." }[o.status] || o.status;
     $("#oThread").innerHTML = `<div class="thread" style="margin-top:12px;border-top:1px solid var(--line,#2a2620);padding-top:12px"><div style="font-size:13.5px"><b style="color:var(--gold,#C9A45C)">${esc(st)}</b>${o.sent_at ? `<span class="muted"> · sent ${esc(new Date(o.sent_at).toLocaleDateString())} to ${esc(o.to)}</span>` : ""}</div>` +
       (o.messages || []).map(m => `<div style="margin-top:10px;font-size:13.5px"><div class="muted">${esc(m.from || "")} · ${esc(m.at ? new Date(m.at).toLocaleString() : "")}</div><div style="white-space:pre-wrap;margin-top:4px">${esc(m.text || "")}</div>${(m.attachments || []).length ? `<div class="muted" style="margin-top:4px">📎 ${m.attachments.map(esc).join(", ")}</div>` : ""}</div>`).join("") + `</div>`;
-    $("#oElk").textContent = o.status === "cancelled" ? "Send through ELK" : "Update request";
-    $("#oElk").style.display = ["sent", "replied", "scheduled"].includes(o.status) ? "none" : "";
   };
   gh(cfg.room, P(OP)).then(f => { oSha = f.sha; showThread(JSON.parse(decode(f.content))); }).catch(() => {});
-  $("#oElk").onclick = async () => {
+  const markOpened = () => {
     const to = $("#oTo").value.trim();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) return toast("Type the email address first");
-    let o = {}; try{ const f = await gh(cfg.room, P(OP)); oSha = f.sha; o = JSON.parse(decode(f.content)); }catch(e){}
-    if (o.status && !["requested", "draft", "cancelled"].includes(o.status)) return toast("This one was already sent. Claude is tracking the replies.");
-    const at = new Date().toISOString();
-    o = Object.assign(o, { id: d.id, name: d.name, to, subject: $("#oSub").value, body: $("#oBody").value, status: "requested", requested_at: at, updated_at: at });
-    $("#oElk").disabled = true;
-    try{ const r = await gh(cfg.room, P(OP), { method: "PUT", body: JSON.stringify({ message: "Outreach request", content: b64u(JSON.stringify(o, null, 1)), sha: oSha || undefined }) }); oSha = r.content && r.content.sha; showThread(o); toast("Saved. Claude makes the draft and asks you before it goes out."); }
-    catch(e){ toast("Couldn't save: " + e.message); }
-    finally{ $("#oElk").disabled = false; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(to)) { toast("Type the email address first"); return false; }
+    (async () => {
+      let o = {}; try{ const f = await gh(cfg.room, P(OP)); oSha = f.sha; o = JSON.parse(decode(f.content)); }catch(e){}
+      if (["sent", "replied"].includes(o.status)) return;
+      const at = new Date().toISOString();
+      o = Object.assign(o, { id: d.id, name: d.name, to, subject: $("#oSub").value, body: $("#oBody").value, via: "outlook", status: "outlook", opened_at: at, updated_at: at });
+      try{ const r = await gh(cfg.room, P(OP), { method: "PUT", body: JSON.stringify({ message: "Outreach opened in Outlook", content: b64u(JSON.stringify(o, null, 1)), sha: oSha || undefined }) }); oSha = r.content && r.content.sha; showThread(o); }catch(e){}
+    })();
+    return true;
   };
+  ["#oWeb", "#oApp"].forEach(s => $(s).addEventListener("click", e => { if (!markOpened()) e.preventDefault(); }));
   $("#toRoom").onclick = () => { $("#f-name").value = d.name; $("#f-addr").value = d.addr; const k = bestContact(d); if (k) $("#f-from").value = (k.person ? k.person + ", " : "") + k.org; openSend(); };
 }
 

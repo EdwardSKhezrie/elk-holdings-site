@@ -286,7 +286,7 @@ body{overflow-x:hidden}
 .enav .lk{display:inline-flex;align-items:center;gap:6px;border:0!important;color:var(--dim);font-size:13px!important;padding:6px 4px!important}
 .enav .lk svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8}
 .hubfoot{display:flex;gap:10px;justify-content:center;margin:6px 0 22px}
-.hub{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:0 0 18px}
+.hub{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin:0 0 18px}
 .hubc{position:relative;text-align:left;background:linear-gradient(160deg,#16140F,#0D0C0B);border:1px solid var(--line2);border-radius:16px;padding:20px 20px 18px;display:flex;flex-direction:column;gap:4px;min-height:132px;transition:border-color .15s,transform .15s}
 .hubc:hover{border-color:var(--gold);transform:translateY(-1px)}
 .hubc .hi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(201,164,92,.12);color:var(--gold-hi);margin-bottom:10px}
@@ -364,6 +364,11 @@ body{overflow-x:hidden}
 .folder{display:flex;align-items:center;gap:10px;width:100%;margin:26px 0 12px;padding:14px 16px;background:transparent;border:1px solid rgba(201,164,92,.45);border-radius:10px;color:inherit;font:inherit;font-size:15px;font-weight:600;cursor:pointer;text-align:left}
 .folder:hover{border-color:#C9A45C}.folder .fi{color:#C9A45C;width:14px}.folder .dim{margin-left:auto}
 .pick{display:flex;flex-wrap:wrap;gap:8px}.pick .chip{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:transparent;border:1px solid #3a342a;color:inherit;border-radius:10px;padding:8px 11px;font:inherit;font-size:13.5px;cursor:pointer;max-width:100%}.pick .chip small{color:#9a907f;font-size:11.5px;margin-top:2px}.pick .chip.on{border-color:#C9A45C;background:rgba(201,164,92,.12)}.pick .chip.on b,.pick .chip.on{color:#E8CB8A}
+.adl{display:grid;gap:14px}.adc{background:linear-gradient(160deg,#16140F,#0D0C0B);border:1px solid var(--line2);border-radius:16px;padding:20px;cursor:pointer;text-align:left;color:inherit;font:inherit;width:100%}.adc:hover{border-color:var(--gold)}
+.adc .nm{font-family:var(--disp);font-size:24px}.adc .ar{color:var(--mut,#9a907f);font-size:14px;margin-top:2px}.adc .st{margin-top:10px;font-size:14.5px}.adc .st b{color:var(--gold-hi)}
+ol.asteps{list-style:none;padding:0;margin:0;display:grid;gap:10px}ol.asteps li{display:flex;gap:12px;align-items:flex-start;font-size:15px}ol.asteps i{flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:12px;border:1px solid var(--line2);color:var(--mut,#9a907f)}
+ol.asteps li.done i{background:rgba(201,164,92,.18);border-color:var(--gold);color:var(--gold-hi)}ol.asteps li.now i{background:var(--gold);border-color:var(--gold);color:#000}ol.asteps li.now{font-weight:600}ol.asteps small{display:block;color:var(--mut,#9a907f);font-weight:400;font-size:13px;margin-top:2px}
+.adoc{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 0;border-bottom:1px solid var(--line2);font-size:14.5px}.adoc:last-child{border-bottom:0}
 </style>
 </head>
 <body>
@@ -446,14 +451,15 @@ const IC = {
   room: '<svg viewBox="0 0 24 24"><path d="M6 3.5h8.5L18.5 7.5V20a.5.5 0 0 1-.5.5H6a.5.5 0 0 1-.5-.5V4a.5.5 0 0 1 .5-.5z"/><path d="M14 3.5V8h4.5M8.5 12.5h7M8.5 16h5"/></svg>',
   budget: '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12.5" rx="1.5"/><circle cx="12" cy="12.25" r="2.6"/><path d="M6.5 9.5v5.5M17.5 9.5v5.5"/></svg>',
   updates: '<svg viewBox="0 0 24 24"><path d="M4 5.5h16v10.5H9.5L5.5 19.5V16H4z"/><path d="M8.5 9.5h7M8.5 12.5h4.5"/></svg>',
+  active: '<svg viewBox="0 0 24 24"><path d="M4 20.5h16M6 20.5V10l6-5 6 5v10.5"/><path d="M10 20.5v-5h4v5M9.5 11.5h5"/></svg>',
   eddie: '<svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>'
 };
 const TABS = [["firm","Home"],["investments","Invest"],["about","About"],["investors","Investors"],["eddie","Eddie"]];
-const LOCKED = ["finds","room","budget","updates"];
-const ENAV = [["eddie","Eddie"],["finds","Finds"],["room","Underwrite"],["budget","Budget"],["updates","Claude"],["settings","Settings"]];
+const LOCKED = ["finds","room","active","budget","updates"];
+const ENAV = [["eddie","Eddie"],["finds","Finds"],["room","Underwrite"],["active","Active"],["budget","Budget"],["updates","Claude"],["settings","Settings"]];
 const SITE_GO = { firm:["home","top"], investments:["investments","platform"], portfolio:["portfolio"], about:["leadership"], contact:["contact"], investors:["login"] };
 const SITE_TAB = v => v === "home" ? "firm" : ["investments","realestate","fixedincome","privateequity","venture","operating","services","equities"].includes(v) ? "investments" : v === "portfolio" ? "portfolio" : v === "leadership" ? "about" : v === "contact" ? "contact" : (v === "login" || v === "room") ? "investors" : "firm";
-const EDDIE_VIEWS = ["eddie","finds","room","budget","updates","settings","prices"];
+const EDDIE_VIEWS = ["eddie","finds","room","active","budget","updates","settings","prices"];
 function buildNav(){
   $("#tabbar").innerHTML = TABS.map(([k, l]) => `<button data-go="${k}">${IC[k]}${l}</button>`).join("");
   $("#ahlocked").innerHTML = `<button class="ahlock" data-go="eddie">${IC.eddie}Eddie</button>`;
@@ -464,7 +470,7 @@ function buildNav(){
 function mark(k){
   const top = EDDIE_VIEWS.includes(k) ? "eddie" : k;
   document.querySelectorAll(".ahnav [data-go], #tabbar [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === top));
-  const T = { finds: "Deal Finds", room: "Underwrite", budget: "Budget", updates: "Claude", settings: "Settings" };
+  const T = { finds: "Deal Finds", room: "Underwrite", active: "Active Deals", budget: "Budget", updates: "Claude", settings: "Settings" };
   const et = $("#etitle"); if (et) et.textContent = T[k] || "";
   const back = document.querySelector("#enav .eback"); if (back) back.style.visibility = k === "eddie" ? "hidden" : "visible";
 }
@@ -509,6 +515,8 @@ function route(){
   if (v === "room" && arg) return folder(arg);
   if (v === "room") return roomList();
   if (v === "updates") return updates();
+  if (v === "active" && arg) return activePage(arg);
+  if (v === "active") return activeList();
   if (v === "budget") return budget();
   if (v === "settings") return settings();
   if (v === "prices") return pricesPage();
@@ -623,6 +631,7 @@ async function loadRoom(){
   try{ S.index = JSON.parse(decode((await gh(cfg.room, P("deals/index.json"))).content)); }catch(e){ S.index = { deals: [], waiting: [] }; }
   try{ S.tpl = JSON.parse(decode((await gh(cfg.room, P("eddie-private/outreach.json"))).content)); }catch(e){ S.tpl = null; }
   try{ S.inbox = (await gh(cfg.room, P("inbox"))).filter(x => x.type === "dir"); }catch(e){ S.inbox = []; }
+  try{ S.active = JSON.parse(decode((await gh(cfg.room, P("eddie-private/active-deals.json"))).content)).deals || []; }catch(e){ S.active = []; }
   // Which finds already had an email go out (outreach/<deal id>.json)
   S.sent = {};
   try{
@@ -698,7 +707,7 @@ function home(){
   let h = `<div class="head"><div><div class="eyebrow">${esc(today)}</div><h1>${greet}, Eddie</h1></div><div class="grow"></div><button class="btn" onclick="openSend()">Send a deal</button></div>`;
   if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
   const F = S.finds.slice().sort((a, b) => b.score - a.score);
-  const HUB = [["finds","Deal Finds", S.finds.length + " finds · " + F.filter(d => d.score >= 72).length + " strong"],["room","Underwrite", (S.index.deals || []).length + " memos · send an OM"],["budget","Budget","2027 money plan"],["updates","Claude","Send changes for this app"]];
+  const HUB = [["finds","Deal Finds", S.finds.length + " finds · " + F.filter(d => d.score >= 72).length + " strong"],["room","Underwrite", (S.index.deals || []).length + " memos · send an OM"],["active","Active Deals", (S.active || []).length ? (S.active || []).length + " deal" + ((S.active || []).length > 1 ? "s" : "") + " underway" : "Deals we're doing now"],["budget","Budget","2027 money plan"],["updates","Claude","Send changes for this app"]];
   h += `<div class="hub">${HUB.map(([k, l, sub]) => `<button class="hubc" onclick="go('${k}')"><span class="hi">${IC[k]}</span><b>${l}</b><small>${esc(sub)}</small><i>→</i></button>`).join("")}</div><div class="hubfoot"><button class="btn line sm" onclick="go('settings')">Settings</button></div>`;
   const strong = F.filter(d => d.score >= 72).length;
   const D = S.index.deals || [];
@@ -828,6 +837,40 @@ function findPage(id){
   };
   ["#oWeb", "#oApp"].forEach(s => $(s).addEventListener("click", e => { if (!markOpened()) e.preventDefault(); }));
   $("#toRoom").onclick = () => { $("#f-name").value = d.name; $("#f-addr").value = d.addr; const k = bestContact(d); if (k) $("#f-from").value = (k.person ? k.person + ", " : "") + k.org; openSend(); };
+}
+
+/* ---------- active deals (deals underway; private repo eddie-private/active-deals.json) ---------- */
+const ASTAT = { done: "✓", now: "●", next: "" };
+function activeList(){
+  mark("active");
+  const A = S.active || [];
+  let h = `<div class="head"><div><div class="eyebrow">Underway</div><h1>Active Deals</h1><div class="sub">Deals we're doing now: where each one stands and what's next.</div></div></div>`;
+  if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
+  h += A.length ? `<div class="adl">${A.map(d => { const now = (d.steps || []).find(x => x.s === "now"); return `<button class="adc" onclick="go('active/${esc(d.id)}')"><div class="nm">${esc(d.name)}</div><div class="ar">${esc(d.area || "")}${d.updated ? " · updated " + esc(fmtDate(d.updated)) : ""}</div>${d.what ? `<div class="st">${esc(d.what)}</div>` : ""}${now ? `<div class="st">Now: <b>${esc(now.t)}</b></div>` : ""}</button>`; }).join("")}</div>` : '<p class="muted">No active deals yet.</p>';
+  $("#main").innerHTML = h;
+}
+function activePage(id){
+  mark("active");
+  const d = (S.active || []).find(x => x.id === id);
+  if (!d){ $("#main").innerHTML = '<p class="muted">Loading…</p>'; if (!S.active) setTimeout(() => route(), 800); else $("#main").innerHTML = '<div class="notice">That deal isn\'t in Active Deals.</div>'; return; }
+  const st = d.steps || [];
+  let h = `<div class="head"><div><div class="eyebrow">Active deal</div><h1>${esc(d.name)}</h1><div class="sub">${esc(d.area || "")}${d.updated ? " · updated " + esc(fmtDate(d.updated)) : ""}</div></div></div>
+  <div class="cols"><div class="stack">
+    ${d.what ? `<div class="card"><h3>The deal</h3><p class="lede">${esc(d.what)}</p>${(d.facts || []).length ? `<ul class="clean" style="margin-top:12px">${d.facts.map(x => `<li>${esc(x)}</li>`).join("")}</ul>` : ""}</div>` : ""}
+    ${d.latest ? `<div class="card"><h3>Latest</h3><p style="margin:0;white-space:pre-wrap">${esc(d.latest)}</p></div>` : ""}
+    <div class="card"><h3>Steps</h3><ol class="asteps">${st.map((x, i) => `<li class="${esc(x.s || "next")}"><i>${ASTAT[x.s] || i + 1}</i><div>${esc(x.t)}${x.n ? `<small>${esc(x.n)}</small>` : ""}</div></li>`).join("") || '<li class="muted">No steps yet.</li>'}</ol></div>
+  </div><div class="stack">
+    ${(d.open || []).length ? `<div class="card"><h3>Open items</h3><ul class="clean">${d.open.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
+    <div class="card"><h3>Documents</h3>${(d.docs || []).map((x, i) => `<div class="adoc"><span>${esc(x.name)}${x.date ? ` <span class="muted">· ${esc(x.date)}</span>` : ""}</span><button class="btn line sm" data-doc="${i}">Open</button></div>`).join("") || '<p class="muted" style="margin:0">None yet.</p>'}</div>
+  </div></div>`;
+  $("#main").innerHTML = h;
+  document.querySelectorAll("[data-doc]").forEach(b => b.onclick = async () => {
+    const x = d.docs[+b.dataset.doc]; b.disabled = true; b.textContent = "Opening…";
+    const w = window.open("", "_blank");
+    try{ const r = await gh(cfg.room, P(x.path), raw); const bl = await r.blob(); const u = URL.createObjectURL(new Blob([bl], { type: /\.pdf$/i.test(x.path) ? "application/pdf" : bl.type })); if (w) w.location = u; else location.href = u; }
+    catch(e){ if (w) w.close(); toast("Couldn't open it. " + e.message); }
+    b.disabled = false; b.textContent = "Open";
+  });
 }
 
 /* ---------- deal room ---------- */

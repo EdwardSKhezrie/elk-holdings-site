@@ -1192,7 +1192,8 @@ function settings(){
   mark("settings");
   $("#main").innerHTML = `<div class="setup" style="max-width:620px"><div class="head"><div><div class="eyebrow">Eddie only</div><h1>Settings</h1></div></div>
   <p class="muted">Deal Finds and Underwriting load straight from your private GitHub repos. No deal data is saved in this app. Your GitHub key is kept on this device, locked with your code.</p>
-  <div class="card"><h3>New GitHub key</h3><p class="muted" style="margin:0 0 6px">Only if the old one expired. Make it at <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>: only select repositories → elk-deal-finds and elk-deal-room, Contents → Read and write.</p>
+  <div id="pubCard"></div>
+  <div class="card" style="margin-top:16px"><h3>New GitHub key</h3><p class="muted" style="margin:0 0 6px">Only if the old one expired. Make it at <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" rel="noopener">github.com/settings/personal-access-tokens/new</a>: only select repositories → elk-deal-finds and elk-deal-room, Contents → Read and write.</p>
    <div class="field"><label for="s-tok">GitHub key</label><input id="s-tok" type="password" placeholder="github_pat_…" autocomplete="off"></div>
    <div class="btns"><button class="btn sm" id="s-key">Save key</button></div></div>
   <div class="card" style="margin-top:16px"><h3>Change your code</h3>
@@ -1208,8 +1209,57 @@ ${lpCard()}
   $("#s-key").onclick = async () => { const t = $("#s-tok").value.replace(/\s+/g, ""); if (!t) return toast("Paste the key first"); await sealKey(CODE, t); cfg.token = t; toast("Key saved"); refresh(); };
   $("#s-code").onclick = async () => { const a = $("#s-c1").value.trim(); if (a.length < 4) return toast("Use at least 4 digits"); if (a !== $("#s-c2").value.trim()) return toast("The codes don't match"); await sealKey(a, cfg.token); CODE = a; toast("Code changed"); settings(); };
   $("#s-repo").onclick = () => { cfg.finds = $("#s-f").value.trim(); cfg.room = $("#s-r").value.trim(); LS.set("cfg", { finds: cfg.finds, room: cfg.room }); toast("Saved"); refresh(); };
-  lpWire();
+  lpWire(); pubWire();
   $("#s-wipe").onclick = () => { localStorage.removeItem(VKEY); scrubPlain(); lock(); };
+}
+
+/* ---------- publish an investor update ----------
+   Claude prepares each investor's new data in the private repo (eddie-private/portal-next/<login>.json).
+   Eddie types each investor's code here; the app checks it against the live locked file, locks the new data with the
+   same code on this device, saves the locked files to the private repo, and asks Claude to put them live. Codes never leave the device. */
+async function pubWire(){
+  const box = $("#pubCard"); if (!box) return;
+  let man; try{ man = JSON.parse(decode((await gh(cfg.room, P("eddie-private/portal-next/manifest.json"))).content)); }catch(e){ return; }
+  if (!man || !(man.logins || []).length || man.published) return;
+  box.innerHTML = `<div class="card" style="border-color:var(--gold)"><h3>Update investor logins</h3>
+   <p class="muted" style="margin:0 0 6px">A new investor update is ready${man.note ? ": " + esc(man.note) : ""}. Type each person's login code. It locks their update on this device; the codes are never saved or sent anywhere.</p>
+   ${man.logins.map(u => `<div class="field"><label>${esc(u)}</label><input class="pub-c" data-u="${esc(u)}" type="password" autocomplete="off" placeholder="${esc(u)}'s code"></div>`).join("")}
+   <div class="btns"><button class="btn sm" id="pub-go">Lock and send</button></div><p class="muted" id="pub-st" style="margin:8px 0 0"></p></div>`;
+  $("#pub-go").onclick = async () => {
+    const st = $("#pub-st"), btn = $("#pub-go"); btn.disabled = true;
+    try{
+      const rows = [...document.querySelectorAll(".pub-c")].map(i => [i.dataset.u, i.value.trim().toLowerCase()]);
+      if (rows.some(r => !r[1])) throw new Error("Type a code for every login.");
+      const ready = [];
+      for (const [u, c] of rows){
+        st.textContent = "Checking " + u + "…";
+        const h = await sha256hex("elk:" + u);
+        const r = await fetch("../portal/vault/" + h + ".json", { cache: "no-store" });
+        if (!r.ok) throw new Error(`No live login called "${u}".`);
+        const v = await r.json();
+        const km = await crypto.subtle.importKey("raw", new TextEncoder().encode(c), "PBKDF2", false, ["deriveKey"]);
+        const key = await crypto.subtle.deriveKey({ name: "PBKDF2", salt: ub64(v.salt), iterations: v.iter, hash: "SHA-256" }, km, { name: "AES-GCM", length: 256 }, false, ["encrypt", "decrypt"]);
+        try{ await crypto.subtle.decrypt({ name: "AES-GCM", iv: ub64(v.iv) }, key, ub64(v.ct)); }catch(e){ throw new Error(`Wrong code for "${u}". Nothing was changed.`); }
+        const next = decode((await gh(cfg.room, P("eddie-private/portal-next/" + u + ".json"))).content);
+        ready.push({ u, h, v, key, next });
+      }
+      for (const x of ready){
+        st.textContent = "Locking " + x.u + "…";
+        const iv = crypto.getRandomValues(new Uint8Array(12));
+        const ct = await crypto.subtle.encrypt({ name: "AES-GCM", iv }, x.key, new TextEncoder().encode(x.next));
+        const out = JSON.stringify({ v: x.v.v || 1, iter: x.v.iter, salt: x.v.salt, iv: b64s(iv), ct: b64s(ct) });
+        const path = "site-tools/vault-next/" + x.h + ".json"; let sha;
+        try{ sha = (await gh(cfg.room, P(path))).sha; }catch(e){}
+        await gh(cfg.room, P(path), { method: "PUT", body: JSON.stringify({ message: "Investor update locked", content: btoa(out), sha }) });
+      }
+      const at = new Date().toISOString(), name = at.replace(/[:.]/g, "-") + "-eddie.json";
+      const body = JSON.stringify({ from: "eddie", app: "elk", text: "PUBLISH INVESTOR UPDATE: the locked files are ready in site-tools/vault-next (" + ready.map(x => x.u).join(", ") + ").", at }, null, 1);
+      await gh(cfg.room, P(UPDIR + "/" + name), { method: "PUT", body: JSON.stringify({ message: "App update request: publish investor update", content: b64u(body) }) });
+      document.querySelectorAll(".pub-c").forEach(i => i.value = "");
+      st.textContent = "Done. All " + ready.length + " updates are locked. Claude puts them live next (tell Claude in chat, or it happens on the next hourly run).";
+    }catch(e){ st.textContent = e.message; }
+    finally{ btn.disabled = false; }
+  };
 }
 
 /* ---------- start ---------- */

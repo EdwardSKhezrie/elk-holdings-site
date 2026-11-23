@@ -1232,8 +1232,8 @@ document.getElementById("logout").addEventListener("click",()=>{location.reload(
 function partnerItems(){
   const items=[];
   Object.keys(session.holdings).forEach(id=>{if(session.merge&&session.merge[id]!==undefined)return;const d=DEALS[id],h=session.holdings[id];
-    const cost=h.land+(d.soft+d.carry)*h.share;
-    items.push({key:"d:"+id,cat:"Operating Businesses",name:d.name,sub:d.city+" · "+d.type,cost,value:cost,status:d.status,proj:model(d,d.price,d.build).net*h.share});});
+    const cost=h.capital;
+    items.push({key:"d:"+id,cat:"Operating Businesses",name:d.name,sub:d.city+" · "+d.type,cost,value:cost,status:d.status,proj:null});});
   (session.positions||[]).forEach((p,i)=>{const m=MARKET[p.ticker];const cost=p.shares*p.cost,value=p.shares*m.price;
     const pp=PRICES.t[p.ticker];items.push({key:"p:"+i,cat:"Public Markets",name:p.name+" ("+p.ticker+")",sub:p.shares.toLocaleString("en-US")+" shares · "+p.exchange,cost,value,day:pp&&pp.prev?p.shares*(pp.last-pp.prev):0,status:"Held"});});
   (session.other||[]).map((o,i)=>eff(o,i)).forEach((o,i)=>{const nh=o.alloc.reduce((s,x)=>s+((EXAMPLES[x[0]]||[]).length),0);
@@ -1295,7 +1295,7 @@ function promoteBlock(){
   const s$=n=>(n>0?"+":n<0?"-":"")+fmt$(Math.abs(n)),cl=n=>n>0?"pos":n<0?"neg":"";
   return `<section class="promo">
     <div class="promo-top"><div><p class="eyebrow">Your ${P}% of ELK's net profit</p><h3>What your share looks like today</h3>
-      <p class="muted" style="max-width:62ch;font-size:.92rem;margin-top:8px">${session.promote.owner} owns 100% of ELK's investments (${session.promote.note}). You earn ${P}% of the net profit in every sector, including both partners' shares of jointly owned deals. Values as of the ${fmtDate(PRICES.asof)} close.</p></div>
+      <p class="muted" style="max-width:62ch;font-size:.92rem;margin-top:8px">${session.promote.owner} owns 100% of ELK's investments (${session.promote.note}). You earn ${P}% of the net profit in every sector. Values as of the ${fmtDate(PRICES.asof)} close.</p></div>
       <div class="promo-big"><b>${fmt$(tot.mine)}</b><span>your ${P}% today</span>${tot.proj?`<br><span>+ ${fmt$(tot.proj)} projected from development deals at completion</span>`:""}</div></div>
     <table><thead><tr><th>Sector</th><th class="r">ELK invested</th><th class="r">Value today</th><th class="r">Net profit</th><th class="r">Your ${P}% today</th><th class="r">Your ${P}% projected</th></tr></thead><tbody>
     ${rows.map(r=>`<tr><td><b>${r.name}</b><small>${r.sub||""}</small></td><td class="r">${fmt$(r.cost)}</td><td class="r">${fmt$(r.value)}</td><td class="r ${cl(r.profit)}">${s$(r.profit)}</td><td class="r you">${fmt$(mine(r))}${r.profit<0?`<small>sector at a loss</small>`:""}</td><td class="r">${r.proj?fmt$(p*r.proj)+`<small>of ${fmt$(r.proj)} total deal profit</small>`:"—"}</td></tr>`).join("")}
@@ -1578,146 +1578,54 @@ function showPosition(i){
 function showDeal(id){
   const d=DEALS[id],h=session.holdings[id];
   document.querySelectorAll("#dealTabs button").forEach(b=>b.setAttribute("aria-selected",b.dataset.deal===id));
-  const u=d.updates[0];
+  const u=d.updates[0],now=(d.steps||[]).find(x=>x.s==="now");
+  const money=n=>"$"+Number(n).toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+  const mark=s=>s==="done"?"✓":s==="now"?"●":"";
   document.getElementById("dealView").innerHTML=`
     <div class="kpis">
-      <div><span>Land contribution</span><b>${fmt$(h.land)}</b></div>
-      <div><span>Total capital</span><b id="kIn"></b><em>land plus share of soft costs and carry</em></div>
-      <div><span>Projected profit</span><b id="kProfit"></b><em>${session.promote?session.promote.ownerShare:"your share after all costs"}</em></div>
-      <div><span>Equity multiple</span><b id="kMult"></b><em id="kMultNote"></em></div>
-      <div><span>Projected IRR</span><b id="kIrr"></b><em id="kIrrNote"></em></div>
-      <div><span>Ownership</span><b>${(h.share*100).toFixed(0)}%</b><em>${session.promote?session.promote.dealOwners:session.name} · ${d.size}</em></div>
+      <div><span>Your share</span><b>${fmt$(h.capital)}</b><em>your capital in, per the partnership's books</em></div>
+      <div><span>Your ownership</span><b>${(h.share*100).toFixed(0)}%</b><em>${d.partners}</em></div>
+      <div><span>Where we are</span><b style="font-size:1.05rem">${now?now.t:d.status}</b><em>${d.status}</em></div>
     </div>
     <div class="two">
       <div class="panel">
-        <div class="photo real" style="border-radius:8px;overflow:hidden"><img id="mainImg" src="${IMG[d.photos[0][0]]}" alt=""><small id="mainCap">${d.photos[0][1]}</small></div>
-        <div class="gallery" id="gal">${d.photos.map((p,i)=>`<button aria-pressed="${i===0}" data-i="${i}" aria-label="${p[1]}"><img src="${IMG[p[0]]}" alt=""></button>`).join("")}</div>
-        <div style="display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;align-items:center">
-          <div><h3>${d.name}</h3><p class="muted">${d.city} · ${d.type} · ${d.size}</p></div>
-          <span class="chip good"><i></i>${d.status}</span>
-        </div>
-        <ol class="stages">${d.stages.map((s,i)=>`<li class="${i<d.stage?"done":i===d.stage?"now":""}">${s}</li>`).join("")}</ol>
-        <div class="update"><p class="eyebrow">Latest update · ${u.m}</p><h4>${u.head}</h4><ul>${u.pts.map(p=>`<li>${p}</li>`).join("")}</ul></div>
+        <p class="eyebrow">The deal</p>
+        <h3 style="margin-top:6px">${d.name}</h3><p class="muted">${d.city} · ${d.size}</p>
+        <p style="margin-top:10px">${d.what}</p>
+        <ul class="done-list" style="margin-top:12px">${d.facts.map(x=>`<li>${x}</li>`).join("")}</ul>
       </div>
       <div class="panel">
-        <p class="eyebrow">Projected return</p>
-        <div class="sens">
-          <label for="sp">Sale price per residence <span class="num" id="spOut"></span></label>
-          <input id="sp" type="range" min="2000000" max="3000000" step="50000" value="${d.price}">
-          <label for="bc">Construction cost per residence <span class="num" id="bcOut"></span></label>
-          <input id="bc" type="range" min="700000" max="1200000" step="25000" value="${d.build}">
-          <label for="tm">Months to final closing <span class="num" id="tmOut"></span></label>
-          <input id="tm" type="range" min="20" max="48" step="1" value="30">
-          <p class="muted" style="font-size:.78rem">Base case: $2.5M per residence, $3.0M for the waterfront residence, $900K construction cost. Adjust to see how pricing and cost affect your return.</p>
-        </div>
-        <div id="pf"></div>
+        <div class="update" style="margin:0"><p class="eyebrow">Latest update · ${u.m}</p><h4>${u.head}</h4><ul>${u.pts.map(p=>`<li>${p}</li>`).join("")}</ul></div>
       </div>
-    </div>
-    <div class="panel">
-      <div style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap;align-items:flex-end">
-        <div><p class="eyebrow">Rezoning option · R4A to R6A</p><h3 style="margin-top:8px">What the site could hold if rezoned</h3></div>
-        <div class="toggles"><label><input type="checkbox" id="rzUap"> Use affordable housing bonus (3.9 FAR)</label><label><input type="checkbox" id="rzCorner"> Include corner parcel (Lot 50)</label></div>
-      </div>
-      <div class="rz-grid">
-        <div><span>Lot area</span><b id="rzLot"></b></div>
-        <div><span>Today, R4A (1.0 FAR)</span><b id="rzR4"></b></div>
-        <div><span>Rezoned, R6A</span><b class="g" id="rzR6"></b></div>
-        <div><span>Of which affordable</span><b id="rzAff"></b></div>
-        <div><span>Est. apartments</span><b id="rzUnits"></b></div>
-        <div><span>Vs. today's zoning</span><b id="rzX"></b></div>
-      </div>
-      <div class="two" style="gap:28px">
-        <div class="sens">
-          <label for="rzP">Sale price per sellable SF <span class="num" id="rzPOut"></span></label>
-          <input id="rzP" type="range" min="450" max="1100" step="25" value="700">
-          <label for="rzC">All-in build cost per SF <span class="num" id="rzCOut"></span></label>
-          <input id="rzC" type="range" min="300" max="600" step="10" value="400">
-          <label for="rzZ">Rezoning cost (legal, studies, design) <span class="num" id="rzZOut"></span></label>
-          <input id="rzZ" type="range" min="250000" max="2000000" step="50000" value="750000">
-          <p class="muted">Assumes 82% of floor area is sellable, about 850 SF per apartment, 5% selling costs and financing and carry at 10% of build cost. Affordable floor area is counted at cost with no sale value. Rough numbers for comparison only.</p>
-        </div>
-        <div id="rzPf"></div>
-      </div>
-      <p class="muted" style="font-size:.8rem">Rezoning goes through the city's land use review (ULURP), usually 12 to 24 months, and is not guaranteed. Waterfront and flood-zone rules can reduce what is buildable. Confirm with a zoning attorney before relying on these figures.</p>
     </div>
     <div class="two">
       <div class="panel">
-        <p class="eyebrow">Milestones</p>
-        <ul class="done-list">${d.done.map(x=>`<li>${x}</li>`).join("")}${d.next.map(x=>`<li class="next">Next: ${x}</li>`).join("")}</ul>
+        <p class="eyebrow">Steps</p>
+        <ol style="list-style:none;margin:12px 0 0;padding:0;display:flex;flex-direction:column;gap:12px">${d.steps.map((x,i)=>`<li style="display:flex;gap:12px;align-items:flex-start${x.s==="now"?";color:var(--gold-hi)":""}"><i style="flex:0 0 22px;height:22px;border-radius:50%;display:grid;place-items:center;font-style:normal;font-size:.72rem;border:1px solid ${x.s==="next"?"var(--line-2)":"var(--gold)"};${x.s==="now"?"background:var(--gold);color:#000":x.s==="done"?"color:var(--gold-hi)":"color:var(--dim)"}">${mark(x.s)||i+1}</i><div>${x.t}${x.n?`<small style="display:block;color:var(--dim);font-size:.8rem;margin-top:2px">${x.n}</small>`:""}</div></li>`).join("")}</ol>
+      </div>
+      <div class="panel">
+        <p class="eyebrow">Money so far</p>
+        ${d.money.map((r,i)=>`<div class="valrow ${i===0||i===d.money.length-1?"total":""}"><span>${r[0]}${r[2]?`<small style="display:block;color:var(--dim);font-size:.78rem">${r[2]}</small>`:""}</span><b>${money(r[1])}</b></div>`).join("")}
+      </div>
+    </div>
+    <div class="two">
+      <div class="panel">
+        <p class="eyebrow">Documents</p>
+        <div class="docs">${d.docs.map((x,i)=>`<div><span>${x.name}</span><button class="btn-ghost" data-doc="${i}" style="background:none;border:1px solid var(--line-2);color:var(--gold-hi);padding:4px 12px;cursor:pointer;font:inherit;font-size:.8rem">Open${x.mb>=5?" · "+x.mb+" MB":""}</button></div>`).join("")}</div>
       </div>
       <div class="panel">
         <p class="eyebrow">Update history</p>
         <div class="history">${d.updates.map(x=>`<button><span>${x.head}</span><span class="muted num">${x.m}</span></button>`).join("")}</div>
-        <p class="eyebrow" style="margin-top:8px">Documents</p>
-        <div class="docs">${d.docs.map(x=>`<div><span>${x}</span><span class="muted">PDF</span></div>`).join("")}</div>
       </div>
     </div>`;
-  document.getElementById("gal").addEventListener("click",e=>{const b=e.target.closest("[data-i]");if(!b)return;const p=d.photos[+b.dataset.i];
-    document.getElementById("mainImg").src=IMG[p[0]];document.getElementById("mainCap").textContent=p[1];
-    document.querySelectorAll("#gal button").forEach(x=>x.setAttribute("aria-pressed",x===b))});
-  const sp=document.getElementById("sp"),bc=document.getElementById("bc");
-  const draw=()=>{
-    const m=model(d,+sp.value,+bc.value),mine=m.net*h.share;
-    const cashIn=h.land+(d.soft+d.carry)*h.share;
-    document.getElementById("spOut").textContent=fmtM(+sp.value);
-    document.getElementById("bcOut").textContent=fmt$(+bc.value);
-    document.getElementById("kIn").textContent=fmt$(cashIn);
-    document.getElementById("kProfit").textContent=fmt$(mine);
-    const mult=(cashIn+mine)/cashIn;
-    document.getElementById("kMult").textContent=mult.toFixed(2)+"x";
-    document.getElementById("kMultNote").textContent=fmt$(cashIn+mine)+" back on "+fmt$(cashIn);
-    const T=+document.getElementById("tm").value;document.getElementById("tmOut").textContent=T+" months";
-    const irr=dealIrr(h.land,cashIn-h.land,cashIn+mine,T);
-    document.getElementById("kIrr").textContent=irr===null?"n/a":(irr*100).toFixed(1)+"%";
-    document.getElementById("kIrrNote").textContent="over ~"+(T/12).toFixed(1)+" years from Sept 2026";
-    const row=(a,b,c="")=>`<div class="valrow ${c}"><span>${a}</span><b>${b}</b></div>`;
-    document.getElementById("pf").innerHTML=
-      row("Gross sales, 9 residences",fmt$(m.sales))+
-      row("Land",fmt$(-d.land))+
-      row("Construction",fmt$(-m.hard))+
-      row("Soft costs",fmt$(-d.soft))+
-      row("Contingency (5%)",fmt$(-m.cont))+
-      row("Selling costs (5%)",fmt$(-m.sell))+
-      row("Carry",fmt$(-d.carry))+
-      row("Contractor profit participation (10%)",fmt$(-m.gc))+
-      row("Net profit to partnership",fmt$(m.net),"total")+
-      row(`Your ${(h.share*100).toFixed(0)}%`,fmt$(mine),"total");
-  };
-  sp.addEventListener("input",draw);bc.addEventListener("input",draw);document.getElementById("tm").addEventListener("input",draw);draw();
-  const homesNet=()=>model(d,+sp.value,+bc.value).net;
-  const rz=()=>{
-    const lot=31112+(document.getElementById("rzCorner").checked?7312:0);
-    const uap=document.getElementById("rzUap").checked;
-    const mkt=lot*3.0,aff=uap?lot*0.9:0,tot=mkt+aff;
-    const units=Math.round(tot*.82/850);
-    const P=+document.getElementById("rzP").value,C=+document.getElementById("rzC").value,Z=+document.getElementById("rzZ").value;
-    const rev=mkt*.82*P,build=tot*C,sell=rev*.05,carry=build*.10,corner=document.getElementById("rzCorner").checked;
-    const net=rev-d.land-Z-build-sell-carry;
-    const n=x=>Math.round(x).toLocaleString("en-US");
-    document.getElementById("rzLot").textContent=n(lot)+" SF";
-    document.getElementById("rzR4").textContent=n(lot)+" SF";
-    document.getElementById("rzR6").textContent=n(tot)+" SF";
-    document.getElementById("rzAff").textContent=aff?n(aff)+" SF":"None";
-    document.getElementById("rzUnits").textContent="~"+units;
-    document.getElementById("rzX").textContent=(tot/lot).toFixed(1)+"x the floor area";
-    document.getElementById("rzPOut").textContent="$"+P;
-    document.getElementById("rzCOut").textContent="$"+C;
-    document.getElementById("rzZOut").textContent=fmt$(Z);
-    const row=(a,b,c="")=>`<div class="valrow ${c}"><span>${a}</span><b>${b}</b></div>`;
-    document.getElementById("rzPf").innerHTML=
-      row("Sales, market-rate apartments",fmt$(rev))+
-      row("Land",fmt$(-d.land))+
-      (corner?row("Corner parcel price","Not included"):"")+
-      row("Rezoning",fmt$(-Z))+
-      row("Construction, all floor area",fmt$(-build))+
-      row("Selling costs (5%)",fmt$(-sell))+
-      row("Financing and carry",fmt$(-carry))+
-      row("Est. profit, R6A building",fmt$(net),"total")+
-      row(`Your ${(h.share*100).toFixed(0)}%`,fmt$(net*h.share),"total")+
-      row("Compare: nine homes, your share",fmt$(homesNet()*h.share));
-  };
-  ["rzUap","rzCorner","rzP","rzC","rzZ"].forEach(id=>document.getElementById(id).addEventListener("input",rz));
-  sp.addEventListener("input",rz);bc.addEventListener("input",rz);rz();
+  document.querySelectorAll("#dealView [data-doc]").forEach(b=>b.onclick=async()=>{
+    const x=d.docs[+b.dataset.doc],t=b.textContent;b.disabled=true;b.textContent="Opening…";const w=window.open("","_blank");
+    try{const r=await fetch("portal/docs/"+x.file);if(!r.ok)throw 0;const buf=new Uint8Array(await r.arrayBuffer());
+      const k=await crypto.subtle.importKey("raw",Uint8Array.from(atob(x.key),c=>c.charCodeAt(0)),"AES-GCM",false,["decrypt"]);
+      const pt=await crypto.subtle.decrypt({name:"AES-GCM",iv:buf.slice(0,12)},k,buf.slice(12));
+      const url=URL.createObjectURL(new Blob([pt],{type:"application/pdf"}));if(w)w.location=url;else location.href=url;}
+    catch(e){if(w)w.close();alert("Couldn't open that document. Please try again.")}
+    b.disabled=false;b.textContent=t;});
 }
 
 (()=>{const h=(location.hash||"").slice(1);go(h==="login"?"login":(PAGE_OF[h]||"home"),h&&h!=="login"?h:undefined)})();

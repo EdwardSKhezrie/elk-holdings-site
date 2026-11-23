@@ -286,7 +286,9 @@ body{overflow-x:hidden}
 .enav .lk{display:inline-flex;align-items:center;gap:6px;border:0!important;color:var(--dim);font-size:13px!important;padding:6px 4px!important}
 .enav .lk svg{width:14px;height:14px;stroke:currentColor;fill:none;stroke-width:1.8}
 .hubfoot{display:flex;gap:10px;justify-content:center;margin:6px 0 22px}
-.hub{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:14px;margin:0 0 18px}
+.hub{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin:0 0 18px}
+.mt{width:100%;border-collapse:collapse;font-size:14px}.mt th{font-weight:500;color:var(--muted);font-size:12px;letter-spacing:.06em;text-transform:uppercase;text-align:left;padding:8px 6px;border-bottom:1px solid var(--line)}.mt td{padding:9px 6px;border-top:1px solid var(--hair);vertical-align:top}.mt .r{text-align:right;white-space:nowrap}.mt tr.sec td{color:var(--gold-hi);font-family:var(--mark);letter-spacing:.08em;font-size:13px;padding-top:18px;border-top:0}.mt small{display:block;color:var(--dim);font-size:12px}.up{color:var(--pos)}.dn{color:var(--neg)}.mtw{overflow-x:auto}
+.mspark{width:100%;height:120px;display:block}
 .hubc{position:relative;text-align:left;background:linear-gradient(160deg,#16140F,#0D0C0B);border:1px solid var(--line2);border-radius:16px;padding:20px 20px 18px;display:flex;flex-direction:column;gap:4px;min-height:132px;transition:border-color .15s,transform .15s}
 .hubc:hover{border-color:var(--gold);transform:translateY(-1px)}
 .hubc .hi{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;background:rgba(201,164,92,.12);color:var(--gold-hi);margin-bottom:10px}
@@ -452,14 +454,15 @@ const IC = {
   budget: '<svg viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="12.5" rx="1.5"/><circle cx="12" cy="12.25" r="2.6"/><path d="M6.5 9.5v5.5M17.5 9.5v5.5"/></svg>',
   updates: '<svg viewBox="0 0 24 24"><path d="M4 5.5h16v10.5H9.5L5.5 19.5V16H4z"/><path d="M8.5 9.5h7M8.5 12.5h4.5"/></svg>',
   active: '<svg viewBox="0 0 24 24"><path d="M4 20.5h16M6 20.5V10l6-5 6 5v10.5"/><path d="M10 20.5v-5h4v5M9.5 11.5h5"/></svg>',
+  stocks: '<svg viewBox="0 0 24 24"><path d="M3.5 19.5h17"/><path d="M4.5 15.5l4.5-4.5 3.5 3 6.5-7"/><path d="M15 7h4v4"/></svg>',
   eddie: '<svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>'
 };
 const TABS = [["firm","Home"],["investments","Invest"],["about","About"],["investors","Investors"],["eddie","Eddie"]];
-const LOCKED = ["finds","room","active","budget","updates"];
-const ENAV = [["eddie","Eddie"],["finds","Finds"],["room","Underwrite"],["active","Active"],["budget","Budget"],["updates","Claude"],["settings","Settings"]];
+const LOCKED = ["finds","room","active","stocks","budget","updates"];
+const ENAV = [["eddie","Eddie"],["finds","Finds"],["room","Underwrite"],["active","Active"],["stocks","Stocks"],["budget","Budget"],["updates","Claude"],["settings","Settings"]];
 const SITE_GO = { firm:["home","top"], investments:["investments","platform"], portfolio:["portfolio"], about:["leadership"], contact:["contact"], investors:["login"] };
 const SITE_TAB = v => v === "home" ? "firm" : ["investments","realestate","fixedincome","privateequity","venture","operating","services","equities"].includes(v) ? "investments" : v === "portfolio" ? "portfolio" : v === "leadership" ? "about" : v === "contact" ? "contact" : (v === "login" || v === "room") ? "investors" : "firm";
-const EDDIE_VIEWS = ["eddie","finds","room","active","budget","updates","settings","prices"];
+const EDDIE_VIEWS = ["eddie","finds","room","active","stocks","budget","updates","settings","prices"];
 function buildNav(){
   $("#tabbar").innerHTML = TABS.map(([k, l]) => `<button data-go="${k}">${IC[k]}${l}</button>`).join("");
   $("#ahlocked").innerHTML = `<button class="ahlock" data-go="eddie">${IC.eddie}Eddie</button>`;
@@ -470,7 +473,7 @@ function buildNav(){
 function mark(k){
   const top = EDDIE_VIEWS.includes(k) ? "eddie" : k;
   document.querySelectorAll(".ahnav [data-go], #tabbar [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === top));
-  const T = { finds: "Deal Finds", room: "Underwrite", active: "Active Deals", budget: "Budget", updates: "Claude", settings: "Settings" };
+  const T = { finds: "Deal Finds", room: "Underwrite", active: "Active Deals", stocks: "My Stocks", budget: "Budget", updates: "Claude", settings: "Settings" };
   const et = $("#etitle"); if (et) et.textContent = T[k] || "";
   const back = document.querySelector("#enav .eback"); if (back) back.style.visibility = k === "eddie" ? "hidden" : "visible";
 }
@@ -517,6 +520,7 @@ function route(){
   if (v === "updates") return updates();
   if (v === "active" && arg) return activePage(arg);
   if (v === "active") return activeList();
+  if (v === "stocks") return stocksPage();
   if (v === "budget") return budget();
   if (v === "settings") return settings();
   if (v === "prices") return pricesPage();
@@ -632,6 +636,7 @@ async function loadRoom(){
   try{ S.tpl = JSON.parse(decode((await gh(cfg.room, P("eddie-private/outreach.json"))).content)); }catch(e){ S.tpl = null; }
   try{ S.inbox = (await gh(cfg.room, P("inbox"))).filter(x => x.type === "dir"); }catch(e){ S.inbox = []; }
   try{ S.active = JSON.parse(decode((await gh(cfg.room, P("eddie-private/active-deals.json"))).content)).deals || []; }catch(e){ S.active = []; }
+  try{ S.mine = JSON.parse(decode((await gh(cfg.room, P("eddie-private/my-portfolio.json"))).content)); }catch(e){ S.mine = null; }
   // Which finds already had an email go out (outreach/<deal id>.json)
   S.sent = {};
   try{
@@ -707,7 +712,7 @@ function home(){
   let h = `<div class="head"><div><div class="eyebrow">${esc(today)}</div><h1>${greet}, Eddie</h1></div><div class="grow"></div><button class="btn" onclick="openSend()">Send a deal</button></div>`;
   if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
   const F = S.finds.slice().sort((a, b) => b.score - a.score);
-  const HUB = [["finds","Deal Finds", S.finds.length + " finds · " + F.filter(d => d.score >= 72).length + " strong"],["room","Underwrite", (S.index.deals || []).length + " memos · send an OM"],["active","Active Deals", (S.active || []).length ? (S.active || []).length + " deal" + ((S.active || []).length > 1 ? "s" : "") + " underway" : "Deals we're doing now"],["budget","Budget","2027 money plan"],["updates","Claude","Send changes for this app"]];
+  const HUB = [["finds","Deal Finds", S.finds.length + " finds · " + F.filter(d => d.score >= 72).length + " strong"],["room","Underwrite", (S.index.deals || []).length + " memos · send an OM"],["active","Active Deals", (S.active || []).length ? (S.active || []).length + " deal" + ((S.active || []).length > 1 ? "s" : "") + " underway" : "Deals we're doing now"],["stocks","My Stocks", S.mine ? usd0(S.mine.totals.value) + " · " + (S.mine.totals.gain >= 0 ? "+" : "") + S.mine.totals.gainPct.toFixed(2) + "%" : "Your Robinhood stocks"],["budget","Budget","2027 money plan"],["updates","Claude","Send changes for this app"]];
   h += `<div class="hub">${HUB.map(([k, l, sub]) => `<button class="hubc" onclick="go('${k}')"><span class="hi">${IC[k]}</span><b>${l}</b><small>${esc(sub)}</small><i>→</i></button>`).join("")}</div><div class="hubfoot"><button class="btn line sm" onclick="go('settings')">Settings</button></div>`;
   const strong = F.filter(d => d.score >= 72).length;
   const D = S.index.deals || [];
@@ -873,6 +878,52 @@ function activePage(id){
     b.disabled = false; b.textContent = "Open";
   });
 }
+
+/* ---------- my stocks (Eddie's own Robinhood account; private repo eddie-private/my-portfolio.json, updated hourly from Yahoo) ---------- */
+const usd0 = n => (n < 0 ? "-$" : "$") + Math.abs(Math.round(n)).toLocaleString("en-US");
+const usd2 = n => (n < 0 ? "-$" : "$") + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const sg = n => (n > 0 ? "+" : n < 0 ? "-" : "") + "$" + Math.abs(n).toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+const pc = (a, b) => b ? ((a / b - 1) * 100) : 0;
+const cls = n => n > 0 ? "up" : n < 0 ? "dn" : "";
+function stocksPage(){
+  mark("stocks");
+  let h = `<div class="head"><div><div class="eyebrow">Robinhood · ELK Holdings account</div><h1>My Stocks</h1><div class="sub" id="mAsof"></div></div><div class="grow"></div><input class="search" id="mq" placeholder="Search ticker or name" aria-label="Search stocks"><button class="btn line sm" id="mRef">Refresh</button></div>`;
+  if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
+  const M = S.mine;
+  if (!M){ $("#main").innerHTML = h + '<p class="muted">Loading…</p>'; if (S.mine === undefined) setTimeout(() => route(), 800); else $("#main").innerHTML = h + '<div class="notice">No stock data yet.</div>'; return; }
+  const T = M.totals, at = new Date(M.asof);
+  const when = at.toLocaleString("en-US", { month: "short", day: "numeric", hour: "numeric", minute: "2-digit" });
+  const H = (M.history || []).filter(x => x.value);
+  let spark = "";
+  if (H.length > 1){
+    const v = H.map(x => x.value), lo = Math.min(...v, T.cost), hi = Math.max(...v, T.cost), W = 600, Ht = 120, sx = i => i / (v.length - 1) * W, sy = y => Ht - 8 - (y - lo) / ((hi - lo) || 1) * (Ht - 16);
+    spark = `<div class="card" style="margin-top:16px"><h3>Value since you bought</h3><svg class="mspark" viewBox="0 0 ${W} ${Ht}" preserveAspectRatio="none"><line x1="0" x2="${W}" y1="${sy(T.cost)}" y2="${sy(T.cost)}" stroke="#6F685D" stroke-dasharray="4 4"/><polyline fill="none" stroke="#C9A45C" stroke-width="2" points="${v.map((y, i) => sx(i) + "," + sy(y)).join(" ")}"/></svg><div class="muted" style="font-size:12.5px">Dotted line = what you put in. One point per trading day.</div></div>`;
+  }
+  h += `<div class="grid g4">
+    <div class="card"><span class="muted">Value now</span><b class="num" style="display:block;font-size:clamp(18px,5.2vw,26px)">${usd2(T.value)}</b></div>
+    <div class="card"><span class="muted">Put in</span><b class="num" style="display:block;font-size:clamp(18px,5.2vw,26px)">${usd2(T.cost)}</b></div>
+    <div class="card"><span class="muted">Gain since you bought</span><b class="num ${cls(T.gain)}" style="display:block;font-size:clamp(18px,5.2vw,26px)">${sg(T.gain)}</b><small class="${cls(T.gain)}">${T.gainPct >= 0 ? "+" : ""}${T.gainPct.toFixed(2)}%</small></div>
+    <div class="card"><span class="muted">Today</span><b class="num ${cls(T.day)}" style="display:block;font-size:clamp(18px,5.2vw,26px)">${sg(T.day)}</b><small class="muted">${esc(fmtDay(M.marketDate))}</small></div>
+  </div>${spark}`;
+  h += `<div class="card" style="margin-top:16px"><h3>By sector</h3><div class="mtw"><table class="mt"><tr><th>Sector</th><th class="r">Put in</th><th class="r">Value</th><th class="r">Gain</th><th class="r">Share</th></tr>${(M.sectors || []).map(x => `<tr><td>${esc(x.sector)}</td><td class="r">${usd2(x.cost)}</td><td class="r">${usd2(x.value)}</td><td class="r ${cls(x.value - x.cost)}">${sg(x.value - x.cost)}<small>${pc(x.value, x.cost) >= 0 ? "+" : ""}${pc(x.value, x.cost).toFixed(2)}%</small></td><td class="r">${(x.value / T.value * 100).toFixed(1)}%</td></tr>`).join("")}</table></div></div>`;
+  h += `<div class="card" style="margin-top:16px"><h3>Every stock <span class="muted" style="font-weight:400;font-size:13px">· ${(M.positions || []).length} holdings</span></h3><div class="mtw" id="mList"></div></div>`;
+  $("#main").innerHTML = h;
+  $("#mAsof").textContent = `Prices from Yahoo, as of ${when}. Updates every hour while the market is open.` + ((M.unpriced || []).length ? ` No price yet for ${M.unpriced.join(", ")}.` : "");
+  const list = () => {
+    const q = ($("#mq").value || "").trim().toLowerCase();
+    const P = (M.positions || []).filter(x => !q || (x.t + " " + x.name + " " + x.group + " " + x.sector).toLowerCase().includes(q));
+    const secs = {}; P.forEach(x => (secs[x.sector] = secs[x.sector] || []).push(x));
+    let t = `<table class="mt"><tr><th>Stock</th><th class="r">Shares</th><th class="r">Avg cost</th><th class="r">Price</th><th class="r">Value</th><th class="r">Gain</th><th class="r">Today</th></tr>`;
+    Object.keys(secs).forEach(k => {
+      t += `<tr class="sec"><td colspan="7">${esc(k)}</td></tr>`;
+      secs[k].forEach(x => { t += `<tr><td><b>${esc(x.t)}</b><small>${esc(x.name)} · ${esc(x.group)}</small></td><td class="r">${Number(x.shares).toFixed(4)}</td><td class="r">${usd2(x.avg)}</td><td class="r">${x.price ? usd2(x.price) : "—"}</td><td class="r">${usd2(x.value)}</td><td class="r ${cls(x.gain)}">${sg(x.gain)}<small>${pc(x.value, x.cost) >= 0 ? "+" : ""}${pc(x.value, x.cost).toFixed(2)}%</small></td><td class="r ${cls(x.day)}">${sg(x.day)}</td></tr>`; });
+    });
+    $("#mList").innerHTML = P.length ? t + "</table>" : '<p class="muted" style="margin:0">Nothing matches.</p>';
+  };
+  list(); $("#mq").oninput = list;
+  $("#mRef").onclick = async () => { const b = $("#mRef"); b.disabled = true; b.textContent = "Loading…"; try{ S.mine = JSON.parse(decode((await gh(cfg.room, P("eddie-private/my-portfolio.json"))).content)); }catch(e){ toast("Couldn't load it. " + e.message); } stocksPage(); };
+}
+const fmtDay = s => { if (!s) return ""; const d = new Date(s + "T12:00:00"); return d.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" }); };
 
 /* ---------- deal room ---------- */
 function roomList(){

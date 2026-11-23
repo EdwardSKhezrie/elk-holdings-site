@@ -860,6 +860,7 @@ function activePage(id){
     ${d.latest ? `<div class="card"><h3>Latest</h3><p style="margin:0;white-space:pre-wrap">${esc(d.latest)}</p></div>` : ""}
     <div class="card"><h3>Steps</h3><ol class="asteps">${st.map((x, i) => `<li class="${esc(x.s || "next")}"><i>${ASTAT[x.s] || i + 1}</i><div>${esc(x.t)}${x.n ? `<small>${esc(x.n)}</small>` : ""}</div></li>`).join("") || '<li class="muted">No steps yet.</li>'}</ol></div>
   </div><div class="stack">
+    ${(d.money || []).length ? `<div class="card"><h3>Money so far</h3><table class="kv">${d.money.map(r => `<tr><td>${esc(r[0])}${r[2] ? `<div class="muted" style="font-size:12.5px">${esc(r[2])}</div>` : ""}</td><td style="text-align:right;white-space:nowrap">${esc(r[1])}</td></tr>`).join("")}</table></div>` : ""}
     ${(d.open || []).length ? `<div class="card"><h3>Open items</h3><ul class="clean">${d.open.map(x => `<li>${esc(x)}</li>`).join("")}</ul></div>` : ""}
     <div class="card"><h3>Documents</h3>${(d.docs || []).map((x, i) => `<div class="adoc"><span>${esc(x.name)}${x.date ? ` <span class="muted">· ${esc(x.date)}</span>` : ""}</span><button class="btn line sm" data-doc="${i}">Open</button></div>`).join("") || '<p class="muted" style="margin:0">None yet.</p>'}</div>
   </div></div>`;

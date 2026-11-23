@@ -1254,6 +1254,11 @@ function openRoom(){
   const cost=items.reduce((a,x)=>a+x.cost,0),value=items.reduce((a,x)=>a+x.value,0),gain=Math.abs(value-cost)<1?0:value-cost;
   const cats=[...new Set(items.map(x=>x.cat))];const dayT=items.reduce((a,x)=>a+(x.day||0),0);
   const sign=g=>(g>=0?"+":"")+fmt$(g);
+  if(!items.length&&!session.promote){
+    document.getElementById("overview").innerHTML=`<div style="border:1px solid rgba(201,164,92,.45);padding:34px 28px;text-align:center;margin:8px 0 24px"><div style="font-family:Cinzel,serif;letter-spacing:.12em;color:#E8CB8A;font-size:1.05rem">NO INVESTMENTS RIGHT NOW</div><p class="muted" style="margin:12px auto 0;max-width:48ch">You don't have any active investments with ELK Holdings. When a new one starts, it will show here.</p></div>`;
+    document.querySelector(".detail-head").hidden=true;document.getElementById("dealView").hidden=true;
+    go("room");return;
+  }
   let rows="";
   cats.forEach(c=>{rows+=`<tr class="cat"><td colspan="6">${c}</td></tr>`;
     items.filter(x=>x.cat===c).forEach(x=>{const g=x.value-x.cost;

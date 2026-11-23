@@ -1157,7 +1157,7 @@ const tkOf=n=>{const m=/\(([A-Z.]+)\)/.exec(n);return m?m[1]:null};
 /* Shares are bought at the buy price; value moves with the latest close. Unconfirmed prices fall back to cost. */
 function holdingCalc(name,amt){const t=tkOf(name),p=t&&PRICES.t[t];
   if(!p||!p.buy)return{t,shares:null,buy:null,last:null,value:amt,day:0,ok:false};
-  const shares=amt/p.buy,last=p.last||p.buy,prev=p.prev||last;
+  const shares=amt/p.buy,last=p.last||p.buy,prev=(p.buyDate&&p.lastDate===p.buyDate)?p.buy:(p.prev||last);
   return{t,shares,buy:p.buy,last,value:shares*last,day:shares*(last-prev),ok:!!p.last};}
 function posCalc(o){let v=0,d=0,miss=0;o.alloc.forEach(([n,c])=>{const ex=EXAMPLES[n];if(!ex){v+=c;return}ex.forEach(([nm,amt])=>{const h=holdingCalc(nm,amt);v+=h.value;d+=h.day;if(!h.ok)miss++})});return{value:v,day:d,miss}}
 const INVESTORS={};
@@ -1385,7 +1385,7 @@ let HIST=null;
 function allStocks(){
   const out=[];
   (session.other||[]).forEach(o=>{if(!o.planned)return;o.alloc.forEach(([n])=>{(EXAMPLES[n]||[]).forEach(([nm,amt])=>{const h=holdingCalc(nm,amt);if(!h.t)return;
-    const pd=PRICES.t[h.t]||{};out.push({t:h.t,name:nm.replace(/\s*\([A-Z.]+\)/,"").replace(/\s·.*$/,""),cat:o.cat,group:n,shares:h.shares,buy:h.buy,last:h.last,prev:pd.prev,cost:amt,value:h.value,day:h.day,date:pd.lastDate,buyDate:pd.buyDate||PRICES.buyDate})})})});
+    const pd=PRICES.t[h.t]||{};out.push({t:h.t,name:nm.replace(/\s*\([A-Z.]+\)/,"").replace(/\s·.*$/,""),cat:o.cat,group:n,shares:h.shares,buy:h.buy,last:h.last,prev:(pd.buyDate&&pd.lastDate===pd.buyDate)?h.buy:pd.prev,cost:amt,value:h.value,day:h.day,date:pd.lastDate,buyDate:pd.buyDate||PRICES.buyDate})})})});
   (session.positions||[]).forEach(p=>{const pd=PRICES.t[p.ticker]||{},last=pd.last||MARKET[p.ticker].price;out.push({t:p.ticker,name:p.name,cat:"Public Equities",group:"Individual stock",shares:p.shares,buy:p.cost,last,prev:pd.prev,cost:p.shares*p.cost,value:p.shares*last,day:pd.prev?p.shares*(last-pd.prev):0,date:pd.lastDate,buyDate:""})});
   return out;
 }
@@ -1465,7 +1465,7 @@ function renderStocks(){
   rows=rows.map(x=>({...x,gain:z(x.value-x.cost),ret:z(x.value-x.cost)/x.cost*100,pct:x.value/base*100,dayp:x.prev?(x.last-x.prev)/x.prev*100:0}));
   const k=stockSort.k,d=stockSort.d;rows.sort((a,b)=>(typeof a[k]==="string"?a[k].localeCompare(b[k]):(a[k]||0)-(b[k]||0))*d);
   const px=n=>n==null?"—":"$"+n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
-  const rowHTML=x=>`<tr class="srow" data-t="${x.t}" title="Click for what this company does"><td><span class="tkr">${x.t}</span></td><td><span class="nm"><b>${x.name} <span class="info">ⓘ</span></b>${q?`<small>${x.cat} · ${x.group}</small>`:""}</span></td><td class="r">${x.shares==null?"—":x.shares.toLocaleString("en-US",{maximumFractionDigits:2})}</td><td class="r">${px(x.buy)}</td><td class="r">${px(x.last)}<br><small class="muted">${x.date?fmtDate(x.date):""}</small></td><td class="r ${pn(x.dayp)}">${x.prev?(x.dayp>0?"+":"")+x.dayp.toFixed(2)+"%":"—"}</td><td class="r">${fmt$(x.value)}</td><td class="r ${pn(x.gain)}">${sgn$(x.gain)}</td><td class="r ${pn(x.gain)}">${(x.ret>0?"+":"")+x.ret.toFixed(2)}%</td><td class="r">${x.pct.toFixed(1)}%</td></tr>`;
+  const rowHTML=x=>`<tr class="srow" data-t="${x.t}" title="Click for what this company does"><td><span class="tkr">${x.t}</span></td><td><span class="nm"><b>${x.name} <span class="info">ⓘ</span></b>${q?`<small>${x.cat} · ${x.group}</small>`:""}</span></td><td class="r">${x.shares==null?"—":x.shares.toLocaleString("en-US",{maximumFractionDigits:x.shares<10?4:2})}</td><td class="r">${px(x.buy)}</td><td class="r">${px(x.last)}<br><small class="muted">${x.date?fmtDate(x.date):""}</small></td><td class="r ${pn(x.dayp)}">${x.prev?(x.dayp>0?"+":"")+x.dayp.toFixed(2)+"%":"—"}</td><td class="r">${fmt$(x.value)}</td><td class="r ${pn(x.gain)}">${sgn$(x.gain)}</td><td class="r ${pn(x.gain)}">${(x.ret>0?"+":"")+x.ret.toFixed(2)}%</td><td class="r">${x.pct.toFixed(1)}%</td></tr>`;
   if(q){tb.innerHTML=rows.map(rowHTML).join("")}
   else{const order=[...new Set(all.filter(x=>x.cat===stockCat).map(x=>x.group))];
     tb.innerHTML=order.map(g=>{const gr=rows.filter(x=>x.group===g);if(!gr.length)return"";const gv=gr.reduce((a,x)=>a+x.value,0),gc=gr.reduce((a,x)=>a+x.cost,0),gg=z(gv-gc),gd=gr.reduce((a,x)=>a+x.day,0);
@@ -1551,7 +1551,7 @@ function showOther(i){
       <tbody>${rows}</tbody>
       <tfoot><tr><td><b>Total</b></td><td></td><td></td><td class="r"><b>${fmt$(o.cost)}</b></td><td class="r"><b>${fmt$(pc.value)}</b></td><td class="r ${g>0?"pos":g<0?"neg":""}"><b>${g>=0?"+":"-"}${fmt$(Math.abs(g))}</b></td><td class="r ${g>0?"pos":g<0?"neg":""}"><b>${pct.toFixed(2)}%</b></td></tr></tfoot>
     </table></div>
-    <p class="muted" style="font-size:.8rem">Assumes each holding was bought at its ${fmtDate(PRICES.buyDate)} close, or at the earliest price found for it if that close wasn't available. Prices are the latest closes found online and update each weekday; each holding shows the date of its price. Not investment advice.</p>`;
+    <p class="muted" style="font-size:.8rem">Each holding shows the price you actually paid on Robinhood (your average cost per share). Above that price is a gain, below it is a loss. Prices come from Yahoo and update every hour while the market is open, then at each close. Not investment advice.</p>`;
 }
 function showPosition(i){
   const p=session.positions[i],m=MARKET[p.ticker];

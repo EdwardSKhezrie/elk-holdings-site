@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>ELK Partners</title>
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" href="../crest-icon.jpg">
+<link rel="apple-touch-icon" href="../apple-touch-icon.png">
+<meta name="theme-color" content="#000000">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="ELK Partners">
+<style>
+html,body{margin:0;height:100%;background:#000}
+body{padding-top:env(safe-area-inset-top,0px)}
+iframe{display:block;border:0;width:100%;height:100%}
+#tip{position:fixed;left:12px;right:12px;bottom:calc(12px + env(safe-area-inset-bottom,0px));background:#16140F;color:#EEE7D8;border:1px solid #C9A45C;border-radius:12px;padding:14px 16px;font:14px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;display:none;z-index:2}
+#tip b{color:#E8CB8A}#tip button{float:right;background:none;border:0;color:#C9A45C;font:inherit;cursor:pointer;margin-left:10px}
+</style></head>
+<body>
+<iframe id="f" title="ELK Holdings partner login" src="../index.html?partners=1#login"></iframe>
+<div id="tip"><button id="tipx" aria-label="Close">Close</button><span id="tipt"></span></div>
+<script>
+/* ELK Partners: the investor login as its own app. Always loads the latest site; nothing private is stored here except the login name, if the partner chooses. */
+const K="elk-partner-login";
+const f=document.getElementById("f");
+f.addEventListener("load",()=>{
+  try{
+    const d=f.contentDocument,em=d.getElementById("email"),form=d.getElementById("loginForm");
+    let saved="";try{saved=localStorage.getItem(K)||""}catch(e){}
+    if(em&&saved&&!em.value)em.value=saved;
+    if(form)form.addEventListener("submit",()=>{try{localStorage.setItem(K,(em.value||"").trim().toLowerCase())}catch(e){}});
+    const out=d.getElementById("logout");if(out)out.addEventListener("click",e=>{e.preventDefault();e.stopImmediatePropagation();f.src="../index.html?partners=1#login"},true);
+  }catch(e){}
+});
+const standalone=matchMedia("(display-mode: standalone)").matches||navigator.standalone;
+let shown=false;try{shown=localStorage.getItem("elk-partner-tip")==="1"}catch(e){}
+if(!standalone&&!shown){
+  const ios=/iPhone|iPad|iPod/.test(navigator.userAgent),mac=/Macintosh/.test(navigator.userAgent)&&!("ontouchend" in document);
+  document.getElementById("tipt").innerHTML=ios?"To keep this as an app: tap <b>Share</b>, then <b>Add to Home Screen</b>.":mac?"To keep this as an app: in Safari use <b>File → Add to Dock</b>; in Chrome, click the install icon in the address bar.":"To keep this as an app: use your browser's <b>Install</b> or <b>Add to Home Screen</b> option.";
+  document.getElementById("tip").style.display="block";
+}
+document.getElementById("tipx").onclick=()=>{document.getElementById("tip").style.display="none";try{localStorage.setItem("elk-partner-tip","1")}catch(e){}};
+if("serviceWorker" in navigator)navigator.serviceWorker.register("../sw.js",{scope:"../"}).catch(()=>{});
+</script>
+</body></html>

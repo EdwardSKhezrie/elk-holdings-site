@@ -623,6 +623,12 @@ async function loadRoom(){
   try{ S.index = JSON.parse(decode((await gh(cfg.room, P("deals/index.json"))).content)); }catch(e){ S.index = { deals: [], waiting: [] }; }
   try{ S.tpl = JSON.parse(decode((await gh(cfg.room, P("eddie-private/outreach.json"))).content)); }catch(e){ S.tpl = null; }
   try{ S.inbox = (await gh(cfg.room, P("inbox"))).filter(x => x.type === "dir"); }catch(e){ S.inbox = []; }
+  // Which finds already had an email go out (outreach/<deal id>.json)
+  S.sent = {};
+  try{
+    const fl = (await gh(cfg.room, P("outreach"))).filter(x => x.type === "file" && /\.json$/.test(x.name) && !x.name.startsWith("_"));
+    await Promise.all(fl.map(async x => { try{ const o = JSON.parse(decode((await gh(cfg.room, P("outreach/" + x.name))).content)); if (["outlook","scheduled","sent","replied"].includes(o.status) || (o.outlook_sends || []).length) S.sent[x.name.replace(/\.json$/, "")] = o.status; }catch(e){} }));
+  }catch(e){}
 }
 async function refresh(){
   if (!cfg.token) return;
@@ -727,21 +733,25 @@ function findsList(){
   const list = S.finds.filter(d => (F_ST.mkt === "all" || d.mkt === F_ST.mkt) && (!q || [d.name, d.addr, d.sub, d.owner, d.summary, d.tenants, d.contacts.map(c => c.org + " " + c.person).join(" "), d.debt.map(r => r.join(" ")).join(" ")].join(" ").toLowerCase().includes(q))).sort((a, b) => b.score - a.score);
   if (!S.finds.length && S.loading) h += '<p class="muted">Loading finds…</p>';
   else if (!list.length) h += `<div class="empty"><h2>Nothing matches</h2><p>Try another market or search.</p></div>`;
-  // This week's finds (Sunday to Sunday) stay open; everything older goes in a folder you tap to open.
-  const wk = new Date(); wk.setHours(0, 0, 0, 0); wk.setDate(wk.getDate() - wk.getDay());
-  const isNew = d => d.added && Date.parse(d.added) >= wk.getTime();
-  const cur = list.filter(isNew), old = list.filter(d => !isNew(d));
-  const openOld = F_ST.old || !!q;
-  h += `<div class="eyebrow" style="margin:18px 0 10px">This week · since Sunday ${wk.toLocaleDateString(undefined, { month: "short", day: "numeric" })} · ${cur.length}</div>`;
-  h += cur.length ? `<div class="finds">${cur.map(card).join("")}</div>` : `<p class="muted">No new finds yet this week.</p>`;
-  if (old.length) {
-    h += `<button class="folder" id="fold" aria-expanded="${openOld}"><span class="fi">${openOld ? "▾" : "▸"}</span> Older deals <span class="dim">${old.length}</span></button>`;
-    if (openOld) h += `<div class="finds">${old.map(card).join("")}</div>`;
-  }
+  // New finds from the last 7 days stay open on top. Finds already emailed go in the "Emailed" folder; older ones not yet emailed go in "Older deals".
+  const wk = Date.now() - 7 * 864e5, SENT = S.sent || {};
+  const isNew = d => d.added && Date.parse(d.added) >= wk, wasSent = d => !!SENT[d.id];
+  const cur = list.filter(d => !wasSent(d) && isNew(d)), sent = list.filter(wasSent), old = list.filter(d => !wasSent(d) && !isNew(d));
+  const SL = { outlook: "Opened in Outlook", scheduled: "Scheduled", sent: "Sent", replied: "Replied" };
+  h += `<div class="eyebrow" style="margin:18px 0 10px">New this week · last 7 days · ${cur.length}</div>`;
+  h += cur.length ? `<div class="finds">${cur.map(card).join("")}</div>` : `<p class="muted">No new finds in the last 7 days that haven't been emailed.</p>`;
+  const fold = (key, label, arr, sub) => {
+    if (!arr.length) return "";
+    const open = F_ST[key] || !!q;
+    return `<button class="folder" data-k="${key}" aria-expanded="${open}"><span class="fi">${open ? "▾" : "▸"}</span> ${label} <span class="dim">${arr.length}</span></button>` +
+      (open ? `<div class="finds">${arr.map(d => sub ? card(d).replace('<div class="tags">', `<div class="tags"><span class="tag" style="border-color:#C9A45C;color:#E8CB8A">${esc(SL[SENT[d.id]] || "Emailed")}</span>`) : card(d)).join("")}</div>` : "");
+  };
+  h += fold("em", "Emailed", sent.sort((a, b) => (SENT[b.id] === "replied") - (SENT[a.id] === "replied")), true);
+  h += fold("old", "Older deals", old, false);
   h += `<p class="dim" style="font-size:13px;margin-top:22px">New finds are added at 7 AM and 1 PM. Open a find and tap Send from Outlook; replies are tracked on the find.</p>`;
   $("#main").innerHTML = h;
   document.querySelectorAll(".chip").forEach(b => b.onclick = () => { F_ST.mkt = b.dataset.m; LS.set("fst", F_ST); findsList(); });
-  const fb = $("#fold"); if (fb) fb.onclick = () => { F_ST.old = !F_ST.old; LS.set("fst", F_ST); findsList(); };
+  document.querySelectorAll(".folder[data-k]").forEach(fb => fb.onclick = () => { const k = fb.dataset.k; F_ST[k] = !F_ST[k]; LS.set("fst", F_ST); findsList(); });
   const fq = $("#fq"); fq.oninput = () => { F_ST.q = fq.value; LS.set("fst", F_ST); clearTimeout(window._fq); window._fq = setTimeout(() => { findsList(); const i = $("#fq"); i.focus(); i.setSelectionRange(i.value.length, i.value.length); }, 220); };
 }
 function photo(d, cls){

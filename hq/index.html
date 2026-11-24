@@ -455,14 +455,15 @@ const IC = {
   updates: '<svg viewBox="0 0 24 24"><path d="M4 5.5h16v10.5H9.5L5.5 19.5V16H4z"/><path d="M8.5 9.5h7M8.5 12.5h4.5"/></svg>',
   active: '<svg viewBox="0 0 24 24"><path d="M4 20.5h16M6 20.5V10l6-5 6 5v10.5"/><path d="M10 20.5v-5h4v5M9.5 11.5h5"/></svg>',
   stocks: '<svg viewBox="0 0 24 24"><path d="M3.5 19.5h17"/><path d="M4.5 15.5l4.5-4.5 3.5 3 6.5-7"/><path d="M15 7h4v4"/></svg>',
+  charity: '<svg viewBox="0 0 24 24"><path d="M12 20s-7.5-4.6-7.5-10.2A4.3 4.3 0 0 1 12 7.3a4.3 4.3 0 0 1 7.5 2.5C19.5 15.4 12 20 12 20z"/></svg>',
   eddie: '<svg viewBox="0 0 24 24"><rect x="5" y="10.5" width="14" height="10" rx="1.5"/><path d="M8.5 10.5V8a3.5 3.5 0 0 1 7 0v2.5"/></svg>'
 };
 const TABS = [["firm","Home"],["investments","Invest"],["about","About"],["investors","Investors"],["eddie","Eddie"]];
-const LOCKED = ["finds","room","active","stocks","budget","updates"];
-const ENAV = [["eddie","Eddie"],["finds","Finds"],["room","Underwrite"],["active","Active"],["stocks","Stocks"],["budget","Budget"],["updates","Claude"],["settings","Settings"]];
+const LOCKED = ["finds","room","active","stocks","budget","charity","updates"];
+const ENAV = [["eddie","Eddie"],["finds","Finds"],["room","Underwrite"],["active","Active"],["stocks","Stocks"],["budget","Budget"],["charity","Charity"],["updates","Claude"],["settings","Settings"]];
 const SITE_GO = { firm:["home","top"], investments:["investments","platform"], portfolio:["portfolio"], about:["leadership"], contact:["contact"], investors:["login"] };
 const SITE_TAB = v => v === "home" ? "firm" : ["investments","realestate","fixedincome","privateequity","venture","operating","services","equities"].includes(v) ? "investments" : v === "portfolio" ? "portfolio" : v === "leadership" ? "about" : v === "contact" ? "contact" : (v === "login" || v === "room") ? "investors" : "firm";
-const EDDIE_VIEWS = ["eddie","finds","room","active","stocks","budget","updates","settings","prices"];
+const EDDIE_VIEWS = ["eddie","finds","room","active","stocks","budget","charity","updates","settings","prices"];
 function buildNav(){
   $("#tabbar").innerHTML = TABS.map(([k, l]) => `<button data-go="${k}">${IC[k]}${l}</button>`).join("");
   $("#ahlocked").innerHTML = `<button class="ahlock" data-go="eddie">${IC.eddie}Eddie</button>`;
@@ -473,7 +474,7 @@ function buildNav(){
 function mark(k){
   const top = EDDIE_VIEWS.includes(k) ? "eddie" : k;
   document.querySelectorAll(".ahnav [data-go], #tabbar [data-go]").forEach(b => b.setAttribute("aria-current", b.dataset.go === top));
-  const T = { finds: "Deal Finds", room: "Underwrite", active: "Active Deals", stocks: "My Stocks", budget: "Budget", updates: "Claude", settings: "Settings" };
+  const T = { finds: "Deal Finds", room: "Underwrite", active: "Active Deals", stocks: "My Stocks", budget: "Budget", charity: "Charity", updates: "Claude", settings: "Settings" };
   const et = $("#etitle"); if (et) et.textContent = T[k] || "";
   const back = document.querySelector("#enav .eback"); if (back) back.style.visibility = k === "eddie" ? "hidden" : "visible";
 }
@@ -522,6 +523,7 @@ function route(){
   if (v === "active") return activeList();
   if (v === "stocks") return stocksPage();
   if (v === "budget") return budget();
+  if (v === "charity") return budget("charity");
   if (v === "settings") return settings();
   if (v === "prices") return pricesPage();
   return home();
@@ -712,7 +714,7 @@ function home(){
   let h = `<div class="head"><div><div class="eyebrow">${esc(today)}</div><h1>${greet}, Eddie</h1></div><div class="grow"></div><button class="btn" onclick="openSend()">Send a deal</button></div>`;
   if (!cfg.token){ $("#main").innerHTML = h + needKey(); return; }
   const F = S.finds.slice().sort((a, b) => b.score - a.score);
-  const HUB = [["finds","Deal Finds", S.finds.length + " finds · " + F.filter(d => d.score >= 72).length + " strong"],["room","Underwrite", (S.index.deals || []).length + " memos · send an OM"],["active","Active Deals", (S.active || []).length ? (S.active || []).length + " deal" + ((S.active || []).length > 1 ? "s" : "") + " underway" : "Deals we're doing now"],["stocks","My Stocks", S.mine ? usd0(S.mine.totals.value) + " · " + (S.mine.totals.gain >= 0 ? "+" : "") + S.mine.totals.gainPct.toFixed(2) + "%" : "Your Robinhood stocks"],["budget","Budget","2027 money plan"],["updates","Claude","Send changes for this app"]];
+  const HUB = [["finds","Deal Finds", S.finds.length + " finds · " + F.filter(d => d.score >= 72).length + " strong"],["room","Underwrite", (S.index.deals || []).length + " memos · send an OM"],["active","Active Deals", (S.active || []).length ? (S.active || []).length + " deal" + ((S.active || []).length > 1 ? "s" : "") + " underway" : "Deals we're doing now"],["stocks","My Stocks", S.mine ? usd0(S.mine.totals.value) + " · " + (S.mine.totals.gain >= 0 ? "+" : "") + S.mine.totals.gainPct.toFixed(2) + "%" : "Your Robinhood stocks"],["budget","Budget","2027 money plan"],["charity","Charity","10% of my income & gains"],["updates","Claude","Send changes for this app"]];
   h += `<div class="hub">${HUB.map(([k, l, sub]) => `<button class="hubc" onclick="go('${k}')"><span class="hi">${IC[k]}</span><b>${l}</b><small>${esc(sub)}</small><i>→</i></button>`).join("")}</div><div class="hubfoot"><button class="btn line sm" onclick="go('settings')">Settings</button></div>`;
   const strong = F.filter(d => d.score >= 72).length;
   const D = S.index.deals || [];
@@ -1155,17 +1157,17 @@ function saveBudget(){
     }, 700);
   });
 }
-async function budget(){
-  mark("budget");
+async function budget(view){
+  mark(view || "budget");
   $("#main").innerHTML = '<p class="muted">Opening your budget…</p>';
   try{
     const [page, file] = await Promise.all([
       gh(cfg.room, P("eddie-private/budget.html"), raw).then(r => r.text()),
       gh(cfg.room, P("eddie-private/budget-data.json"))
     ]);
-    if (location.hash.slice(1) !== "budget") return;
+    if (location.hash.slice(1) !== (view || "budget")) return;
     BUD.sha = file.sha;
-    window.__budget = { data: JSON.parse(decode(file.content)), save: saveBudget };
+    window.__budget = { data: JSON.parse(decode(file.content)), save: saveBudget, view: view || "" };
     $("#main").innerHTML = '<div class="bud"><iframe id="budf" title="2027 Money Plan"></iframe></div>';
     $("#budf").srcdoc = page;
   }catch(e){

@@ -466,7 +466,11 @@ nav a[aria-current="page"]{color:var(--gold-hi)}
 .rtabs{display:flex;gap:4px}
 .rtabs button{background:none;border:1px solid transparent;color:var(--muted);font-size:.8rem;font-weight:600;letter-spacing:.06em;padding:7px 14px}
 .rtabs button.on{border-color:var(--gold);color:var(--gold-hi)}
-.pchart{position:relative}
+.pchart{position:relative;touch-action:pan-y;cursor:crosshair;-webkit-user-select:none;user-select:none}
+.pc-cur{position:absolute;left:0;right:0;top:0;display:none;pointer-events:none}
+.pc-vl{position:absolute;top:0;bottom:0;width:1px;background:var(--gold);opacity:.55;transform:translateX(-.5px)}
+.pc-dot{position:absolute;width:11px;height:11px;border-radius:50%;border:2px solid var(--bg,#0b0b0b);transform:translate(-50%,-50%);box-shadow:0 0 0 1px var(--gold)}
+.pc-tip{position:absolute;top:4px;transform:translateX(-50%);z-index:1;white-space:nowrap;font-size:.74rem;color:var(--ink);background:var(--surface);border:1px solid var(--line);padding:3px 8px}
 .pchart svg{width:100%;height:240px;display:block}
 .pc-empty{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:.92rem;text-align:center;padding:0 24px}
 .pc-axis{display:flex;justify-content:space-between;font-size:.74rem;color:var(--dim);padding-top:6px}
@@ -1349,8 +1353,13 @@ function hist(){
   return{dates:ds,t};
 }
 function series(rows,fixed){
-  const H=hist(),out=[];
-  H.dates.forEach((d,i)=>{let v=fixed||0;rows.forEach(s=>{if(s.buyDate&&d<s.buyDate){v+=s.cost;return}const a=H.t[s.t]||[];let px=null;for(let j=i;j>=0;j--){if(a[j]!=null){px=a[j];break}}v+=s.shares*(px==null?s.buy:px)});out.push({d,v})});
+  const H=hist(),out=[],f=fixed||0;
+  const b0=rows.map(s=>s.buyDate).filter(Boolean).sort()[0]||"";
+  if(b0)out.push({d:b0,v:f+rows.reduce((a,s)=>a+s.cost,0),lb:"bought"});
+  H.dates.forEach((d,i)=>{if(b0&&d<b0)return;let v=f;rows.forEach(s=>{if(s.buyDate&&d<s.buyDate){v+=s.cost;return}const a=H.t[s.t]||[];let px=null;for(let j=i;j>=0;j--){if(a[j]!=null){px=a[j];break}}v+=s.shares*(px==null?s.buy:px)});out.push({d,v,lb:"close"})});
+  /* today's value from the latest prices, so the chart ends where the Value number is */
+  const asof=PRICES.asof,live=f+rows.reduce((a,s)=>a+s.value,0),L=out[out.length-1];
+  if(asof){if(L&&L.d===asof&&L.lb!=="bought"){L.v=live;if(PRICES.asofTime)L.lb=PRICES.asofTime}else if(!L||asof>=L.d)out.push({d:asof,v:live,lb:PRICES.asofTime||"close"})}
   return out;
 }
 const RANGES=["1W","1M","3M","YTD","5Y","All"];
@@ -1363,7 +1372,8 @@ function rangeRet(all,r){if(all.length<2)return null;const last=all[all.length-1
   let base=valueAt(all,start),since=false;if(base==null){base=all[0].v;since=r!=="All"}
   const ch=Math.abs(last.v-base)<0.5?0:last.v-base;return{ch,p:base?ch/base:0,since}}
 const sgn$=n=>(n>0?"+":n<0?"-":"")+fmt$(Math.abs(n));
-const pctS=p=>(p>0?"+":"")+(p*100).toFixed(2)+"%";
+const pctS=p=>{const a=Math.abs(p*100);return(p>0?"+":p<0?"-":"")+(a>0&&a<0.1?a.toFixed(4):a.toFixed(2))+"%"};
+const ptLbl=q=>fmtDate(q.d)+(q.lb==="bought"?" · bought":q.lb==="close"?" · close":q.lb?" · "+q.lb:"");
 const pn=n=>n>0?"pos":n<0?"neg":"";
 let perfRange="1M",stockSort={k:"value",d:-1},stockCat=null,stockQ="";
 function perfChart(pts){
@@ -1372,8 +1382,10 @@ function perfChart(pts){
   const vs=pts.map(x=>x.v),mn=Math.min(...vs),mx=Math.max(...vs),rg=(mx-mn)||1,up=vs[vs.length-1]>=vs[0];
   const X=i=>p+i*(W-2*p)/(pts.length-1),Y=v=>H-p-((v-mn)/rg)*(H-2*p-20);
   const d=pts.map((q,i)=>(i?"L":"M")+X(i).toFixed(1)+" "+Y(q.v).toFixed(1)).join(" "),c=up?"#7FBF95":"#E39B7B";
-  return`<div class="pchart"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="pcg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".22"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>
+  PERF={pts,X:i=>X(i)/W*100,Y:v=>Y(v)/H*100};
+  return`<div class="pchart" data-scrub="1"><svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none"><defs><linearGradient id="pcg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${c}" stop-opacity=".22"/><stop offset="1" stop-color="${c}" stop-opacity="0"/></linearGradient></defs>
     <path d="${d} L${X(pts.length-1)} ${H} L${X(0)} ${H} Z" fill="url(#pcg)"/><path d="${d}" fill="none" stroke="${c}" stroke-width="2.2" vector-effect="non-scaling-stroke" stroke-linejoin="round"/></svg>
+    <div class="pc-cur" aria-hidden="true"><i class="pc-vl"></i><i class="pc-dot" style="background:${c}"></i><span class="pc-tip"></span></div>
     <div class="pc-axis"><span>${fmtDate(pts[0].d)}</span><span>${fmtDate(pts[pts.length-1].d)}</span></div></div>`;
 }
 function retStrip(all){const first=all.length?all[0].d:"";
@@ -1396,13 +1408,37 @@ function stocksBlock(total){
     <p class="muted" style="font-size:.78rem"><span id="stockN"></span> Closing prices update every morning. Returns use each trading day's close; ranges longer than the tracking history show results since tracking began. Click a column to sort.</p>
   </section>`;
 }
+let PERF=null,PERF_SUM=null;
+function perfSumHTML(v,dl,dv,rl,x){if(dv!=null&&Math.abs(dv)<0.5)dv=0;
+  return`<div><span>Value</span><b>${fmt$(v)}</b></div><div><span>${dl}</span><b class="${dv==null?"":pn(dv)}">${dv==null?"—":sgn$(dv)}</b></div><div><span>${rl}</span><b class="${x?pn(x.ch):""}">${x?sgn$(x.ch)+" ("+pctS(x.p)+")":"—"}</b></div>`}
+/* Press (or hover) and slide across the chart to see the value on each day */
+function scrubAt(el,clientX){
+  if(!PERF||!PERF.pts.length)return;const r=el.getBoundingClientRect(),pts=PERF.pts;
+  const f=Math.min(1,Math.max(0,(clientX-r.left)/r.width));let i=0,best=1e9;
+  pts.forEach((q,k)=>{const dd=Math.abs(PERF.X(k)/100-f);if(dd<best){best=dd;i=k}});
+  const q=pts[i],cur=el.querySelector(".pc-cur"),svgH=el.querySelector("svg").getBoundingClientRect().height,lx=PERF.X(i);
+  cur.style.display="block";cur.style.height=svgH+"px";
+  cur.querySelector(".pc-vl").style.left=lx+"%";
+  const dot=cur.querySelector(".pc-dot");dot.style.left=lx+"%";dot.style.top=(PERF.Y(q.v)/100*svgH)+"px";
+  const tip=cur.querySelector(".pc-tip");tip.textContent=ptLbl(q);tip.style.left=Math.min(88,Math.max(12,lx))+"%";
+  const ch=Math.abs(q.v-pts[0].v)<0.5?0:q.v-pts[0].v,pv=i?pts[i-1].v:null;
+  const sum=document.getElementById("perfSum");if(sum)sum.innerHTML=perfSumHTML(q.v,i?"Change from point before":"Bought",i?q.v-pv:null,"Since "+fmtDate(pts[0].d),{ch,p:pts[0].v?ch/pts[0].v:0});
+}
+function scrubEnd(el){const cur=el&&el.querySelector(".pc-cur");if(cur)cur.style.display="none";const sum=document.getElementById("perfSum");if(sum&&PERF_SUM)sum.innerHTML=PERF_SUM()}
+document.addEventListener("pointermove",e=>{const el=e.target.closest&&e.target.closest(".pchart[data-scrub]");if(el)scrubAt(el,e.clientX)});
+document.addEventListener("pointerdown",e=>{const el=e.target.closest&&e.target.closest(".pchart[data-scrub]");if(el)scrubAt(el,e.clientX)});
+document.addEventListener("pointerout",e=>{const el=e.target.closest&&e.target.closest(".pchart[data-scrub]");if(el&&!el.contains(e.relatedTarget))scrubEnd(el)});
+document.addEventListener("pointerup",e=>{if(e.pointerType!=="mouse")scrubEnd(document.querySelector(".pchart[data-scrub]"))});
+document.addEventListener("pointercancel",()=>scrubEnd(document.querySelector(".pchart[data-scrub]")));
 function renderPerf(){
   const s=document.getElementById("stocks");if(!s)return;
   const all=allStocks(),sv=all.reduce((a,x)=>a+x.value,0),fixed=(+s.dataset.total||sv)-sv;
   const ser=series(all,fixed),last=ser.length?ser[ser.length-1]:{d:PRICES.asof,v:+s.dataset.total};
   const start=rangeStart(perfRange,last.d);let pts=ser.filter(p=>p.d>=start);const bv=valueAt(ser,start);if(bv!=null&&pts.length&&pts[0].d>start)pts=[{d:start,v:bv},...pts];
   const day=all.reduce((a,x)=>a+x.day,0),x=rangeRet(ser,perfRange);
-  document.getElementById("perfSum").innerHTML=`<div><span>Value</span><b>${fmt$(+s.dataset.total)}</b></div><div><span>Last day</span><b class="${pn(Math.abs(day)<0.5?0:day)}">${sgn$(Math.abs(day)<0.5?0:day)}</b></div><div><span>${perfRange==="All"?"All time":perfRange}</span><b class="${x?pn(x.ch):""}">${x?sgn$(x.ch)+" ("+pctS(x.p)+")":"—"}</b></div>`;
+  const rl=perfRange==="All"?"All time":perfRange,dl=PRICES.asofTime?"Today":"Last day";
+  PERF_SUM=()=>perfSumHTML(+s.dataset.total,dl,day,x?(x.since?"Since "+fmtDate(ser[0].d):rl):rl,x);
+  document.getElementById("perfSum").innerHTML=PERF_SUM();
   document.getElementById("perf").innerHTML=`<div class="rtabs">${RANGES.map(r=>`<button data-range="${r}" class="${perfRange===r?"on":""}">${r}</button>`).join("")}</div>${perfChart(pts)}${retStrip(ser)}`;
   const rows=all.filter(r=>r.cat===stockCat),cs=series(rows,0),cv=rows.reduce((a,r)=>a+r.value,0),cd=rows.reduce((a,r)=>a+r.day,0);
   document.getElementById("catSum").innerHTML=`<div class="cat-perf"><div class="cp-name"><span class="sw" style="background:${CAT_COLORS[stockCat]}"></span><b>${stockCat}</b><em>${rows.length} holdings · ${fmt$(cv)} · last day <span class="${pn(Math.abs(cd)<0.5?0:cd)}">${sgn$(Math.abs(cd)<0.5?0:cd)}</span></em></div>
